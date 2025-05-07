@@ -4,6 +4,7 @@ import router from './router'
 import { IonicVue } from '@ionic/vue'
 import PrimeVue from 'primevue/config'
 import { deepLinkService } from './services/deepLinkService'
+import { createPinia } from 'pinia'
 
 // Import PrimeVue styles
 import 'primeicons/primeicons.css'
@@ -46,6 +47,7 @@ const app = createApp(App)
   .use(PrimeVue, {
     theme: primeVueTheme,
   })
+  .use(createPinia())
   .use(router)
 
 router.isReady().then(() => {

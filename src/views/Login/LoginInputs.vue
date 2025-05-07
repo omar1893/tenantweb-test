@@ -21,7 +21,6 @@
         <div class="flex flex-col gap-4">
           <span class="p-input-icon-left w-full">
             <i class="pi pi-envelope"></i>
-            <TInput></TInput>
             <InputText 
               v-model="email" 
               placeholder="Email address"
@@ -79,18 +78,19 @@ import { ref } from 'vue'
 import { IonModal } from '@ionic/vue'
 import InputText from 'primevue/inputtext'
 import TButton from '@/components/TButton.vue'
-import TInput from '@/components/TInput.vue'
+import { useAuthStore } from '@/services/AuthStore'
+/* import TInput from '@/components/TInput.vue' */
 
 const visible = ref(false)
 const email = ref('')
+const authStore = useAuthStore()
 
 const closeModal = () => {
   visible.value = false
 }
 
-const handleEmailLogin = () => {
-  // Handle email login
-  console.log('Email login:', email.value)
+const handleEmailLogin = async () => {
+  await authStore.signInMagicLink(email.value)
 }
 
 const handleAppleLogin = () => {
@@ -98,9 +98,8 @@ const handleAppleLogin = () => {
   console.log('Apple login')
 }
 
-const handleGoogleLogin = () => {
-  // Handle Google login
-  console.log('Google login')
+const handleGoogleLogin = async () => {
+  await authStore.signInGoogle()
 }
 
 defineExpose({

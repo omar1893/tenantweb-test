@@ -1,0 +1,17 @@
+{
+	"folders": [
+		{
+			"path": "../.."
+		},
+		{
+			"path": "../../../tenantev-ai-web"
+		},
+		{
+			"path": "../../../auth-front"
+		},
+		{
+			"path": "../../../new-tenantev"
+		}
+	],
+	"settings": {}
+}

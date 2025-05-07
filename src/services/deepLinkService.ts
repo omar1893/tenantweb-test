@@ -1,4 +1,6 @@
 import { App } from '@capacitor/app';
+import router from '@/router';
+import { nextTick } from 'vue';
 
 class DeepLinkService {
   private static instance: DeepLinkService;
@@ -30,48 +32,24 @@ class DeepLinkService {
     }
   }
 
-  private handleDeepLink(url: string) {
+  private async handleDeepLink(url: string) {
     console.log('Handling deep link:', url);
     this.currentUrl = url;
 
     try {
-      // Remove the scheme from the URL for parsing
-      const urlWithoutScheme = url.replace('tenantev://', '');
+      const urlWithoutScheme = url.replace('app://', '').replace('tenantev://', '');
       const [path, queryString] = urlWithoutScheme.split('?');
       const params = new URLSearchParams(queryString || '');
+      const paramsObj = Object.fromEntries(params.entries());
 
       console.log('Path:', path);
-      console.log('Params:', Object.fromEntries(params.entries()));
+      console.log('Params:', paramsObj);
 
-      switch (path) {
-        case 'login':
-          this.handleLoginDeepLink(params);
-          break;
-        case 'property':
-          this.handlePropertyDeepLink(params);
-          break;
-        default:
-          console.log('Unknown deep link path:', path);
-      }
+      await router.isReady();
+      await nextTick();
+      router.replace({ name: 'DeepLinkLanding', query: paramsObj });
     } catch (error) {
       console.error('Error handling deep link:', error);
-    }
-  }
-
-  private handleLoginDeepLink(params: URLSearchParams) {
-    const email = params.get('email');
-    const token = params.get('token');
-    if (email && token) {
-      console.log('Login deep link:', { email, token });
-      // Aquí puedes implementar la lógica de navegación o autenticación
-    }
-  }
-
-  private handlePropertyDeepLink(params: URLSearchParams) {
-    const propertyId = params.get('id');
-    if (propertyId) {
-      console.log('Property deep link:', { propertyId });
-      // Aquí puedes implementar la lógica de navegación
     }
   }
 
