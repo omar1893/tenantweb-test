@@ -71,11 +71,12 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
 import TAccordion from '@/components/TAccordion.vue'
 import TLabel from '@/components/TLabel.vue'
 import TGoogleMaps from '@/components/TGoogleMaps.vue'
 import TButton from '@/components/TButton.vue'
-import propertyData from '@/data/properties.json'
+import { propertyService } from '@/services/property.service'
 import axios from 'axios'
 
 interface Property {
@@ -88,12 +89,13 @@ interface Property {
     state: string
     zip_code: string
   }
-  configurations: {
+  configuration: {
     type: string
     requirements: string[]
   }[]
 }
 
+const route = useRoute()
 const loading = ref(true)
 const property = ref<Property>({} as Property)
 
@@ -104,8 +106,10 @@ const fullAddress = computed(() => {
 })
 
 const propertyRequirements = computed(() => {
-  if (!property.value.configurations) return []
-  return property.value.configurations.map(config => ({
+  console.log('propertyRequirements', property.value.configuration)
+
+  if (!property.value.configuration) return []
+  return property.value.configuration.map(config => ({
     header: config.type.charAt(0) + config.type.slice(1).toLowerCase(),
     content: config.requirements
   }))
@@ -114,12 +118,11 @@ const propertyRequirements = computed(() => {
 // const androidUrl = 'https://play.google.com/store/apps/details?id=com.tenantevaluation'
 const iosUrl = 'https://apps.apple.com/app/tenantev/id6447689989'
 
-const GOOGLE_API_KEY = 'AIzaSyAHFOQEwRQ6_CGQcBZ7R7fLO0ECSqrNxWw' // <-- Pega aquí tu API Key de Google Places
+const GOOGLE_API_KEY = 'AIzaSyAHFOQEwRQ6_CGQcBZ7R7fLO0ECSqrNxWw'
 const googlePlaceInfo = ref<any>(null)
 
 const fetchGooglePlaceInfo = async (address: string) => {
   try {
-    // 1. Buscar el place_id usando el address
     const searchUrl = 'https://maps.googleapis.com/maps/api/place/findplacefromtext/json'
     const searchResp = await axios.get(searchUrl, {
       params: {
@@ -132,7 +135,6 @@ const fetchGooglePlaceInfo = async (address: string) => {
     const placeId = searchResp.data.candidates?.[0]?.place_id
     if (!placeId) return null
 
-    // 2. Obtener detalles del place
     const detailsUrl = 'https://maps.googleapis.com/maps/api/place/details/json'
     const detailsResp = await axios.get(detailsUrl, {
       params: {
@@ -151,11 +153,9 @@ const fetchGooglePlaceInfo = async (address: string) => {
 
 const fetchPropertyData = async () => {
   try {
-    // Simulate API call with 2 second delay
-    await new Promise(resolve => setTimeout(resolve, 2000))
-    property.value = propertyData
-
-    // Llama a Google Places con la dirección formateada
+    const propertyId = route.params.propertyId as string
+    property.value = await propertyService.getPropertyLandingPage(propertyId)
+    console.log('property', property.value)
     const address = fullAddress.value
     googlePlaceInfo.value = await fetchGooglePlaceInfo(address)
   } catch (error) {

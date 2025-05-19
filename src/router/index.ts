@@ -27,7 +27,7 @@ const routes: Array<RouteRecordRaw> = [
     component: AudioTesting
   },
   {
-    path: '/property-landing',
+    path: '/property/:propertyId',
     name: 'PropertyLanding',
     component: PropertyLanding
   }
