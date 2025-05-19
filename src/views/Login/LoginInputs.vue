@@ -30,15 +30,15 @@
 
         <div class="flex grow items-center gap-4 w-full">
           <TButton variant="dark" class="flex-1 !rounded-full py-5" @click="handleAppleLogin">
-            <!-- <template #default>
-              <img src="@/assets/apple-icon.svg?inline" alt="Google" class="w-[24px] h-[24px]">
-            </template> -->
+            <template #default>
+              <img src="@/assets/icons/apple-icon.svg" alt="Google" class="w-[24px] h-[24px]">
+            </template>
           </TButton>
 
           <TButton variant="dark" class="flex-1 rounded-full border border-gray-200 py-5" @click="handleGoogleLogin">
-            <!-- <template #default>
-              <img src="@/assets/google-icon.svg?inline" alt="Google" class="w-[24px] h-[24px]">
-            </template> -->
+            <template #default>
+              <img src="@/assets/icons/google-icon.svg?inline" alt="Google" class="w-[24px] h-[24px]">
+            </template>
           </TButton>
         </div>
       </div>
@@ -58,18 +58,30 @@ import { IonModal } from '@ionic/vue'
 import InputText from 'primevue/inputtext'
 import TButton from '@/components/TButton.vue'
 import { useAuthStore } from '@/services/AuthStore'
+import { useRouter } from 'vue-router'
 /* import TInput from '@/components/TInput.vue' */
 
 const visible = ref(false)
 const email = ref('')
+const loading = ref(false)
 const authStore = useAuthStore()
+const router = useRouter()
 
 const closeModal = () => {
   visible.value = false
 }
 
 const handleEmailLogin = async () => {
-  await authStore.signInMagicLink(email.value)
+  try {
+    loading.value = true
+    await authStore.signInMagicLink(email.value)
+    visible.value = false
+    router.push({ name: 'AudioTesting' })
+  } catch (error) {
+    console.error('Error during login:', error)
+  } finally {
+    loading.value = false
+  }
 }
 
 const handleAppleLogin = () => {

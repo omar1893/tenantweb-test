@@ -39,8 +39,8 @@ import './theme/variables.css'
 import './styles/main.css'
 
 // Initialize deep link service
-console.log('Initializing app with deep link service');
-deepLinkService; // This will trigger the singleton initialization
+console.log('Initializing app with deep link service')
+deepLinkService // This will trigger the singleton initialization
 
 const app = createApp(App)
   .use(IonicVue)

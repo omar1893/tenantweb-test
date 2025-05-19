@@ -5,6 +5,7 @@ import VideoIntro from '../views/Login/VideoIntro.vue'
 import DeepLinkLanding from '../views/DeepLinkLanding.vue'
 import AudioTesting from '../views/Login/AudioTesting.vue'
 import PropertyLanding from '../views/PropertyLanding/PropertyLanding.vue'
+
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',

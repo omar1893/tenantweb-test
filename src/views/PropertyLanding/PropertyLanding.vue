@@ -1,5 +1,5 @@
 <template>
-  <main class="min-h-screen bg-black">
+  <ion-page class="bg-black justify-normal">
     <!-- Loading State -->
     <div v-if="loading" class="flex items-center justify-center min-h-screen">
       <div class="text-white">Loading...</div>
@@ -66,18 +66,19 @@
         </div>
       </div>
     </template>
-  </main>
+  </ion-page>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import TAccordion from '@/components/TAccordion.vue'
 import TLabel from '@/components/TLabel.vue'
 import TGoogleMaps from '@/components/TGoogleMaps.vue'
 import TButton from '@/components/TButton.vue'
 import { propertyService } from '@/services/property.service'
 import axios from 'axios'
+import { IonPage } from '@ionic/vue'
 
 interface Property {
   id: string
@@ -96,6 +97,8 @@ interface Property {
 }
 
 const route = useRoute()
+const router = useRouter()
+const propertyId = computed(() => route.params.propertyId as string)
 const loading = ref(true)
 const property = ref<Property>({} as Property)
 
@@ -106,17 +109,12 @@ const fullAddress = computed(() => {
 })
 
 const propertyRequirements = computed(() => {
-  console.log('propertyRequirements', property.value.configuration)
-
   if (!property.value.configuration) return []
   return property.value.configuration.map(config => ({
     header: config.type.charAt(0) + config.type.slice(1).toLowerCase(),
     content: config.requirements
   }))
 })
-
-// const androidUrl = 'https://play.google.com/store/apps/details?id=com.tenantevaluation'
-const iosUrl = 'https://apps.apple.com/app/tenantev/id6447689989'
 
 const GOOGLE_API_KEY = 'AIzaSyAHFOQEwRQ6_CGQcBZ7R7fLO0ECSqrNxWw'
 const googlePlaceInfo = ref<any>(null)
@@ -153,8 +151,7 @@ const fetchGooglePlaceInfo = async (address: string) => {
 
 const fetchPropertyData = async () => {
   try {
-    const propertyId = route.params.propertyId as string
-    property.value = await propertyService.getPropertyLandingPage(propertyId)
+    property.value = await propertyService.getPropertyLandingPage(propertyId.value)
     console.log('property', property.value)
     const address = fullAddress.value
     googlePlaceInfo.value = await fetchGooglePlaceInfo(address)
@@ -166,7 +163,7 @@ const fetchPropertyData = async () => {
 }
 
 const applyNow = () => {
-  window.open(iosUrl, '_blank')
+  router.push({ name: 'VideoIntro' })
 }
 
 onMounted(() => {
