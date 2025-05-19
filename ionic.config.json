@@ -1,5 +1,7 @@
 {
   "name": "tenantev-ai",
-  "integrations": {},
+  "integrations": {
+    "capacitor": {}
+  },
   "type": "vue-vite"
 }

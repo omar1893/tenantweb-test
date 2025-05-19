@@ -1,0 +1,52 @@
+{
+  "id": "prop-001",
+  "code": "5051",
+  "name": "505 Deerfield COA, Inc",
+  "address": {
+    "street": "10191 West Sample Road Suite 203",
+    "city": "Coral Springs",
+    "state": "Florida",
+    "zip_code": "33065"
+  },
+  "configurations": [
+    {
+      "type": "LEASE",
+      "requirements": [
+        "Valid government-issued photo ID",
+        "Proof of income (last 3 pay stubs)",
+        "Rental history verification",
+        "Credit check authorization",
+        "Pet photos and vaccination records",
+        "Security deposit equal to one month's rent",
+        "Application fee of $50 per adult",
+        "Background check authorization"
+      ]
+    },
+    {
+      "type": "PURCHASE",
+      "requirements": [
+        "Pre-approval letter from mortgage lender",
+        "Proof of funds for down payment",
+        "Valid government-issued photo ID",
+        "Recent bank statements",
+        "Employment verification",
+        "Tax returns from last 2 years",
+        "Credit report authorization",
+        "Purchase agreement"
+      ]
+    },
+    {
+      "type": "STAYING",
+      "requirements": [
+        "Written permission from property owner",
+        "Background check authorization",
+        "Valid government-issued photo ID",
+        "Proof of relationship to owner",
+        "Temporary stay agreement",
+        "Emergency contact information",
+        "Vehicle registration (if applicable)",
+        "Pet information (if applicable)"
+      ]
+    }
+  ]
+} 

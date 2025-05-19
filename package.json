@@ -10,7 +10,7 @@
     "test:e2e": "cypress run",
     "test:unit": "vitest",
     "lint": "eslint .",
-    "ios:build": "ionic capacitor run ios"
+    "ios:build": "ionic capacitor build ios"
   },
   "dependencies": {
     "@capacitor/app": "7.0.1",
@@ -22,6 +22,7 @@
     "@ionic/vue": "^8.0.0",
     "@ionic/vue-router": "^8.0.0",
     "@primeuix/themes": "^1.0.3",
+    "axios": "^1.9.0",
     "better-auth": "^1.2.7",
     "express": "^5.1.0",
     "ionicons": "^7.0.0",

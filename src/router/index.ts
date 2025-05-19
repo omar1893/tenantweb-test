@@ -1,9 +1,10 @@
-import { createRouter, createWebHistory } from '@ionic/vue-router';
-import { RouteRecordRaw } from 'vue-router';
+import { createRouter, createWebHistory } from '@ionic/vue-router'
+import { RouteRecordRaw } from 'vue-router'
 import HomePage from '../views/HomePage.vue'
 import VideoIntro from '../views/Login/VideoIntro.vue'
 import DeepLinkLanding from '../views/DeepLinkLanding.vue'
-
+import AudioTesting from '../views/Login/AudioTesting.vue'
+import PropertyLanding from '../views/PropertyLanding/PropertyLanding.vue'
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
@@ -19,6 +20,16 @@ const routes: Array<RouteRecordRaw> = [
     path: '/deeplink-landing',
     name: 'DeepLinkLanding',
     component: DeepLinkLanding
+  },
+  {
+    path: '/audio-testing',
+    name: 'AudioTesting',
+    component: AudioTesting
+  },
+  {
+    path: '/property-landing',
+    name: 'PropertyLanding',
+    component: PropertyLanding
   }
 ]
 
