@@ -1,12 +1,12 @@
 <template>
-    <label class="t-label">
-        <img
-            src="@/assets/icons/google-maps.svg?inline"
-            alt="Google maps icon"
-            class="logo"
-        >
-        See on Google Maps
-    </label>
+  <label class="t-label button-small">
+    <img
+      src="@/assets/icons/google-maps.svg?inline"
+      alt="Google maps icon"
+      class="logo"
+    >
+    See on Google Maps
+  </label>
 </template>
 
 <script setup lang="ts">
@@ -18,8 +18,6 @@ defineProps<{
 
 <style scoped lang="scss">
 .t-label {
-    font-size: 14px;
-    font-weight: 600;
     color: #000000;
     padding: 0.4rem 2rem;
     border-radius: 0.5rem;

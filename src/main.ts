@@ -36,7 +36,9 @@ import '@ionic/vue/css/palettes/dark.system.css'
 
 /* Theme variables */
 import './theme/variables.css'
-import './styles/main.css'
+
+// Import custom styles
+import './styles/main.scss'
 
 // Initialize deep link service
 console.log('Initializing app with deep link service')

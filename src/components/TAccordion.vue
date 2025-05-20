@@ -5,7 +5,7 @@
         {{ item.header }}
       </AccordionHeader>
       <AccordionContent>
-        <ul class="space-y-2 text-left">
+        <ul class="body-medium space-y-2 text-left">
           <li v-for="(requirement, reqIndex) in item.content" :key="reqIndex" class="text-white/80">
             {{ requirement }}
           </li>
