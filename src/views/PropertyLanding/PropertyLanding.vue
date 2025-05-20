@@ -1,5 +1,5 @@
 <template>
-  <ion-page class="bg-black justify-normal">
+  <ion-page class="bg-black justify-normal pb-[20px] overflow-y-auto">
     <!-- Loading State -->
     <div v-if="loading" class="flex items-center justify-center min-h-screen">
       <div class="text-white">Loading...</div>
@@ -40,13 +40,13 @@
 
       <!-- Property Requirements Section -->
       <div class="p-4">
-        <h2 class="text-xl font-semibold mb-4 text-white">Property Requirements</h2>
+        <h2 class="button-large mb-4 text-white">Property Requirements</h2>
         <TAccordion
           :items="propertyRequirements"
           multiple
         />
       </div>
-      <div class="absolute bottom-[1rem] w-full p-4">
+      <div class="button-bar w-full p-4 z-10">
         <TButton
           class="w-full !rounded-[100px] button-large"
           variant="white"
@@ -174,5 +174,10 @@ onMounted(() => {
 <style scoped lang="scss">
 .property-landing {
   @apply min-h-screen bg-gray-100;
+}
+
+.button-bar {
+  margin-top: auto;
+  background: linear-gradient(to top, rgba(0,0,0,0.85) 80%, transparent 100%);
 }
 </style>

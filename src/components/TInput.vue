@@ -38,7 +38,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 const inputClass = computed(() => {
   const classes = ['t-input']
-  
+
   if (props.class) {
     classes.push(props.class)
   }
@@ -49,10 +49,19 @@ const inputClass = computed(() => {
 
 <style lang="scss">
 .p-inputtext {
-  @apply w-full rounded-full border-gray-200 focus:ring-2 focus:ring-pink-200 focus:border-pink-200;
-  
-  &:disabled {
-    @apply opacity-50 cursor-not-allowed;
+  display: flex;
+flex-direction: column;
+padding: 14px 16px;
+justify-content: center;
+align-items: center;
+gap: 13px;
+align-self: stretch;
+border-radius: 10px!important;
+border: 2px solid #726B7C;
+
+&:focus {
+    border: 2px solid;
+    border-color: #726B7C!important;
   }
 }
 </style>

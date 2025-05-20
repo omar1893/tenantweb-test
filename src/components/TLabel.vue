@@ -1,6 +1,6 @@
 <template>
   <div class="t-label">
-    <span>{{ label }}: {{ copyValue }}</span>
+    <span class="button-large">{{ label }}: {{ copyValue }}</span>
     <img
       src="@/assets/icons/clone-icon.svg?inline"
       alt="Copy"
@@ -49,8 +49,6 @@ const shareValue = async () => {
 
 <style scoped lang="scss">
 .t-label {
-    font-size: 18px;
-    font-weight: 600;
     color: #23222A;
     padding: 0.6rem 1.2rem;
     border-radius: 0.8rem;

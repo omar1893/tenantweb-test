@@ -14,7 +14,9 @@ import primeVueTheme from './prime-vue-theme'
 
 /* Theme variables */
 import './theme/variables.css'
-import './styles/main.css'
+
+// Import custom styles
+import './styles/main.scss'
 
 // Initialize deep link service
 console.log('Initializing app with deep link service')
