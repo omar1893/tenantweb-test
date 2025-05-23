@@ -1,4 +1,4 @@
-$primary: #3880ff;
+/* $primary: #3880ff;
 $secondary: #3dc2ff;
 $tertiary: #5260ff;
 $success: #2dd36f;
@@ -12,4 +12,23 @@ $spacing-xs: 4px;
 $spacing-sm: 8px;
 $spacing-md: 16px;
 $spacing-lg: 24px;
-$spacing-xl: 32px; 
+$spacing-xl: 32px;
+ */
+ 
+:root {
+  --te-primary: #3880ff;
+  --te-secondary: #3dc2ff;
+  --te-tertiary: #5260ff;
+  --te-success: #2dd36f;
+  --te-warning: #ffc409;
+  --te-danger: #eb445a;
+  --te-dark: #222428;
+  --te-medium: #92949c;
+  --te-light: #f4f5f8;
+
+  --te-spacing-xs: 4px;
+  --te-spacing-sm: 8px;
+  --te-spacing-md: 16px;
+  --te-spacing-lg: 24px;
+  --te-spacing-xl: 32px;
+}

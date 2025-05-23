@@ -22,7 +22,7 @@
 </template>
 
 <script setup lang="ts">
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from '@ionic/vue';
+import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from '@ionic/vue'
 </script>
 
 <style lang="scss" scoped>
@@ -33,27 +33,27 @@ import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from '@ionic/vue
   right: 0;
   top: 50%;
   transform: translateY(-50%);
-  padding: $spacing-md;
+  padding: var(--te-spacing-md);
 
   strong {
     font-size: 20px;
     line-height: 26px;
-    color: $dark;
+    color: var(--te-dark);
   }
 
   p {
     font-size: 16px;
     line-height: 22px;
-    color: $medium;
+    color: var(--te-medium);
     margin: 0;
   }
 
   a {
     text-decoration: none;
-    color: $primary;
-    
+    color: var(--te-primary);
+
     &:hover {
-      color: $secondary;
+      color: var(--te-secondary);
     }
   }
 }

@@ -5,12 +5,12 @@ html, body {
 }
 
 .ion-page {
-  background-color: $light;
-  color: $dark;
+  background-color: var(--te-light);
+  color: var(--te-dark);
 }
 
 .container {
-  padding: $spacing-md;
+  padding: var(--te-spacing-md);
   max-width: 1200px;
   margin: 0 auto;
-} 
+}

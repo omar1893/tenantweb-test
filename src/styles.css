@@ -1,0 +1,14 @@
+@import "tailwindcss";
+@import "tailwindcss-primeui";
+@plugin "@tailwindcss/typography";
+
+@custom-variant dark (&:where(.app-dark, .app-dark *));
+
+:root {
+  font-size: 14px;
+  --p-tooltip-max-width: min(96rem, 80vw) !important;
+}
+
+html, body {
+  font-size: 14px !important;
+}
