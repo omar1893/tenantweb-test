@@ -1,5 +1,6 @@
 <template>
   <Button
+    class="bg-white"
     :class="buttonClass"
     :type="type"
     :disabled="disabled"

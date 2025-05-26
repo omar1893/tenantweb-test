@@ -59,11 +59,8 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { IonModal } from '@ionic/vue'
-import InputText from 'primevue/inputtext'
-import IconField from 'primevue/iconfield'
-import InputIcon from 'primevue/inputicon'
 import TButton from '@/components/TButton.vue'
-import { useAuthStore } from '@/services/AuthStore'
+import { useAuthStore } from '@/stores/AuthStore'
 import { useRouter } from 'vue-router'
 import TInput from '@/components/TInput.vue'
 /* import TInput from '@/components/TInput.vue' */

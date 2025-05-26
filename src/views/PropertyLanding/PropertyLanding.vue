@@ -76,7 +76,7 @@ import TAccordion from '@/components/TAccordion.vue'
 import TLabel from '@/components/TLabel.vue'
 import TGoogleMaps from '@/components/TGoogleMaps.vue'
 import TButton from '@/components/TButton.vue'
-import { propertyService } from '@/services/property.service'
+import { propertyService } from '@/services/propertyService'
 import axios from 'axios'
 import { IonPage } from '@ionic/vue'
 

@@ -1,8 +1,8 @@
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 import HomePage from '../views/HomePage.vue'
-import VideoIntro from '../views/Login/VideoIntro.vue'
+import VideoIntro from '../views/VideoIntro/VideoIntro.vue'
 import DeepLinkLanding from '../views/DeepLinkLanding.vue'
-import AudioTesting from '../views/Login/AudioTesting.vue'
+import AudioTesting from '../views/PropertyVideo/PropertyVideo.vue'
 import PropertyLanding from '../views/PropertyLanding/PropertyLanding.vue'
 
 const routes: Array<RouteRecordRaw> = [

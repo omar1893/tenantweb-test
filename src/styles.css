@@ -5,10 +5,10 @@
 @custom-variant dark (&:where(.app-dark, .app-dark *));
 
 :root {
-  font-size: 14px;
+  font-size: 10px;
   --p-tooltip-max-width: min(96rem, 80vw) !important;
 }
 
 html, body {
-  font-size: 14px !important;
+  font-size: 10px !important;
 }
