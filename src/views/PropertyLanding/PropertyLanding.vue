@@ -1,7 +1,7 @@
 <template>
   <ion-page class="bg-black justify-normal pb-[20px] overflow-y-auto">
     <!-- Loading State -->
-    <div v-if="loading" class="flex items-center justify-center min-h-screen">
+    <div v-if="state.loading" class="flex items-center justify-center min-h-screen">
       <div class="text-white">Loading...</div>
     </div>
 
@@ -27,13 +27,13 @@
       </div>
 
       <div class="p-4 text-left">
-        <h1 class="text-large text-white mb-2">{{ property.name }}</h1>
+        <h1 class="text-large text-white mb-2">{{ state.property.name }}</h1>
         <p class="body-medium text-white/90 mb-4">{{ fullAddress }}</p>
 
         <div class="flex items-center gap-2">
           <TLabel
             label="Property Code"
-            :copy-value="property.code"
+            :copy-value="state.property.code"
           />
         </div>
       </div>
@@ -70,7 +70,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, reactive } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import TAccordion from '@/components/TAccordion.vue'
 import TLabel from '@/components/TLabel.vue'
@@ -99,18 +99,20 @@ interface Property {
 const route = useRoute()
 const router = useRouter()
 const propertyId = computed(() => route.params.propertyId as string)
-const loading = ref(true)
-const property = ref<Property>({} as Property)
+const state = reactive({
+  loading: true,
+  property: {} as Property
+})
 
 const fullAddress = computed(() => {
-  if (!property.value.address) return ''
-  const { street, city, state, zip_code } = property.value.address
-  return `${street}, ${city}, ${state} ${zip_code}`
+  if (!state.property.address) return ''
+  const { street, city, state: st, zip_code } = state.property.address
+  return `${street}, ${city}, ${st} ${zip_code}`
 })
 
 const propertyRequirements = computed(() => {
-  if (!property.value.configuration) return []
-  return property.value.configuration.map(config => ({
+  if (!state.property.configuration) return []
+  return state.property.configuration.map(config => ({
     header: config.type.charAt(0) + config.type.slice(1).toLowerCase(),
     content: config.requirements
   }))
@@ -151,14 +153,14 @@ const fetchGooglePlaceInfo = async (address: string) => {
 
 const fetchPropertyData = async () => {
   try {
-    property.value = await propertyService.getPropertyLandingPage(propertyId.value)
-    console.log('property', property.value)
+    state.property = await propertyService.getPropertyLandingPage(propertyId.value)
+    console.log('property', state.property)
     const address = fullAddress.value
     googlePlaceInfo.value = await fetchGooglePlaceInfo(address)
   } catch (error) {
     console.error('Error fetching property data:', error)
   } finally {
-    loading.value = false
+    state.loading = false
   }
 }
 
@@ -169,6 +171,8 @@ const applyNow = () => {
 onMounted(() => {
   fetchPropertyData()
 })
+
+defineExpose({ state })
 </script>
 
 <style scoped lang="scss">

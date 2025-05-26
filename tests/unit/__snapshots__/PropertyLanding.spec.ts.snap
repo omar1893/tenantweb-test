@@ -1,0 +1,31 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`PropertyLanding.vue > matches snapshot 1`] = `
+"<div data-v-930597b8="" class="ion-page bg-black justify-normal pb-[20px] overflow-y-auto">
+  <!-- Loading State -->
+  <!-- Content -->
+  <!-- Property Header Section -->
+  <div data-v-930597b8="" class="relative"><img data-v-930597b8="" src="/src/assets/property-image.png" alt="505 Deerfield COA" class="w-full h-[300px] object-cover"><!-- Property Info Overlay -->
+    <div data-v-930597b8="" class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/70 to-transparent text-left">
+      <div data-v-930597b8="" class="flex items-center gap-2 mb-2">
+        <t-google-maps-stub data-v-930597b8="" label="See on Google maps" address=", ,  "></t-google-maps-stub>
+      </div>
+    </div>
+  </div>
+  <div data-v-930597b8="" class="p-4 text-left">
+    <h1 data-v-930597b8="" class="text-large text-white mb-2">Test Property</h1>
+    <p data-v-930597b8="" class="body-medium text-white/90 mb-4">, , </p>
+    <div data-v-930597b8="" class="flex items-center gap-2">
+      <t-label-stub data-v-930597b8="" label="Property Code"></t-label-stub>
+    </div>
+  </div><!-- Property Requirements Section -->
+  <div data-v-930597b8="" class="p-4">
+    <h2 data-v-930597b8="" class="button-large mb-4 text-white">Property Requirements</h2>
+    <t-accordion-stub data-v-930597b8="" items="" multiple="true"></t-accordion-stub>
+  </div>
+  <div data-v-930597b8="" class="button-bar w-full p-4 z-10">
+    <t-button-stub data-v-930597b8="" class="w-full !rounded-[100px] button-large" label="Apply Now" icon="pi pi-apple" variant="white" size="normal" type="button" disabled="false" loading="false" iconpos="left"></t-button-stub>
+  </div>
+  <!--v-if-->
+</div>"
+`;

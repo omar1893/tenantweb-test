@@ -1,15 +1,15 @@
 <template>
-  <ion-page class="video-intro-page">
-    <video ref="videoRef" autoplay muted loop playsinline class="background-video">
-      <source src="../../assets/property-requirements.mp4" type="video/mp4">
+  <ion-page class="bg-black video-intro-page">
+    <video ref="videoRef" autoplay playsinline class="background-video">
+      <source src="../../assets/video-test5.mp4" type="video/mp4">
     </video>
 
     <audio ref="audioRef" preload="auto">
-      <source src="../../assets/test-audio.mp3" type="audio/mpeg">
+      <source src="../../assets/test-audio5.mp3" type="audio/mpeg">
     </audio>
 
-    <div v-if="currentCaption" class="caption-container">
-      <p class="caption-text text-large">{{ currentCaption.text }}</p>
+    <div v-if="currentCaption" class="caption-container body-large">
+      <p class="caption-text">{{ currentCaption.text }}</p>
     </div>
 
     <div class="text-container">
@@ -75,7 +75,7 @@ interface Caption {
   type: string
   text: string
   time: number
-  nextTime: number
+  endTime: number
 }
 
 const showContinueButtons = ref(false)
@@ -83,33 +83,57 @@ const showContinueButtons = ref(false)
 const captions: Caption[] = [
   {
     'type': 'WELCOME',
-    'text': 'Welcome to Oakwood Apartments, your new home awaits.',
+    'text': "🌟 Hey there, welcome to Foster's Mill Homeowners Association Incorporated.",
     'time': 0.0,
-    'nextTime': 2.8
+    'endTime': 4.0
   },
   {
     'type': 'CREDIT',
-    'text': "We have a flexible approach to credit scores, so there's no minimum credit score required.",
-    'time': 3.5,
-    'nextTime': 7.0
+    'text': "💳 No credit score needed, you're all set.",
+    'time': 4.1,
+    'endTime': 7.0
   },
   {
     'type': 'PETS',
-    'text': "If you're a pet lover, you're in luck – we allow up to two pets, with a combined weight limit of 75 pounds.",
-    'time': 8.0,
-    'nextTime': 13.5
+    'text': '🐾 Bring two pets under 50 pounds, keep them leashed outside and ESAs are always okay.',
+    'time': 7.1,
+    'endTime': 12.0
+  },
+  {
+    'type': 'BREEDS',
+    'text': '🚫 Aggressive breeds must be muzzled or removed.',
+    'time': 12.1,
+    'endTime': 15.0
   },
   {
     'type': 'VEHICLES',
-    'text': "You're free to park up to two cars on the premises.",
-    'time': 15.0,
-    'nextTime': 19.0
+    'text': '🚗 Park up to two cars in your garage or driveway.',
+    'time': 15.1,
+    'endTime': 18.0
+  },
+  {
+    'type': 'PARKING',
+    'text': '🚫 No street parking overnight or on the grass.',
+    'time': 18.1,
+    'endTime': 20.0
   },
   {
     'type': 'LEASE',
-    'text': 'We offer a minimum lease term of 12 months.',
-    'time': 20.0,
-    'nextTime': 23.5
+    'text': '📅 Flexible leases from 6 to 12 months.',
+    'time': 20.1,
+    'endTime': 23.0
+  },
+  {
+    'type': 'RENEW',
+    'text': '🔄 Renew and stay as long as you like.',
+    'time': 23.1,
+    'endTime': 25.0
+  },
+  {
+    'type': 'REVIEW',
+    'text': "📄 Next, you'll review the full property requirements before agreeing and continuing with your application.",
+    'time': 25.1,
+    'endTime': 28.9
   }
 ]
 
@@ -157,7 +181,7 @@ const updateCaption = () => {
   if (!audioRef.value) return
 
   const currentTime = audioRef.value.currentTime
-  const caption = captions.find(c => currentTime >= c.time && currentTime < c.nextTime)
+  const caption = captions.find(c => currentTime >= c.time && currentTime < c.endTime)
   currentCaption.value = caption || null
 }
 
@@ -208,20 +232,19 @@ onUnmounted(() => {
 
 .background-video {
   position: absolute;
-  top: 50%;
+  top: 0;
   left: 50%;
-  transform: translate(-50%, -50%);
+  transform: translateX(-50%);
   min-width: 100%;
-  min-height: 100%;
   width: auto;
-  height: 100vh;
+  height: 88vh;
   z-index: 1;
   object-fit: cover;
 }
 
 .caption-container {
   position: absolute;
-  top: 2rem;
+  top: 10rem;
   left: 0;
   right: 0;
   z-index: 2;
@@ -304,6 +327,8 @@ onUnmounted(() => {
   padding: 4rem 0.8rem;
   background: linear-gradient(to bottom, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 1));
   position: relative;
+  padding-bottom: 0;
+  margin-bottom: 12vh;
 
   p {
     color: #FFFFFFE5;
