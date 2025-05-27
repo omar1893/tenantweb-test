@@ -6,35 +6,38 @@ import AudioTesting from '../views/PropertyVideo/PropertyVideo.vue'
 import PropertyLanding from '../views/PropertyLanding/PropertyLanding.vue'
 import ChatbotView from '../views/Chatbot/ChatbotView.vue'
 
+import { ERouter, EPropertyRouter } from '../enums/router'
+
+
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
-    name: 'VideoIntro',
+    name: ERouter.VideoIntro,
     component: VideoIntro
   },
   {
     path: '/home',
-    name: 'Home',
+    name: ERouter.Home,
     component: HomePage
   },
   {
     path: '/deeplink-landing',
-    name: 'DeepLinkLanding',
+    name: ERouter.DeepLinkLanding,
     component: DeepLinkLanding
   },
   {
     path: '/audio-testing',
-    name: 'AudioTesting',
+    name: ERouter.AudioTesting,
     component: AudioTesting
   },
   {
     path: '/property/:propertyId',
-    name: 'PropertyLanding',
+    name: EPropertyRouter.PropertyLanding,
     component: PropertyLanding
   },
   {
     path: '/chatbot',
-    name: 'ChatBot',
+    name: ERouter.Chatbot,
     component: ChatbotView
   }
 ]
