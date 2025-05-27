@@ -51,17 +51,21 @@ const inputClass = computed(() => {
 .p-inputtext {
   display: flex;
 flex-direction: column;
-padding: 14px 16px;
+padding: 1.4rem 1.6rem;
 justify-content: center;
 align-items: center;
 gap: 13px;
 align-self: stretch;
 border-radius: 10px!important;
 border: 2px solid #726B7C;
+height: 5.2rem;
 
 &:focus {
     border: 2px solid;
     border-color: #726B7C!important;
   }
+&::placeholder {
+  color: var(--te-medium);
+}
 }
 </style>
