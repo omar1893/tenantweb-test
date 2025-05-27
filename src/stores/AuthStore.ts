@@ -2,7 +2,11 @@ import { defineStore } from 'pinia'
 import { authClient } from '../utils/auth'
 import { computed } from 'vue'
 
-const callBackURL = 'http://localhost:3001/audio-testing'
+import Router from '@/router'
+import { ERouter } from '@/enums/router'
+
+const callBackName = ERouter.AudioTesting
+
 
 export const useAuthStore = defineStore('auth', () => {
   const isLoading = computed(() => {
@@ -20,17 +24,24 @@ export const useAuthStore = defineStore('auth', () => {
     return session.value.data
   })
 
+  const getCallBackURL = () => {
+    const route = Router.resolve({ name: callBackName })
+    const fullPath = `${window.location.origin}${route.fullPath}`
+
+    return fullPath
+  }
+
   const signInGoogle = async () => {
     await authClient.signIn.social({
       provider: 'google',
-      callbackURL: callBackURL
+      callbackURL: getCallBackURL()
     })
   }
 
   const signInMagicLink = async (email: string): Promise<boolean> => {
     const response = await authClient.signIn.magicLink({
       email: email,
-      callbackURL: callBackURL
+      callbackURL: getCallBackURL()
     })
     return !!response.data?.status
   }
