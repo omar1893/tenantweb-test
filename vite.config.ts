@@ -16,13 +16,6 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
-  css: {
-    preprocessorOptions: {
-      scss: {
-        silenceDeprecations: ['legacy-js-api'],
-      },
-    },
-  },
   test: {
     globals: true,
     environment: 'jsdom'

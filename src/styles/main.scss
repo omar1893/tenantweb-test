@@ -1,7 +1,7 @@
-@import './_typography.scss';
-@import './_modals.scss';
-@import './_colors.scss';
-@import './variables.scss';
+@use './_typography.scss';
+@use './_modals.scss';
+@use './_colors.scss';
+@use './variables.scss';
 
 html {
   font-size: 10px;
