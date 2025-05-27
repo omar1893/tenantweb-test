@@ -1,6 +1,6 @@
 // Import PrimeVue styles
 import './styles.css'
-import '@/styles/variables.scss'
+import './styles/main.scss'
 import 'primeicons/primeicons.css'
 
 import { createApp } from 'vue'
@@ -16,7 +16,7 @@ import primeVueTheme from './prime-vue-theme'
 import './theme/variables.css'
 
 // Import custom styles
-import './styles/main.scss'
+
 
 // Initialize deep link service
 console.log('Initializing app with deep link service')
