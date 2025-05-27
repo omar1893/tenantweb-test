@@ -59,10 +59,15 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { IonModal } from '@ionic/vue'
-import TButton from '@/components/TButton.vue'
-import { useAuthStore } from '@/stores/AuthStore'
 import { useRouter } from 'vue-router'
+
+import { useAuthStore } from '@/stores/AuthStore'
+
+import { ERouter } from '@/enums/router'
+
+
 import TInput from '@/components/TInput.vue'
+import TButton from '@/components/TButton.vue'
 /* import TInput from '@/components/TInput.vue' */
 
 const visible = ref(false)
@@ -80,7 +85,7 @@ const handleEmailLogin = async () => {
     loading.value = true
     await authStore.signInMagicLink(email.value)
     visible.value = false
-    router.push({ name: 'AudioTesting' })
+    router.push({ name: ERouter.AudioTesting })
   } catch (error) {
     console.error('Error during login:', error)
   } finally {

@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { authClient } from '../utils/auth'
 import { computed } from 'vue'
 
-const callBackURL = 'http://localhost:3001/propertyId/1'
+const callBackURL = 'http://localhost:3001/property/1'
 
 export const useAuthStore = defineStore('auth', () => {
   const isLoading = computed(() => {

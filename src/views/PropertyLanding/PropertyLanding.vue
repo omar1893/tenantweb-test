@@ -79,6 +79,7 @@ import TButton from '@/components/TButton.vue'
 import { propertyService } from '@/services/propertyService'
 import axios from 'axios'
 import { IonPage } from '@ionic/vue'
+import { ERouter } from '@/enums/router'
 
 interface Property {
   id: string
@@ -165,7 +166,7 @@ const fetchPropertyData = async () => {
 }
 
 const applyNow = () => {
-  router.push({ name: 'VideoIntro' })
+  router.push({ name: ERouter.VideoIntro })
 }
 
 onMounted(() => {
