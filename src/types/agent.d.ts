@@ -1,8 +1,8 @@
 import {
   EAgentMessageType,
-  EAgentComponentType,
-  EAgentComponentItemType,
-  EAgentComponentActionType,
+  EAgentQuickActionType,
+  EAgentQuickActionItemType,
+  EAgentQuickActionActionType,
   EAgentRequestType,
   EAgentMessageRole,
 } from '@/enums/agent'
@@ -14,28 +14,28 @@ export interface IAgentMessage {
   role: EAgentMessageRole
 }
 
-export interface IAgentComponentAction {
-  type: EAgentComponentActionType
+export interface IAgentQuickActionAction {
+  type: EAgentQuickActionActionType
   code: string
   value: string
   showMessage: boolean
 }
 
-export interface IAgentComponentItem {
-  type: EAgentComponentItemType
+export interface IAgentQuickActionItem {
+  type: EAgentQuickActionItemType
   label: string
   style?: string
-  action: IAgentComponentAction
+  action: IAgentQuickActionAction
 }
 
-export interface IAgentComponent {
-  type: EAgentComponentType
-  items: IAgentComponentItem[]
+export interface IAgentQuickAction {
+  type: EAgentQuickActionType
+  items: IAgentQuickActionItem[]
 }
 
 export interface IAgentResponse {
   messages: IAgentMessage[]
-  components?: IAgentComponent[]
+  quickActions?: IAgentQuickAction[]
   nextRoute?: string
 }
 

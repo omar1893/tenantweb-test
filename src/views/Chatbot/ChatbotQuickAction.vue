@@ -1,7 +1,7 @@
 <template>
   <div class="chatbot-component">
-    <div v-if="component.type === EAgentComponentType.MULTIPLE_BUTTONS" class="chatbot-component-multiple-buttons">
-      <div v-for="(item, index) in component.items" :key="`multiple-buttons-${index}`" class="chatbot-component-multiple-buttons-item">
+    <div v-if="quickAction.type === EAgentQuickActionType.MULTIPLE_BUTTONS" class="chatbot-component-multiple-buttons">
+      <div v-for="(item, index) in quickAction.items" :key="`multiple-buttons-${index}`" class="chatbot-component-multiple-buttons-item">
         <button
           class="chatbot-component-multiple-buttons-item-button"
           @click="onActionClick(item)"
@@ -15,18 +15,18 @@
 
 <script setup lang="ts">
 import { useAgentStore } from '@/stores/agentStore'
-import type { IAgentComponent, IAgentComponentItem } from '@/types/agent.d'
-import { EAgentComponentType, EAgentComponentActionType } from '@/enums/agent'
+import type { IAgentQuickAction, IAgentQuickActionItem } from '@/types/agent.d'
+import { EAgentQuickActionType, EAgentQuickActionActionType } from '@/enums/agent'
 
 const agentStore = useAgentStore()
 
 defineProps<{
-  component: IAgentComponent
+  quickAction: IAgentQuickAction
 }>()
 
-const onActionClick = (item: IAgentComponentItem) => {
+const onActionClick = (item: IAgentQuickActionItem) => {
   switch (item.action.type) {
-    case EAgentComponentActionType.COMMAND:
+    case EAgentQuickActionActionType.COMMAND:
       agentStore.sendCommand(item.action, item.action.showMessage ? item.label : undefined)
       break
     default:

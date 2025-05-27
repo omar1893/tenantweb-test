@@ -3,20 +3,20 @@ export enum EAgentMessageType {
   TEST_COMPONENT = 'TEST_COMPONENT',
 }
 
-export enum EAgentComponentType {
+export enum EAgentQuickActionType {
   MULTIPLE_BUTTONS = 'MULTIPLE_BUTTONS',
 }
 
-export enum EAgentComponentItemType {
+export enum EAgentQuickActionItemType {
   BUTTON = 'BUTTON',
 }
 
-export enum EAgentComponentActionType {
+export enum EAgentQuickActionActionType {
   COMMAND = 'COMMAND',
 }
 
 export enum EAgentRequestType {
-  SAY = 'SAY',
+  TEXT = 'TEXT',
   COMMAND = 'COMMAND',
   LOGIN = 'LOGIN',
 }

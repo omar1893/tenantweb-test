@@ -1,13 +1,13 @@
 import { defineStore } from 'pinia'
 
-import type { IAgentMessage, IAgentResponse, IAgentComponent, IAgentRequest, IAgentComponentAction } from '@/types/agent.d'
+import type { IAgentMessage, IAgentResponse, IAgentQuickAction, IAgentRequest, IAgentQuickActionAction } from '@/types/agent.d'
 import AgentClientService from '@/services/agentClientService'
 import { EAgentMessageRole, EAgentMessageType, EAgentRequestType } from '@/enums/agent'
 import { v4 as uuidv4 } from 'uuid'
 
 export interface IAgentStoreState {
   messages: IAgentMessage[]
-  components: IAgentComponent[]
+  quickActions: IAgentQuickAction[]
   connected: boolean
   client: AgentClientService | null
 }
@@ -15,7 +15,7 @@ export interface IAgentStoreState {
 export const useAgentStore = defineStore('agent', {
   state: (): IAgentStoreState => ({
     messages: [],
-    components: [],
+    quickActions: [],
     connected: false,
     client: null,
   }),
@@ -31,7 +31,7 @@ export const useAgentStore = defineStore('agent', {
         },
         onMessage: (message: IAgentResponse) => {
           this.messages.push(...message.messages)
-          this.components = message.components || []
+          this.quickActions = message.quickActions || []
         },
         onClose: () => {
           this.connected = false
@@ -55,13 +55,13 @@ export const useAgentStore = defineStore('agent', {
     },
     sendMessage(message: string) {
       this.send({
-        type: EAgentRequestType.SAY,
+        type: EAgentRequestType.TEXT,
         data: {
           message,
         },
       }, message)
     },
-    sendCommand(command: IAgentComponentAction, message?: string) {
+    sendCommand(command: IAgentQuickActionAction, message?: string) {
       this.send({
         type: EAgentRequestType.COMMAND,
         code: command.code,
