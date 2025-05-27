@@ -1,7 +1,7 @@
 <template>
-  <ion-page class="bg-black video-intro-page">
+  <ion-page class="bg-te-black video-intro-page">
     <video ref="videoRef" autoplay playsinline class="background-video">
-      <source src="../../assets/video-test5.mp4" type="video/mp4">
+      <source src="../../assets/video-test2.mp4" type="video/mp4">
     </video>
 
     <audio ref="audioRef" preload="auto">
@@ -12,7 +12,7 @@
       <p class="caption-text">{{ currentCaption.text }}</p>
     </div>
 
-    <div class="text-container">
+    <div class="text-container w-full">
       <p class="text-medium">La Perla</p>
       <p class="body-large">We're thrilled to have you at La Perla...</p>
       <p class="button-large" style="cursor:pointer;" @click="showInfoModal">Read more</p>
@@ -215,13 +215,12 @@ onUnmounted(() => {
 })
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .video-intro-page {
   position: relative;
   height: 100vh;
   width: 100vw;
   overflow: hidden;
-  background-color: #F15B4E;
   justify-content: flex-end;
 }
 
@@ -321,9 +320,10 @@ onUnmounted(() => {
   z-index: 2;
   padding: 4rem 0.8rem;
   background: linear-gradient(to bottom, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 1));
-  position: relative;
+  position: absolute;
   padding-bottom: 0;
   margin-bottom: 12vh;
+  bottom: 0;
 
   p {
     color: #FFFFFFE5;

@@ -39,7 +39,7 @@
             </template>
           </TButton>
 
-          <TButton variant="dark" class="flex-1 rounded-full border border-gray-200 py-5" @click="handleGoogleLogin">
+          <TButton variant="dark" class="flex-1 !rounded-full py-5" @click="handleGoogleLogin">
             <template #default>
               <img src="@/assets/icons/google-icon.svg?inline" alt="Google" class="w-[24px] h-[24px]">
             </template>

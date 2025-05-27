@@ -4,6 +4,7 @@ import VideoIntro from '../views/VideoIntro/VideoIntro.vue'
 import DeepLinkLanding from '../views/DeepLinkLanding.vue'
 import AudioTesting from '../views/PropertyVideo/PropertyVideo.vue'
 import PropertyLanding from '../views/PropertyLanding/PropertyLanding.vue'
+import ChatbotView from '../views/Chatbot/ChatbotView.vue'
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -30,6 +31,11 @@ const routes: Array<RouteRecordRaw> = [
     path: '/property/:propertyId',
     name: 'PropertyLanding',
     component: PropertyLanding
+  },
+  {
+    path: '/chatbot',
+    name: 'ChatBot',
+    component: ChatbotView
   }
 ]
 

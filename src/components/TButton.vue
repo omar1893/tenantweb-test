@@ -1,6 +1,5 @@
 <template>
   <Button
-    class="bg-white"
     :class="buttonClass"
     :type="type"
     :disabled="disabled"
@@ -86,24 +85,27 @@ const buttonClass = computed(() => {
 })
 </script>
 
-  <style lang="scss">
+  <style lang="scss" scoped>
   .p-button {
+    padding: 1.6rem;
     &.p-button-white {
       overflow: visible;
-      @apply bg-white text-gray-900 hover:bg-gray-100 !py-[1.4rem];
       border: none;
+      background-color: var(--te-light);
+      color: var(--te-secondary);
     }
 
     &.p-button-dark {
       overflow: visible;
-      @apply bg-slate-900 text-gray-900 hover:bg-gray-100;
+      background-color: var(--te-secondary);
+      color: var(--te-light);
       border: none;
     }
 
     &.p-button-pink {
       overflow: visible;
       background: radial-gradient(398.51% 296.03% at 40.13% -147.32%, #FFD0CA 0%, #FFEBF0 100%);
-      @apply bg-slate-900 text-gray-900 hover:bg-gray-100;
+      color: var(--te-secondary);
       border: none;
     }
 

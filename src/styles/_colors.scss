@@ -1,0 +1,27 @@
+$te-colors: (
+  'primary': var(--te-primary),
+  'secondary': var(--te-secondary),
+  'tertiary': var(--te-tertiary),
+  'success': var(--te-success),
+  'warning': var(--te-warning),
+  'danger': var(--te-danger),
+  'dark': var(--te-dark),
+  'medium': var(--te-medium),
+  'light': var(--te-light),
+  'black': var(--te-black),
+);
+
+@each $name, $value in $te-colors {
+  .bg-te-#{$name} {
+    background-color: #{$value} !important;
+  }
+  .text-te-#{$name} {
+    color: #{$value} !important;
+  }
+}
+
+:root {
+  @each $name, $value in $te-colors {
+    --te-#{$name}: #{$value};
+  }
+} 
