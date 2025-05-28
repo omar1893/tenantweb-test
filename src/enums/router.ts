@@ -4,6 +4,8 @@ export enum ERouter {
   DeepLinkLanding = 'DeepLinkLanding',
   AudioTesting = 'AudioTesting',
   Chatbot = 'Chatbot',
+  AuthCallback = 'AuthCallback',
+  PropertyVideo = 'PropertyVideo',
 }
 
 export const EPropertyRouter = {

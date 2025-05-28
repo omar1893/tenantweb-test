@@ -1,73 +1,94 @@
 <template>
   <ion-page class="bg-te-black video-intro-page">
-    <video ref="videoRef" autoplay playsinline class="background-video">
-      <source src="../../assets/video-test2.mp4" type="video/mp4">
-    </video>
-
-    <audio ref="audioRef" preload="auto">
-      <source src="../../assets/test-audio5.mp3" type="audio/mpeg">
-    </audio>
-
-    <div v-if="currentCaption" class="caption-container body-large">
-      <p class="caption-text">{{ currentCaption.text }}</p>
+    <div v-if="isLoading" class="loading-container">
+      <ion-spinner name="circular"></ion-spinner>
+      <p class="text-white mt-4">Loading media...</p>
     </div>
 
-    <div class="text-container w-full">
-      <p class="text-medium">La Perla</p>
-      <p class="body-large">We're thrilled to have you at La Perla...</p>
-      <p class="button-large" style="cursor:pointer;" @click="showInfoModal">Read more</p>
-      <div v-if="!showContinueButtons" class="controls-container">
-        <div class="control-group">
-          <button class="control-button" @click="togglePlayback">
-            <i :class="isPlaying ? 'pi pi-pause' : 'pi pi-play'" />
-          </button>
-          <button class="control-button" @click="toggleAudioMute">
-            <i :class="isAudioMuted ? 'pi pi-volume-off' : 'pi pi-volume-up'" />
-          </button>
+    <template v-else>
+      <video ref="videoRef" playsinline class="background-video">
+        <source src="@/assets/video-test5.mp4" type="video/mp4">
+      </video>
+
+      <audio ref="audioRef" preload="auto">
+        <source src="@/assets/test-audio5.mp3" type="audio/mpeg">
+      </audio>
+
+      <div v-if="currentCaption" class="caption-container body-large">
+        <p class="caption-text">{{ currentCaption.text }}</p>
+      </div>
+
+      <div class="text-container w-full">
+        <p class="text-medium">La Perla</p>
+        <p class="body-large">We're thrilled to have you at La Perla...</p>
+        <p class="button-large" style="cursor:pointer;" @click="showInfoModal">Read more</p>
+        <div v-if="!showContinueButtons" class="controls-container">
+          <div class="control-group">
+            <button class="control-button" @click="togglePlayback">
+              <i :class="isPlaying ? 'pi pi-pause' : 'pi pi-play'" />
+            </button>
+            <button class="control-button" @click="toggleAudioMute">
+              <i :class="isAudioMuted ? 'pi pi-volume-off' : 'pi pi-volume-up'" />
+            </button>
+          </div>
         </div>
+        <template v-if="showContinueButtons">
+          <TButton
+            class="w-full !rounded-[100px] button-large"
+            variant="white"
+            label="Start Application"
+          />
+          <TButton
+            class="w-full !rounded-[100px] button-large"
+            :text="true"
+            variant="text"
+            label="Watch Video Again"
+            @click="restartMedia"
+          />
+        </template>
       </div>
-      <template v-if="showContinueButtons">
-        <TButton
-          class="w-full !rounded-[100px] button-large"
-          variant="white"
-          label="Start Application"
-        />
-        <TButton
-          class="w-full !rounded-[100px] button-large"
-          :text="true"
-          label="Watch Video Again"
-          @click="restartMedia"
-        />
-      </template>
-    </div>
 
-    <!-- <div class="w-full p-4 z-10">
-    </div> -->
+      <!-- <div class="w-full p-4 z-10">
+      </div> -->
 
-    <!-- <LoginInputs ref="loginModal" /> -->
+      <!-- <LoginInputs ref="loginModal" /> -->
 
-    <ion-modal
-      :is-open="infoModalVisible" :initial-breakpoint="1" :breakpoints="[0, 1]" class="bottom-modal"
-      @did-dismiss="closeInfoModal" @will-dismiss="closeInfoModal"
-    >
-      <div class="p-12">
-        <h2 class="mb-1 text-medium">Welcome to La Perla!</h2>
-        <h3 class="mb-4 text-medium">Here's the quick rundown <span>👇</span></h3>
-        <ul class="body-large text-gray-800 mb-2 list-disc pl-4">
-          <li class="mb-4">Processing Time: up to 5 business days</li>
-          <li class="mb-4">No Pets only ESA / SA</li>
-          <li class="mb-4">Short-Term Lease applications only</li>
-          <li class="mb-4">Everyone +18 Applies</li>
-          <li class="mb-4">Airbnb booking screenshots required</li>
-        </ul>
-      </div>
-    </ion-modal>
+      <ion-modal
+        :is-open="infoModalVisible"
+        :initial-breakpoint="1"
+        :breakpoints="[1]"
+        class="bottom-modal"
+        :backdrop-dismiss="false"
+        :backdrop-breakpoint="1"
+        :swipe-to-close="false"
+        :presenting-element="null"
+        :handle="false"
+        @did-dismiss="closeInfoModal"
+      >
+        <div class="p-6">
+          <div class="flex justify-between items-center mb-6">
+            <i class="pi pi-times text-xl cursor-pointer" @click="closeInfoModal" />
+          </div>
+
+          <h2 class="mb-1 text-medium">Welcome to La Perla!</h2>
+          <h3 class="mb-4 text-medium">Here's the quick rundown <span>👇</span></h3>
+          <ul class="body-large text-gray-800 mb-2 list-disc pl-4">
+            <li class="mb-4">Processing Time: up to 5 business days</li>
+            <li class="mb-4">No Pets only ESA / SA</li>
+            <li class="mb-4">Short-Term Lease applications only</li>
+            <li class="mb-4">Everyone +18 Applies</li>
+            <li class="mb-4">Airbnb booking screenshots required</li>
+          </ul>
+        </div>
+      </ion-modal>
+    </template>
   </ion-page>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
-import { IonPage, IonModal } from '@ionic/vue'
+import { IonPage, IonModal, IonSpinner } from '@ionic/vue'
+import { Capacitor } from '@capacitor/core'
 import TButton from '@/components/TButton.vue'
 /* import LoginInputs from './LoginInputs.vue' */
 
@@ -139,17 +160,41 @@ const captions: Caption[] = [
 
 const videoRef = ref()
 const audioRef = ref()
+const isLoading = ref(false)
 const currentCaption = ref<Caption | null>(null)
 let timeUpdateInterval: number | null = null
 
-const isPlaying = ref(true)
+const isPlaying = ref(false)
 const isAudioMuted = ref(false)
+const infoModalVisible = ref(true)
 
-const infoModalVisible = ref(false)
-const showInfoModal = () => { infoModalVisible.value = true }
-const closeInfoModal = () => {
-  console.log('closing modal')
+const startMedia = async () => {
+  if (videoRef.value && audioRef.value) {
+    try {
+      await videoRef.value.play()
+      await audioRef.value.play()
+      isPlaying.value = true
+      timeUpdateInterval = window.setInterval(updateCaption, 100)
+
+      audioRef.value.addEventListener('ended', async () => {
+        if (videoRef.value) {
+          await videoRef.value.pause()
+        }
+        showContinueButtons.value = true
+      })
+    } catch (err) {
+      console.error('Error playing media:', err)
+    }
+  }
+}
+
+const showInfoModal = () => {
+  infoModalVisible.value = true
+}
+
+const closeInfoModal = async () => {
   infoModalVisible.value = false
+  await startMedia()
 }
 
 const togglePlayback = async () => {
@@ -182,30 +227,15 @@ const updateCaption = () => {
 
 const restartMedia = async () => {
   if (videoRef.value && audioRef.value) {
-    await videoRef.value.play()
-    await audioRef.value.play()
+    videoRef.value.currentTime = 0
+    audioRef.value.currentTime = 0
+    await startMedia()
     showContinueButtons.value = false
-    isPlaying.value = true
   }
 }
 
 onMounted(() => {
-  if (videoRef.value && audioRef.value) {
-    setTimeout(() => {
-      videoRef.value.play().catch((err: Error) => console.error('Error playing video:', err))
-      audioRef.value.play().catch((err: Error) => console.error('Error playing audio:', err))
-
-      timeUpdateInterval = window.setInterval(updateCaption, 100)
-
-      // Detect when audio ends
-      audioRef.value.addEventListener('ended', async () => {
-        if (videoRef.value) {
-          await videoRef.value.pause()
-        }
-        showContinueButtons.value = true
-      })
-    }, 1000)
-  }
+  // El modal se mostrará automáticamente porque infoModalVisible está inicializado como true
 })
 
 onUnmounted(() => {
@@ -330,5 +360,50 @@ onUnmounted(() => {
     margin-top: 0;
     margin-bottom: 0.6rem !important;
   }
+}
+
+:deep(.bottom-modal) {
+  --height: auto;
+  --max-height: 90%;
+  --width: 100%;
+  --border-radius: 24px;
+  border-bottom-left-radius: 0px !important;
+  border-bottom-right-radius: 0px !important;
+  touch-action: none;
+
+  .ion-page {
+    border-bottom-left-radius: 0px !important;
+    border-bottom-right-radius: 0px !important;
+    background: white;
+    position: fixed;
+    touch-action: none;
+  }
+
+  .modal-wrapper {
+    border-radius: var(--border-radius);
+    touch-action: none;
+  }
+
+  ion-modal {
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  .modal-handle {
+    display: none;
+  }
+}
+
+.loading-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
 }
 </style>

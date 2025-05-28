@@ -88,11 +88,20 @@ const buttonClass = computed(() => {
   <style lang="scss" scoped>
   .p-button {
     padding: 1.6rem;
+    transition: all 0.2s ease-in-out;
+
     &.p-button-white {
       overflow: visible;
       border: none;
       background-color: var(--te-light);
       color: var(--te-secondary);
+
+      &:hover {
+        filter: brightness(0.6)!important;
+        background-color: var(--te-light)!important;
+        color: var(--te-secondary)!important;
+        border: none!important;
+      }
     }
 
     &.p-button-dark {
@@ -100,25 +109,49 @@ const buttonClass = computed(() => {
       background-color: var(--te-secondary);
       color: var(--te-light);
       border: none;
+
+      &:hover {
+        filter: brightness(0.6)!important;
+        background-color: var(--te-secondary)!important;
+        color: var(--te-light)!important;
+        border: none!important;
+      }
     }
 
     &.p-button-pink {
       overflow: visible;
-      background: radial-gradient(398.51% 296.03% at 40.13% -147.32%, #FFD0CA 0%, #FFEBF0 100%);
+      background: linear-gradient(45deg, #FFD0CA 0%, #FFEBF0 100%);
       color: var(--te-secondary);
       border: none;
+
+      &:hover {
+        filter: brightness(0.6)!important;
+        background: linear-gradient(45deg, #FFD0CA 0%, #FFEBF0 100%)!important;
+        color: var(--te-secondary)!important;
+        border: none!important;
+      }
     }
 
     &.p-button-text {
       background: transparent!important;
       border: none;
-      @apply text-white !py-[1.4rem];
+      color: var(--te-light);
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.1)!important;
+      }
     }
 
     .pi {
         font-size: inherit;
     }
-   }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+  }
 
   /* .p-button {
     // Apply severity styles

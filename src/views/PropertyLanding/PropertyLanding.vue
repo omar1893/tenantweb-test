@@ -1,5 +1,5 @@
 <template>
-  <ion-page class="bg-black justify-normal pb-[20px] overflow-y-auto">
+  <ion-page class="min-h-screen !bg-black justify-normal pb-[20px] overflow-y-auto">
     <!-- Loading State -->
     <div v-if="state.loading" class="flex items-center justify-center min-h-screen">
       <div class="text-white">Loading...</div>
@@ -71,7 +71,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, reactive } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 import TAccordion from '@/components/TAccordion.vue'
 import TLabel from '@/components/TLabel.vue'
 import TGoogleMaps from '@/components/TGoogleMaps.vue'
@@ -79,7 +79,6 @@ import TButton from '@/components/TButton.vue'
 import { propertyService } from '@/services/propertyService'
 import axios from 'axios'
 import { IonPage } from '@ionic/vue'
-import { ERouter } from '@/enums/router'
 
 interface Property {
   id: string
@@ -98,7 +97,6 @@ interface Property {
 }
 
 const route = useRoute()
-const router = useRouter()
 const propertyId = computed(() => route.params.propertyId as string)
 const state = reactive({
   loading: true,
@@ -166,7 +164,7 @@ const fetchPropertyData = async () => {
 }
 
 const applyNow = () => {
-  router.push({ name: ERouter.VideoIntro })
+  window.location.href = 'https://d3gs2.test-app.link/test-cta'
 }
 
 onMounted(() => {
@@ -177,10 +175,6 @@ defineExpose({ state })
 </script>
 
 <style scoped lang="scss">
-.property-landing {
-  @apply min-h-screen bg-gray-100;
-}
-
 .button-bar {
   margin-top: auto;
   background: linear-gradient(to top, rgba(0,0,0,0.85) 80%, transparent 100%);

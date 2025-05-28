@@ -6,7 +6,7 @@
     <div class="flex flex-col gap-6 p-6">
       <div class="flex justify-between items-center">
         <i class="pi pi-times text-xl cursor-pointer" @click="closeModal" />
-        <div class="w-8 h-8 bg-red-100 rounded-lg" />
+        <!-- <div class="w-8 h-8 bg-red-100 rounded-lg" /> -->
       </div>
 
       <div class="text-center text-slate-900">
@@ -19,10 +19,19 @@
         <!-- <IconField class="w-full">
           <InputIcon class="pi pi-envelope" style="font-size: 1.5rem" />
         </IconField> -->
-        <TInput v-model="email" placeholder="Email address" class="w-full button-large" />
+        <TInput
+          v-model="v$.email.$model"
+          placeholder="Email address"
+          class="w-full button-large"
+          :error="v$.email.$error"
+          :error-message="v$.email.$errors[0]?.$message"
+        />
 
         <TButton
-          label="Continue" variant="pink" class="w-full !rounded-full py-[1.2rem] px-[1.6rem] button-large"
+          label="Continue"
+          variant="pink"
+          class="w-full !rounded-full py-[1.2rem] px-[1.6rem] button-large"
+          :disabled="v$.email.$invalid"
           @click="handleEmailLogin"
         />
 
@@ -57,9 +66,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, reactive } from 'vue'
 import { IonModal } from '@ionic/vue'
 import { useRouter } from 'vue-router'
+import { useVuelidate } from '@vuelidate/core'
+import { required, email } from '@vuelidate/validators'
 
 import { useAuthStore } from '@/stores/AuthStore'
 
@@ -71,21 +82,33 @@ import TButton from '@/components/TButton.vue'
 /* import TInput from '@/components/TInput.vue' */
 
 const visible = ref(false)
-const email = ref('')
 const loading = ref(false)
 const authStore = useAuthStore()
 const router = useRouter()
+
+const state = reactive({
+  email: ''
+})
+
+const rules = {
+  email: { required, email }
+}
+
+const v$ = useVuelidate(rules, state)
 
 const closeModal = () => {
   visible.value = false
 }
 
 const handleEmailLogin = async () => {
+  const isValid = await v$.value.$validate()
+  if (!isValid) return
+
   try {
     loading.value = true
-    await authStore.signInMagicLink(email.value)
+    await authStore.signInMagicLink(state.email)
     visible.value = false
-    router.push({ name: ERouter.AudioTesting })
+    router.push({ name: ERouter.PropertyVideo })
   } catch (error) {
     console.error('Error during login:', error)
   } finally {
