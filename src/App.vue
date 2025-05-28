@@ -3,22 +3,18 @@
     <router-view />
   </div>
   <div v-else>
-    <AuthLogic>
+    <router-view />
+<!--     <AuthLogic>
       <template #signed-in>
-        <router-view />
       </template>
-      <template #signed-out>
-        <LoginInputs />
-      </template>
-    </AuthLogic>
+    </AuthLogic> -->
   </div>
 </template>
 
 <script setup lang="ts">
 import { useRoute } from 'vue-router'
 import { computed } from 'vue'
-import LoginInputs from '@/views/Login/LoginInputs.vue'
-import AuthLogic from '@/components/AuthLogic.vue'
+/* import AuthLogic from '@/components/AuthLogic.vue' */
 /* import { DeepLinkService } from '@/services/deepLink.service' */
 
 const route = useRoute()

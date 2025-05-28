@@ -49,11 +49,11 @@ const routes: Array<RouteRecordRaw> = [
       isPublic: true
     }
   },
-/*   {
+  {
     path: '/chatbot',
     name: ERouter.Chatbot,
     component: ChatbotView
-  }, */
+  },
   {
     path: '/:pathMatch(.*)*',
     redirect: '/'
