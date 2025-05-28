@@ -10,7 +10,7 @@
       <!-- Property Header Section -->
       <div class="relative">
         <img
-          :src="propertyImage"
+          :src="propertyImageUrl"
           alt="505 Deerfield COA"
           class="w-full h-[300px] object-cover"
         >
@@ -79,6 +79,7 @@ import TButton from '@/components/TButton.vue'
 import { propertyService } from '@/services/propertyService'
 import axios from 'axios'
 import { IonPage } from '@ionic/vue'
+import propertyImageUrl from '@/assets/property-image.png'
 
 interface Property {
   id: string
@@ -119,8 +120,6 @@ const propertyRequirements = computed(() => {
 
 const GOOGLE_API_KEY = 'AIzaSyAHFOQEwRQ6_CGQcBZ7R7fLO0ECSqrNxWw'
 const googlePlaceInfo = ref<any>(null)
-
-const propertyImage = '/images/property-image.png'
 
 const fetchGooglePlaceInfo = async (address: string) => {
   try {
