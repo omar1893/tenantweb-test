@@ -16,7 +16,7 @@
 
 <script setup lang="ts">
 import { useRoute } from 'vue-router'
-import { computed, onMounted } from 'vue'
+import { computed } from 'vue'
 import LoginInputs from '@/views/Login/LoginInputs.vue'
 import AuthLogic from '@/components/AuthLogic.vue'
 /* import { DeepLinkService } from '@/services/deepLink.service' */
