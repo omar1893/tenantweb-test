@@ -10,7 +10,7 @@
       <!-- Property Header Section -->
       <div class="relative">
         <img
-          src="@/assets/property-image.png"
+          src="../../assets/property-image.png"
           alt="505 Deerfield COA"
           class="w-full h-[300px] object-cover"
         >
