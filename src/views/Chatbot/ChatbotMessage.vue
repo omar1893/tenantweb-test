@@ -1,47 +1,16 @@
 <template>
-  <div
-    v-if="message.type === EAgentMessageType.TEXT"
-    class="chat-message"
-    :class="message.role === EAgentMessageRole.AGENT ? 'chat-message-agent body-large' : 'chat-message-user body-medium'"
-  >
-    <span>{{ message.data.message }}</span>
-  </div>
-  <TestComponent v-if="message.type === EAgentMessageType.TEST_COMPONENT" />
+  <ChatbotText v-if="message.type === EAgentMessageType.TEXT" :message="message" :instant="true" />
+  <ChatbotComponent v-if="message.type === EAgentMessageType.COMPONENT" :component="message.data.component" />
 </template>
 
 <script setup lang="ts">
-import { EAgentMessageRole, EAgentMessageType } from '@/enums/agent'
+import { EAgentMessageType } from '@/enums/agent'
 import type { IAgentMessage } from '@/types/agent.d'
 
-import TestComponent from '@/components/TestComponent.vue'
+import ChatbotText from '@/views/Chatbot/ChatbotText.vue'
+import ChatbotComponent from '@/views/Chatbot/ChatbotComponent.vue'
 
 defineProps<{
   message: IAgentMessage
 }>()
 </script>
-
-<style scoped lang="scss">
-.chat-message {
-  max-width: 80%;
-  padding: 0.75rem 1rem;
-  font-size: 1rem;
-  margin-bottom: 0.25rem;
-  border: none
-}
-
-.chat-message-agent {
-  align-self: flex-start;
-  background: #d8c8c8 !important;
-  padding: 1.2rem 1.6rem 1.2rem 2rem;
-  border: 1px solid #3F39491A;
-  border-radius: 4rem 2rem 0.6rem 4rem;
-}
-
-.chat-message-user {
-  align-self: flex-end;
-  background: var(--te-light, #fdd5d1);
-  padding: 1.2rem 1.6rem 1.2rem 2rem;
-  border: 1px solid #3F39491A;
-  border-radius: 4rem 2rem 0.6rem 4rem;
-}
-</style>

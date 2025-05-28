@@ -3,8 +3,8 @@
     <div ref="messagesContainer" class="flex-1 overflow-y-auto p-6 flex flex-col gap-3">
       <ChatbotMessage v-for="msg in agentStore.messages" :key="msg.id" :message="msg" />
     </div>
-    <div v-if="agentStore.quickActions?.length" class="flex flex-col gap-3 px-1.5 py-2">
-      <ChatbotQuickAction v-for="(quickAction, index) in agentStore.quickActions" :key="`quickAction-${index}`" :quick-action="quickAction" />
+    <div v-if="agentStore.quickAction" class="flex flex-col gap-3 px-1.5 py-2">
+      <ChatbotQuickAction :quick-action="agentStore.quickAction" />
     </div>
     <div class="bg-white flex items-center px-4 py-3 gap-2 border-t border-gray-200">
       <button class="bg-gray-100 rounded-full w-9 h-9 flex items-center justify-center text-xl">+</button>

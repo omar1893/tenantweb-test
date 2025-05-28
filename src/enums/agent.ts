@@ -1,17 +1,25 @@
 export enum EAgentMessageType {
   TEXT = 'TEXT',
-  TEST_COMPONENT = 'TEST_COMPONENT',
+  COMPONENT = 'COMPONENT',
 }
 
-export enum EAgentQuickActionType {
-  MULTIPLE_BUTTONS = 'MULTIPLE_BUTTONS',
+export enum EAgentResponseType {
+  START = 'START',
+  END = 'END',
+  TEXT = 'TEXT',
+  COMPONENT = 'COMPONENT',
+  QUICK_ACTION = 'QUICK_ACTION',
 }
 
-export enum EAgentQuickActionItemType {
+export enum EAgentQuickActionComponent {
+  MULTIPLE_CHOICE = 'MULTIPLE_CHOICE',
+}
+
+export enum EAgentQuickActionItemComponent {
   BUTTON = 'BUTTON',
 }
 
-export enum EAgentQuickActionActionType {
+export enum EAgentQuickActionAction {
   COMMAND = 'COMMAND',
 }
 
@@ -24,4 +32,8 @@ export enum EAgentRequestType {
 export enum EAgentMessageRole {
   USER = 'USER',
   AGENT = 'AGENT',
+}
+
+export enum EAgentComponent {
+  TEST_COMPONENT = 'TEST_COMPONENT',
 }

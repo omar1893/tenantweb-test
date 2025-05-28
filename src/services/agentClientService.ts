@@ -1,6 +1,5 @@
 import { EAgentRequestType } from '@/enums/agent'
 import type { IAgentRequest, IAgentResponse } from '@/types/agent.d'
-import { v4 as uuidv4 } from 'uuid'
 
 export interface IAgentClientServiceOptions {
   url: string
@@ -38,15 +37,6 @@ class AgentClientService {
 
     this.client.onmessage = (event) => {
       const res = JSON.parse(event.data) as IAgentResponse
-
-      if (res.messages.length > 0) {
-        res.messages.forEach((message) => {
-          if (!message.id) {
-            message.id = uuidv4()
-          }
-        })
-      }
-
       this.onMessage?.(res)
     }
 

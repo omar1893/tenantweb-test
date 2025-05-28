@@ -1,9 +1,9 @@
 <template>
   <div class="chatbot-component">
-    <div v-if="quickAction.type === EAgentQuickActionType.MULTIPLE_BUTTONS" class="chatbot-component-multiple-buttons">
-      <div v-for="(item, index) in quickAction.items" :key="`multiple-buttons-${index}`" class="chatbot-component-multiple-buttons-item">
+    <div v-if="quickAction.component === EAgentQuickActionComponent.MULTIPLE_CHOICE" class="chatbot-component-multiple-choice">
+      <div v-for="(item, index) in quickAction.items" :key="`multiple-choice-${index}`" class="chatbot-component-multiple-choice-item">
         <button
-          class="chatbot-component-multiple-buttons-item-button"
+          class="chatbot-component-multiple-choice-item-button"
           @click="onActionClick(item)"
         >
           {{ item.label }}
@@ -15,22 +15,22 @@
 
 <script setup lang="ts">
 import { useAgentStore } from '@/stores/agentStore'
-import type { IAgentQuickAction, IAgentQuickActionItem } from '@/types/agent.d'
-import { EAgentQuickActionType, EAgentQuickActionActionType } from '@/enums/agent'
+import type { IAgentQuickActionData, IAgentQuickActionItem } from '@/types/agent.d'
+import { EAgentQuickActionComponent, EAgentQuickActionAction } from '@/enums/agent'
 
 const agentStore = useAgentStore()
 
 defineProps<{
-  quickAction: IAgentQuickAction
+  quickAction: IAgentQuickActionData
 }>()
 
 const onActionClick = (item: IAgentQuickActionItem) => {
-  switch (item.action.type) {
-    case EAgentQuickActionActionType.COMMAND:
-      agentStore.sendCommand(item.action, item.action.showMessage ? item.label : undefined)
+  switch (item.action) {
+    case EAgentQuickActionAction.COMMAND:
+      agentStore.sendCommand(item, item.showMessage ? item.label : undefined)
       break
     default:
-      console.error('Unknown action type', item.action.type)
+      console.error('Unknown action type', item.action)
       break
   }
 }
@@ -43,7 +43,7 @@ const onActionClick = (item: IAgentQuickActionItem) => {
   gap: 1rem;
 }
 
-.chatbot-component-multiple-buttons {
+.chatbot-component-multiple-choice {
   display: flex;
   flex-direction: row;
   gap: 1rem;
