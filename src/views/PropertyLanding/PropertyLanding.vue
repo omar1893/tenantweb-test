@@ -120,7 +120,7 @@ const propertyRequirements = computed(() => {
 const GOOGLE_API_KEY = 'AIzaSyAHFOQEwRQ6_CGQcBZ7R7fLO0ECSqrNxWw'
 const googlePlaceInfo = ref<any>(null)
 
-const propertyImage = new URL('../../assets/property-image.png', import.meta.url).href
+const propertyImage = '/images/property-image.png'
 
 const fetchGooglePlaceInfo = async (address: string) => {
   try {
