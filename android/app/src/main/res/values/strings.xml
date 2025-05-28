@@ -1,7 +1,12 @@
-<?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">tenantev-ai</string>
-    <string name="title_activity_main">tenantev-ai</string>
+    <string name="app_name">TenantEval</string>
+    <string name="title_activity_main">TenantEval</string>
     <string name="package_name">com.tenantev.app</string>
-    <string name="custom_url_scheme">com.tenantev.app</string>
+    <string name="custom_url_scheme">tenantev</string>
+    <string name="applink_host">d3gs2.test-app.link</string>
+    <string name="applink_host_alternate">d3gs2-alternate.test-app.link</string>
+    <string name="deeplink_scheme">tenantev</string>
+    <string name="branch_key">key_test_oCzipvLcpzA0cZx0bh7m8lldywiF4TGR</string>
+    <string name="branch_test_key">key_test_oCzipvLcpzA0cZx0bh7m8lldywiF4TGR</string>
+    <bool name="branch_test_mode">true</bool>
 </resources>

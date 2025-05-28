@@ -1,12 +1,13 @@
 import { magicLinkClient } from 'better-auth/client/plugins'
 import { createAuthClient } from 'better-auth/vue'
 import { jwtDecode } from 'jwt-decode'
+import env from '@/config/env'
 
 let jwtToken: string | null = null
 let jwtExpiresAt: number | null = null
 
 export const authClient = createAuthClient({
-  baseURL: 'http://localhost:3000',
+  baseURL: env.apiUrl,
   plugins: [
     magicLinkClient()
   ],

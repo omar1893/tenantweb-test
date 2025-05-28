@@ -1,6 +1,6 @@
 <template>
   <InputText
-    :class="inputClass"
+    :class="[inputClass, { 'p-invalid': error }]"
     :type="type"
     :disabled="disabled"
     :placeholder="placeholder"
@@ -9,6 +9,7 @@
     @focus="(e: FocusEvent) => emit('focus', e)"
     @blur="(e: FocusEvent) => emit('blur', e)"
   />
+  <small v-if="error && errorMessage" class="p-error">{{ errorMessage }}</small>
 </template>
 
 <script setup lang="ts">
@@ -22,6 +23,8 @@ interface Props {
   modelValue?: string
   class?: string
   size?: 'small' | 'normal' | 'large'
+  error?: boolean
+  errorMessage?: string
 }
 
 const emit = defineEmits<{
@@ -33,7 +36,9 @@ const emit = defineEmits<{
 const props = withDefaults(defineProps<Props>(), {
   type: 'text',
   disabled: false,
-  size: 'normal'
+  size: 'normal',
+  error: false,
+  errorMessage: ''
 })
 
 const inputClass = computed(() => {
@@ -50,22 +55,34 @@ const inputClass = computed(() => {
 <style lang="scss">
 .p-inputtext {
   display: flex;
-flex-direction: column;
-padding: 1.4rem 1.6rem;
-justify-content: center;
-align-items: center;
-gap: 13px;
-align-self: stretch;
-border-radius: 10px!important;
-border: 2px solid #726B7C;
-height: 5.2rem;
+  flex-direction: column;
+  padding: 1.4rem 1.6rem;
+  justify-content: center;
+  align-items: center;
+  gap: 13px;
+  align-self: stretch;
+  border-radius: 10px!important;
+  border: 2px solid #726B7C;
+  height: 5.2rem;
 
-&:focus {
+  &.p-invalid {
+    border-color: var(--red-500)!important;
+  }
+
+  &:focus {
     border: 2px solid;
     border-color: #726B7C!important;
   }
-&::placeholder {
-  color: var(--te-medium);
+
+  &::placeholder {
+    color: var(--te-medium)!important;
+    font-weight: 400!important;
+  }
 }
+
+.p-error {
+  color: var(--red-500);
+  margin-top: 0.25rem;
+  font-size: 0.875rem;
 }
 </style>
