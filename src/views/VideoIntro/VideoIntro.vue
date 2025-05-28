@@ -8,7 +8,7 @@
       <TButton
         class="w-full !rounded-[100px] button-large"
         variant="white"
-        label="Apply Now"
+        label="Get started"
         @click="showLoginModal"
       />
     </div>

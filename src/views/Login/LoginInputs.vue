@@ -108,7 +108,7 @@ const handleEmailLogin = async () => {
     loading.value = true
     await authStore.signInMagicLink(state.email)
     visible.value = false
-    router.push({ name: ERouter.AudioTesting })
+    router.push({ name: ERouter.PropertyVideo })
   } catch (error) {
     console.error('Error during login:', error)
   } finally {

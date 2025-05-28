@@ -1,86 +1,94 @@
 <template>
   <ion-page class="bg-te-black video-intro-page">
-    <video ref="videoRef" playsinline class="background-video">
-      <source src="../../assets/video-test5.mp4" type="video/mp4">
-    </video>
-
-    <audio ref="audioRef" preload="auto">
-      <source src="../../assets/test-audio5.mp3" type="audio/mpeg">
-    </audio>
-
-    <div v-if="currentCaption" class="caption-container body-large">
-      <p class="caption-text">{{ currentCaption.text }}</p>
+    <div v-if="isLoading" class="loading-container">
+      <ion-spinner name="circular"></ion-spinner>
+      <p class="text-white mt-4">Loading media...</p>
     </div>
 
-    <div class="text-container w-full">
-      <p class="text-medium">La Perla</p>
-      <p class="body-large">We're thrilled to have you at La Perla...</p>
-      <p class="button-large" style="cursor:pointer;" @click="showInfoModal">Read more</p>
-      <div v-if="!showContinueButtons" class="controls-container">
-        <div class="control-group">
-          <button class="control-button" @click="togglePlayback">
-            <i :class="isPlaying ? 'pi pi-pause' : 'pi pi-play'" />
-          </button>
-          <button class="control-button" @click="toggleAudioMute">
-            <i :class="isAudioMuted ? 'pi pi-volume-off' : 'pi pi-volume-up'" />
-          </button>
-        </div>
+    <template v-else>
+      <video ref="videoRef" playsinline class="background-video">
+        <source src="@/assets/video-test5.mp4" type="video/mp4">
+      </video>
+
+      <audio ref="audioRef" preload="auto">
+        <source src="@/assets/test-audio5.mp3" type="audio/mpeg">
+      </audio>
+
+      <div v-if="currentCaption" class="caption-container body-large">
+        <p class="caption-text">{{ currentCaption.text }}</p>
       </div>
-      <template v-if="showContinueButtons">
-        <TButton
-          class="w-full !rounded-[100px] button-large"
-          variant="white"
-          label="Start Application"
-        />
-        <TButton
-          class="w-full !rounded-[100px] button-large"
-          :text="true"
-          variant="text"
-          label="Watch Video Again"
-          @click="restartMedia"
-        />
-      </template>
-    </div>
 
-    <!-- <div class="w-full p-4 z-10">
-    </div> -->
-
-    <!-- <LoginInputs ref="loginModal" /> -->
-
-    <ion-modal
-      :is-open="infoModalVisible"
-      :initial-breakpoint="1"
-      :breakpoints="[1]"
-      class="bottom-modal"
-      :backdrop-dismiss="false"
-      :backdrop-breakpoint="1"
-      :swipe-to-close="false"
-      :presenting-element="null"
-      :handle="false"
-      @did-dismiss="closeInfoModal"
-    >
-      <div class="p-6">
-        <div class="flex justify-between items-center mb-6">
-          <i class="pi pi-times text-xl cursor-pointer" @click="closeInfoModal" />
+      <div class="text-container w-full">
+        <p class="text-medium">La Perla</p>
+        <p class="body-large">We're thrilled to have you at La Perla...</p>
+        <p class="button-large" style="cursor:pointer;" @click="showInfoModal">Read more</p>
+        <div v-if="!showContinueButtons" class="controls-container">
+          <div class="control-group">
+            <button class="control-button" @click="togglePlayback">
+              <i :class="isPlaying ? 'pi pi-pause' : 'pi pi-play'" />
+            </button>
+            <button class="control-button" @click="toggleAudioMute">
+              <i :class="isAudioMuted ? 'pi pi-volume-off' : 'pi pi-volume-up'" />
+            </button>
+          </div>
         </div>
-
-        <h2 class="mb-1 text-medium">Welcome to La Perla!</h2>
-        <h3 class="mb-4 text-medium">Here's the quick rundown <span>👇</span></h3>
-        <ul class="body-large text-gray-800 mb-2 list-disc pl-4">
-          <li class="mb-4">Processing Time: up to 5 business days</li>
-          <li class="mb-4">No Pets only ESA / SA</li>
-          <li class="mb-4">Short-Term Lease applications only</li>
-          <li class="mb-4">Everyone +18 Applies</li>
-          <li class="mb-4">Airbnb booking screenshots required</li>
-        </ul>
+        <template v-if="showContinueButtons">
+          <TButton
+            class="w-full !rounded-[100px] button-large"
+            variant="white"
+            label="Start Application"
+          />
+          <TButton
+            class="w-full !rounded-[100px] button-large"
+            :text="true"
+            variant="text"
+            label="Watch Video Again"
+            @click="restartMedia"
+          />
+        </template>
       </div>
-    </ion-modal>
+
+      <!-- <div class="w-full p-4 z-10">
+      </div> -->
+
+      <!-- <LoginInputs ref="loginModal" /> -->
+
+      <ion-modal
+        :is-open="infoModalVisible"
+        :initial-breakpoint="1"
+        :breakpoints="[1]"
+        class="bottom-modal"
+        :backdrop-dismiss="false"
+        :backdrop-breakpoint="1"
+        :swipe-to-close="false"
+        :presenting-element="null"
+        :handle="false"
+        @did-dismiss="closeInfoModal"
+      >
+        <div class="p-6">
+          <div class="flex justify-between items-center mb-6">
+            <i class="pi pi-times text-xl cursor-pointer" @click="closeInfoModal" />
+          </div>
+
+          <h2 class="mb-1 text-medium">Welcome to La Perla!</h2>
+          <h3 class="mb-4 text-medium">Here's the quick rundown <span>👇</span></h3>
+          <ul class="body-large text-gray-800 mb-2 list-disc pl-4">
+            <li class="mb-4">Processing Time: up to 5 business days</li>
+            <li class="mb-4">No Pets only ESA / SA</li>
+            <li class="mb-4">Short-Term Lease applications only</li>
+            <li class="mb-4">Everyone +18 Applies</li>
+            <li class="mb-4">Airbnb booking screenshots required</li>
+          </ul>
+        </div>
+      </ion-modal>
+    </template>
   </ion-page>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
-import { IonPage, IonModal } from '@ionic/vue'
+import { IonPage, IonModal, IonSpinner } from '@ionic/vue'
+import { Capacitor } from '@capacitor/core'
 import TButton from '@/components/TButton.vue'
 /* import LoginInputs from './LoginInputs.vue' */
 
@@ -152,6 +160,7 @@ const captions: Caption[] = [
 
 const videoRef = ref()
 const audioRef = ref()
+const isLoading = ref(false)
 const currentCaption = ref<Caption | null>(null)
 let timeUpdateInterval: number | null = null
 
@@ -383,5 +392,18 @@ onUnmounted(() => {
   .modal-handle {
     display: none;
   }
+}
+
+.loading-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
 }
 </style>

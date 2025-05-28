@@ -16,7 +16,8 @@ export class DeepLinkService {
   }
 
   async initialize(): Promise<void> {
-    try {
+    console.log('Initializing Branch')
+    /* try {
       const { data_parsed } = await BranchDeepLinks.initSession()
       if (data_parsed?.propertyId) {
         router.push({
@@ -26,7 +27,7 @@ export class DeepLinkService {
       }
     } catch (error) {
       console.error('Error initializing Branch session:', error)
-    }
+    } */
   }
 
   async createLink(params: Record<string, any>): Promise<string> {
