@@ -44,18 +44,28 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/property/:propertyId',
     name: EPropertyRouter.PropertyLanding,
-    component: PropertyLanding
+    component: PropertyLanding,
+    meta: {
+      isPublic: true
+    }
   },
   {
     path: '/chatbot',
     name: ERouter.Chatbot,
     component: ChatbotView
+  },
+  {
+    path: '/:pathMatch(.*)*',
+    redirect: '/'
   }
 ]
 
 const router = createRouter({
-  history: createWebHistory(),
-  routes
+  history: createWebHistory(import.meta.env.BASE_URL || '/'),
+  routes,
+  scrollBehavior() {
+    return { top: 0 }
+  }
 })
 
 export default router
