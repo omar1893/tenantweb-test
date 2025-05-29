@@ -1,7 +1,5 @@
 import { BranchDeepLinks } from 'capacitor-branch-deep-links'
-import { EPropertyRouter } from '@/enums/router'
 import { BRANCH_CONFIG } from '@/config/branch'
-import router from '@/router'
 
 export class DeepLinkService {
   private static instance: DeepLinkService

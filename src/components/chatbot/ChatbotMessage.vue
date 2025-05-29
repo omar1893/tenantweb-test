@@ -7,8 +7,8 @@
 import { EAgentMessageType } from '@/enums/agent'
 import type { IAgentMessage } from '@/types/agent.d'
 
-import ChatbotText from '@/views/Chatbot/ChatbotText.vue'
-import ChatbotComponent from '@/views/Chatbot/ChatbotComponent.vue'
+import ChatbotText from '@/components/chatbot/ChatbotText.vue'
+import ChatbotComponent from '@/components/chatbot/ChatbotComponent.vue'
 
 defineProps<{
   message: IAgentMessage

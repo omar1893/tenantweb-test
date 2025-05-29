@@ -57,8 +57,30 @@ class AgentClientService {
     return this.client
   }
 
+  public isReady(): boolean {
+    return this.client?.readyState === WebSocket.OPEN
+  }
+
+  public getReadyState(): number | undefined {
+    return this.client?.readyState
+  }
+
   public send(message: IAgentRequest) {
-    this.getClient.send(JSON.stringify(message))
+    if (!this.isReady()) {
+      throw new Error('WebSocket connection is not ready')
+    }
+
+    try {
+      this.getClient.send(JSON.stringify(message))
+    } catch (error) {
+      console.error(error)
+      if (error instanceof DOMException && error.name === 'InvalidStateError') {
+        console.warn('WebSocket is not in OPEN state, cannot send message')
+        throw new Error('WebSocket connection is not available')
+      }
+
+      throw error
+    }
   }
 
   public login(jwt: string) {

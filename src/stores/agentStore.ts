@@ -21,7 +21,7 @@ export const useAgentStore = defineStore('agent', {
     client: null,
   }),
   getters: {
-    isConnected: (state) => state.connected,
+    isConnected: (state) => state.connected && state.client?.isReady() === true,
   },
   actions: {
     _addTextMessage (message: IAgentResponse) {
@@ -56,7 +56,13 @@ export const useAgentStore = defineStore('agent', {
         data: message.data,
       })
     },
+    _cleanState() {
+      this.connected = false
+      this.messages = []
+      this.quickAction = null
+    },
     connect() {
+      this._cleanState()
       this.client = new AgentClientService({
         url: 'ws://localhost:8787/ws',
         onOpen: () => {
@@ -87,22 +93,45 @@ export const useAgentStore = defineStore('agent', {
         onClose: () => {
           this.connected = false
         },
+        onError: (event: Event) => {
+          console.error('Agent client error', event)
+        },
       })
       this.client.connect()
     },
     send(request: IAgentRequest, message?: string) {
       this.quickAction = null
-      this.client?.send(request)
 
-      if (message) {
-        this.messages.push({
-          id: uuidv4(),
-          role: EAgentMessageRole.USER,
-          type: EAgentMessageType.TEXT,
-          data: {
-            message,
-          },
-        })
+      // Check if client exists and is ready to send messages
+      if (!this.client || !this.client.isReady()) {
+        console.error('Agent client is not ready to send messages')
+        this.connected = false
+        throw new Error('Agent client is not ready to send messages')
+      }
+
+      try {
+        this.client.send(request)
+
+        if (message) {
+          this.messages.push({
+            id: uuidv4(),
+            role: EAgentMessageRole.USER,
+            type: EAgentMessageType.TEXT,
+            data: {
+              message,
+            },
+          })
+        }
+      } catch (error) {
+        console.error('Failed to send message to agent:', error)
+        // If it's a connection error, update the connected state
+        if (error instanceof Error && (
+          error.message.includes('WebSocket connection is not available') ||
+          error.message.includes('WebSocket connection is not ready')
+        )) {
+          this.connected = false
+        }
+        throw error
       }
     },
     sendMessage(message: string) {

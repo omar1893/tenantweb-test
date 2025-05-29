@@ -6,7 +6,7 @@
 import { computed } from 'vue'
 import { EAgentComponent } from '@/enums/agent'
 
-import TestComponent from '@/components/chatbot/TestComponent.vue'
+import TestComponent from '@/components/chatbot/custom-components/TestComponent.vue'
 
 const components = {
   [EAgentComponent.TEST_COMPONENT]: TestComponent,
