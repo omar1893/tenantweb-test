@@ -47,5 +47,7 @@
 	<true/>
 	<key>ITSAppUsesNonExemptEncryption</key>
   <false/>
+  <key>NSMicrophoneUsageDescription</key>
+  <string>This app requires access to your microphone for the chatbot communication.</string>
 </dict>
 </plist>

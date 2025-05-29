@@ -16,12 +16,45 @@
         @keyup.enter="send"
       >
       <button class="bg-gray-100 rounded-full w-9 h-9 flex items-center justify-center text-xl" @click="send">⮞</button>
+      {{ permissionStatus }}
+      <button
+        v-if="mediaStream"
+        class="bg-gray-100 rounded-full w-9 h-9 flex items-center justify-center text-xl"
+        :disabled="permissionStatus === 'prompt' || permissionStatus === 'unavailable'"
+        @click="handleStopMicrophone()"
+      >
+        <i class="pi pi-stop" />
+      </button>
+      <button
+        v-else
+        class="bg-gray-100 rounded-full w-9 h-9 flex items-center justify-center text-xl"
+        @click="handleMicrophoneAccess()"
+      >
+        <LoadingComponent
+          v-if="permissionStatus === 'prompt'"
+          style="width: 1rem; height: 1rem;"
+          color="var(--te-secondary)"
+        />
+        <i
+          v-else
+          class="pi pi-microphone"
+          :class="{
+            'text-red-500': permissionStatus === 'denied',
+            'text-green-500': permissionStatus === 'granted',
+            'text-gray-500': permissionStatus === 'unavailable'
+          }"
+        />
+      </button>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, watch, nextTick } from 'vue'
+
+import { useMicrophone } from '@/composables/useMicrophone'
+
+import LoadingComponent from '@/components/LoadingComponent.vue'
 
 import ChatbotMessage from '@/components/chatbot/ChatbotMessage.vue'
 import ChatbotQuickAction from '@/components/chatbot/ChatbotQuickAction.vue'
@@ -30,6 +63,13 @@ import type { IAgentMessage, IAgentQuickActionData } from '@/types/agent.d'
 
 const input = ref('')
 const messagesContainer = ref<HTMLDivElement | null>(null)
+
+const {
+  requestMicrophoneAccess,
+  mediaStream,
+  stopMicrophone,
+  permissionStatus
+} = useMicrophone()
 
 const props = defineProps<{
   messages: IAgentMessage[]
@@ -45,12 +85,33 @@ const send = () => {
   input.value = ''
 }
 
+const handleMicrophoneAccess = async () => {
+  const stream = await requestMicrophoneAccess()
+  if (stream) {
+    console.log('Microphone access granted')
+  } else {
+    console.error('Microphone access denied')
+  }
+}
+
+const handleStopMicrophone = () => {
+  stopMicrophone()
+}
+
 watch(props.messages, () => {
   nextTick(() => {
     if (messagesContainer.value) {
       messagesContainer.value.scrollTop = messagesContainer.value.scrollHeight
     }
   })
+})
+
+watch(permissionStatus, () => {
+  console.log('Permission status changed:', permissionStatus.value)
+
+  if (permissionStatus.value === 'denied') {
+    console.error('Microphone access denied')
+  }
 })
 </script>
 

@@ -5,7 +5,7 @@
     </div>
     <div v-else-if="state.error" class="flex flex-col h-screen items-center justify-center">
       <h1>{{ state.error }}</h1>
-      <Button @click="tryAgain">Try again</Button>
+      <Button @click="tryAgain()">Try again</Button>
     </div>
     <ChatbotMain
       v-else-if="agentStore.connected"
@@ -15,7 +15,7 @@
     />
     <div v-else-if="!agentStore.connected" class="flex flex-col h-screen items-center justify-center">
       <h1>Agent is not connected</h1>
-      <Button @click="connect">Connect</Button>
+      <Button @click="connect()">Connect</Button>
     </div>
   </div>
 </template>
