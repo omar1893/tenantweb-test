@@ -31,6 +31,7 @@ export interface IAgentTextData {
 
 export interface IAgentComponentData {
   component: EAgentComponent
+  properties: any
 }
 
 export interface IAgentStartData {}

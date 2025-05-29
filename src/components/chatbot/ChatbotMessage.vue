@@ -1,6 +1,14 @@
 <template>
-  <ChatbotText v-if="message.type === EAgentMessageType.TEXT" :message="message" :instant="true" />
-  <ChatbotComponent v-if="message.type === EAgentMessageType.COMPONENT" :component="message.data.component" />
+  <ChatbotText
+    v-if="message.type === EAgentMessageType.TEXT"
+    :message="message"
+    :instant="true"
+  />
+  <ChatbotComponent
+    v-if="message.type === EAgentMessageType.COMPONENT"
+    :component="message.data.component"
+    :properties="message.data.properties"
+  />
 </template>
 
 <script setup lang="ts">

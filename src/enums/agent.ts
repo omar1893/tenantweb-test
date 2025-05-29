@@ -36,4 +36,5 @@ export enum EAgentMessageRole {
 
 export enum EAgentComponent {
   TEST_COMPONENT = 'TEST_COMPONENT',
+  APPLICATION_FEE_COMPONENT = 'APPLICATION_FEE_COMPONENT',
 }

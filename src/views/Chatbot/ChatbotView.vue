@@ -22,7 +22,7 @@
 
 <script setup lang="ts">
 import { onMounted, reactive } from 'vue'
-import { useAgentStore } from '@/stores/agentStore'
+import { useAgentStore } from '@/stores/AgentStore'
 
 import Button from 'primevue/button'
 

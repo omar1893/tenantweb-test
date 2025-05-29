@@ -1,5 +1,5 @@
 <template>
-  <component :is="selectedComponent" v-if="selectedComponent" />
+  <component :is="selectedComponent" v-if="selectedComponent" :properties="properties" />
 </template>
 
 <script setup lang="ts">
@@ -7,13 +7,16 @@ import { computed } from 'vue'
 import { EAgentComponent } from '@/enums/agent'
 
 import TestComponent from '@/components/chatbot/custom-components/TestComponent.vue'
+import ApplicationFeeComponent from '@/components/chatbot/custom-components/ApplicationFeeComponent.vue'
 
 const components = {
   [EAgentComponent.TEST_COMPONENT]: TestComponent,
+  [EAgentComponent.APPLICATION_FEE_COMPONENT]: ApplicationFeeComponent,
 }
 
 const props = defineProps<{
   component: EAgentComponent
+  properties: any
 }>()
 
 const selectedComponent = computed(() => components[props.component])

@@ -14,7 +14,7 @@
 </template>
 
 <script setup lang="ts">
-import { useAgentStore } from '@/stores/agentStore'
+import { useAgentStore } from '@/stores/AgentStore'
 import type { IAgentQuickActionData, IAgentQuickActionItem } from '@/types/agent.d'
 import { EAgentQuickActionComponent, EAgentQuickActionAction } from '@/enums/agent'
 

@@ -25,6 +25,7 @@ globs: **/*.vue, **/*.ts, components/**/*
 - Keep setup function clean
 - Use proper computed properties
 - Implement proper watchers
+- defineProps, defineEmits, defineModel doesnt need to be imported.
 
 ## State Management
 - Use Pinia for state management
