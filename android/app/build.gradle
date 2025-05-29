@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     namespace "com.tenantev.app"
-    compileSdk rootProject.ext.compileSdkVersion
+    compileSdkVersion rootProject.ext.compileSdkVersion
     defaultConfig {
         applicationId "com.tenantev.app"
         minSdkVersion rootProject.ext.minSdkVersion
@@ -28,6 +28,7 @@ repositories {
     flatDir{
         dirs '../capacitor-cordova-android-plugins/src/main/libs', 'libs'
     }
+    maven { url "https://jitpack.io" }
 }
 
 dependencies {
@@ -36,6 +37,7 @@ dependencies {
     implementation "androidx.coordinatorlayout:coordinatorlayout:$androidxCoordinatorLayoutVersion"
     implementation "androidx.core:core-splashscreen:$coreSplashScreenVersion"
     implementation project(':capacitor-android')
+    implementation 'io.branch.sdk.android:library:5.+'
     testImplementation "junit:junit:$junitVersion"
     androidTestImplementation "androidx.test.ext:junit:$androidxJunitVersion"
     androidTestImplementation "androidx.test.espresso:espresso-core:$androidxEspressoCoreVersion"

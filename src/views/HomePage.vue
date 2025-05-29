@@ -16,6 +16,8 @@
       <div id="container">
         <strong>Ready to create an app?</strong>
         <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
+        <button @click="generateTestLink">Generate Test Link</button>
+        <p v-if="testLink">Generated Link: {{ testLink }}</p>
       </div>
     </ion-content>
   </ion-page>
@@ -23,6 +25,23 @@
 
 <script setup lang="ts">
 import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from '@ionic/vue'
+import { ref } from 'vue'
+import { DeepLinkService } from '@/services/deepLink.service'
+
+const testLink = ref('')
+
+const generateTestLink = async () => {
+  try {
+    const deepLinkService = DeepLinkService.getInstance()
+    const link = await deepLinkService.createLink({
+      propertyId: '123',
+      test: 'true'
+    })
+    testLink.value = link
+  } catch (error) {
+    console.error('Error generating link:', error)
+  }
+}
 </script>
 
 <style lang="scss" scoped>

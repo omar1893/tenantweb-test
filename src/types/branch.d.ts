@@ -1,6 +1,14 @@
 declare module 'capacitor-branch-deep-links' {
+  export interface BranchEvent {
+    data_parsed?: {
+      propertyId?: string
+      [key: string]: any
+    }
+    [key: string]: any
+  }
+
   export interface BranchDeepLinksPlugin {
-    initSession(): Promise<{ data_parsed: any }>
+    addListener(eventName: 'init' | 'deeplink', callback: (event: BranchEvent) => void): Promise<void>
     generateShortUrl(options: {
       properties: {
         $ios_url?: string

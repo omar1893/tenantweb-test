@@ -10,7 +10,7 @@
       <!-- Property Header Section -->
       <div class="relative">
         <img
-          :src="propertyImageUrl"
+          :src="propertyImage"
           alt="505 Deerfield COA"
           class="w-full h-[300px] object-cover"
         >
@@ -79,7 +79,8 @@ import TButton from '@/components/TButton.vue'
 import { propertyService } from '@/services/propertyService'
 import axios from 'axios'
 import { IonPage } from '@ionic/vue'
-import propertyImageUrl from '@/assets/property-image.png'
+
+const propertyImage = 'https://te-ai-pub-docs.s3.us-east-1.amazonaws.com/property/property-image.png'
 
 interface Property {
   id: string
@@ -165,7 +166,10 @@ const fetchPropertyData = async () => {
 }
 
 const applyNow = () => {
-  window.location.href = 'https://d3gs2.test-app.link/test-cta'
+  // Match the exact Branch configuration
+  const deepLinkUrl = `https://d3gs2.test-app.link/property-view?id=${propertyId.value}`
+  console.log('Opening deep link:', deepLinkUrl)
+  window.location.href = deepLinkUrl
 }
 
 onMounted(() => {

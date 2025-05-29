@@ -256,7 +256,7 @@ onMounted(async () => {
   }
 
   // Intentar cargar el video
-  if (videoRef.value) {
+        if (videoRef.value) {
     try {
       await videoRef.value.load()
       console.log('Video loaded')

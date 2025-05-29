@@ -11,6 +11,14 @@ const config: CapacitorConfig = {
     SplashScreen: {
       launchShowDuration: 0,
       backgroundColor: "#FFFFFF"
+    },
+    BranchDeepLinks: {
+      enableTestMode: true,
+      androidAppScheme: 'tenantev',
+      androidDeepLinkDomain: 'd3gs2.test-app.link',
+      androidPrefix: '/app',
+      androidTestMode: true,
+      androidDebugMode: true
     }
   }
 }
