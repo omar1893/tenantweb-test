@@ -51,38 +51,38 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   const getExpiresAt = (jwtToken: string): number => {
-    const decoded = jwtDecode(jwtToken);
+    const decoded = jwtDecode(jwtToken)
 
     if (!decoded.exp) {
-      throw new Error("No expires at found");
+      throw new Error('No expires at found')
     }
 
-    return decoded.exp * 1000;
+    return decoded.exp * 1000
   }
 
   const jwt = async (): Promise<string> => {
     if (jwtToken && jwtExpiresAt && jwtExpiresAt > Date.now()) {
-      return jwtToken;
+      return jwtToken
     }
 
     await authClient.getSession({
       fetchOptions: {
         onSuccess: async (ctx) => {
-          jwtToken = ctx.response.headers.get("set-auth-jwt");
+          jwtToken = ctx.response.headers.get('set-auth-jwt')
           if (!jwtToken) {
-            throw new Error("No JWT found");
+            throw new Error('No JWT found')
           }
         }
       }
-    });
+    })
 
     if (!jwtToken) {
-      throw new Error("No JWT found");
+      throw new Error('No JWT found')
     }
 
-    jwtExpiresAt = getExpiresAt(jwtToken);
+    jwtExpiresAt = getExpiresAt(jwtToken)
 
-    return jwtToken;
+    return jwtToken
   }
 
   return {
