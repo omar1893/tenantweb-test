@@ -62,5 +62,7 @@
 	<string>key_test_oCzipvLcpzA0cZx0bh7m8lldywiF4TGR</string>
 	<key>branch_app_domain</key>
 	<string>d3gs2.test-app.link</string>
+  <key>NSMicrophoneUsageDescription</key>
+  <string>This app requires access to your microphone for the chatbot communication.</string>
 </dict>
 </plist>

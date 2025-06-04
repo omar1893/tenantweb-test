@@ -1,48 +1,62 @@
 import {
   EAgentMessageType,
-  EAgentQuickActionType,
-  EAgentQuickActionItemType,
-  EAgentQuickActionActionType,
   EAgentRequestType,
   EAgentMessageRole,
+  EAgentResponseType,
+  EAgentQuickActionComponent,
+  EAgentQuickActionAction,
+  EAgentComponent,
 } from '@/enums/agent'
 
-export interface IAgentMessage {
-  id: string
-  type: EAgentMessageType
-  data: any
-  role: EAgentMessageRole
-}
+// ------------- RESPONSE -------------
 
-export interface IAgentQuickActionAction {
-  type: EAgentQuickActionActionType
-  code: string
+export interface IAgentQuickActionItem {
+  component: EAgentQuickActionItemComponent
+  label: string
+  style?: string
+  action: EAgentQuickActionAction
+  type: string
   value: string
   showMessage: boolean
 }
 
-export interface IAgentQuickActionItem {
-  type: EAgentQuickActionItemType
-  label: string
-  style?: string
-  action: IAgentQuickActionAction
-}
-
-export interface IAgentQuickAction {
-  type: EAgentQuickActionType
+export interface IAgentQuickActionData {
+  component: EAgentQuickActionComponent
   items: IAgentQuickActionItem[]
 }
 
-export interface IAgentResponse {
-  messages: IAgentMessage[]
-  quickActions?: IAgentQuickAction[]
-  nextRoute?: string
+export interface IAgentTextData {
+  message: string
 }
 
+export interface IAgentComponentData {
+  component: EAgentComponent
+  properties: any
+}
+
+export interface IAgentStartData {}
+
+export interface IAgentEndData {
+  nextView?: string
+}
+
+export type IAgentResponse =
+  | { id: string; type: EAgentResponseType.START; data: IAgentStartData }
+  | { id: string; type: EAgentResponseType.END; data: IAgentEndData }
+  | { id: string; type: EAgentResponseType.TEXT; data: IAgentTextData }
+  | { id: string; type: EAgentResponseType.COMPONENT; data: IAgentComponentData }
+  | { id: string; type: EAgentResponseType.QUICK_ACTION; data: IAgentQuickActionData }
+
+// ------------- REQUEST -------------
 
 export interface IAgentRequest {
   type: EAgentRequestType
-  code?: string
-  data?: object
+  data?: any
   showMessage?: boolean
 }
+
+// ------------- MESSAGE -------------
+
+export type IAgentMessage =
+  | { id: string; type: EAgentMessageType.TEXT; data: IAgentTextData; role: EAgentMessageRole }
+  | { id: string; type: EAgentMessageType.COMPONENT; data: IAgentComponentData; role: EAgentMessageRole }

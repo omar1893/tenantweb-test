@@ -2,18 +2,15 @@
   <div
     v-if="message.type === EAgentMessageType.TEXT"
     class="chat-message"
-    :class="message.role === EAgentMessageRole.AGENT ? 'chat-message-agent body-large' : 'chat-message-user body-medium'"
+    :class="message.role === EAgentMessageRole.AGENT ? 'chat-text-agent body-large' : 'chat-text-user body-medium'"
   >
     <span>{{ message.data.message }}</span>
   </div>
-  <TestComponent v-if="message.type === EAgentMessageType.TEST_COMPONENT" />
 </template>
 
 <script setup lang="ts">
 import { EAgentMessageRole, EAgentMessageType } from '@/enums/agent'
 import type { IAgentMessage } from '@/types/agent.d'
-
-import TestComponent from '@/components/TestComponent.vue'
 
 defineProps<{
   message: IAgentMessage
@@ -29,7 +26,7 @@ defineProps<{
   border: none
 }
 
-.chat-message-agent {
+.chat-text-agent {
   align-self: flex-start;
   background: #d8c8c8 !important;
   padding: 1.2rem 1.6rem 1.2rem 2rem;
@@ -37,7 +34,7 @@ defineProps<{
   border-radius: 4rem 2rem 0.6rem 4rem;
 }
 
-.chat-message-user {
+.chat-text-user {
   align-self: flex-end;
   background: var(--te-light, #fdd5d1);
   padding: 1.2rem 1.6rem 1.2rem 2rem;

@@ -1,0 +1,122 @@
+name: CI/CD Workflow
+
+on:
+  pull_request:
+    types:
+      - closed
+    branches:
+      - main
+      - 'rc[0-9]+'
+
+permissions:
+  actions: write
+  checks: write
+  contents: write
+  deployments: write
+  issues: write
+  packages: write
+  pull-requests: write
+  repository-projects: write
+  security-events: write
+  statuses: write
+
+env:
+  MAIN_BRANCH: main
+  PROJECT_NAME: te-ai-applicant-mobile
+
+jobs:
+  ECR_PUSH:
+    name: Push Docker Image to ECR
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ssh-key: ${{ secrets.ACTIONS_SSH_KEY }}
+
+      - name: Set environment name
+        id: set_env
+        run: |
+          if [ "${{ github.ref_name }}" == "${{ env.MAIN_BRANCH }}" ]; then
+            ENV_NAME="qa"
+          else
+            ENV_NAME="${{ github.ref_name }}"
+          fi
+          echo "Environment name is $ENV_NAME"
+          echo "ENV_NAME=$ENV_NAME" >> $GITHUB_ENV
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Increment version number
+        id: versioning
+        run: |
+          if [ "${{ github.base_ref }}" == "${{ env.MAIN_BRANCH }}" ]; then
+            npm version preminor --no-git-tag-version
+          else
+            npm version prerelease -preid ${{ github.base_ref }}
+          fi
+          VERSION=$(grep -oP '(?<="version": ")[^"]*' package.json)
+          echo "New version is $VERSION"
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Push version changes
+        id: push-version
+        run: |
+          VERSION=${{ steps.versioning.outputs.version }}
+          git config user.name ${{ vars.GITOPS_USER_NAME }}
+          git config user.email ${{ vars.GITOPS_USER_EMAIL }}
+          git add package.json
+          git commit -m "$VERSION"
+          git push -f origin HEAD:${{ github.base_ref }} --no-verify
+          git tag "$VERSION"
+          git push -f origin HEAD:${{ github.base_ref }} --no-verify --tags
+
+      - name: Setup AWS ECR Details
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.TEV3_DEPLOY_AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.TEV3_DEPLOY_AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{vars.TEV3_DEPLOY_AWS_REGION}}
+
+      - name: Log in to Amazon ECR
+        id: ecr-login
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build, tag, and push Docker image
+        id : containerImage
+        env:
+          ECR_REGISTRY: ${{ steps.ecr-login.outputs.registry }}
+          ECR_REPOSITORY: ${{ env.PROJECT_NAME }}
+          IMAGE_TAG: ${{ steps.versioning.outputs.version }}
+        run: |
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+      - name: ECR Status Check
+        if: steps.containerImage.outcome == 'failure'
+        run: exit 1
+
+      - name: Call RunDeck Webhook
+        env:
+          ENV_NAME: ${{ env.ENV_NAME }}
+        run: |
+          RESPONSE=$(curl -s -X POST ${{ vars.TEV3_RUNDECK_WEBHOOK_URL }}/${{ secrets.TEV3_RUNDECK_WEBHOOK_TOKEN }}#${{ vars.TEV3_RUNDECK_WEBHOOK_ACTION }} \
+            -H "Content-Type: application/json" \
+            -d '{
+                  "env_name": "'${{ env.ENV_NAME }}'",
+                  "service_name": "'${{ env.PROJECT_NAME }}'",
+                  "version": "'${{ steps.versioning.outputs.version }}'"
+                }')
+
+          echo "Response: $RESPONSE"
+
+          if echo "$RESPONSE" | grep -q '"jobId"'; then
+            echo "Webhook call was successful."
+          else
+            echo "Webhook call failed or did not return expected JSON."
+            exit 1
+          fi

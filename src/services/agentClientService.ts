@@ -1,6 +1,5 @@
 import { EAgentRequestType } from '@/enums/agent'
 import type { IAgentRequest, IAgentResponse } from '@/types/agent.d'
-import { v4 as uuidv4 } from 'uuid'
 
 export interface IAgentClientServiceOptions {
   url: string
@@ -38,15 +37,6 @@ class AgentClientService {
 
     this.client.onmessage = (event) => {
       const res = JSON.parse(event.data) as IAgentResponse
-
-      if (res.messages.length > 0) {
-        res.messages.forEach((message) => {
-          if (!message.id) {
-            message.id = uuidv4()
-          }
-        })
-      }
-
       this.onMessage?.(res)
     }
 
@@ -67,8 +57,30 @@ class AgentClientService {
     return this.client
   }
 
+  public isReady(): boolean {
+    return this.client?.readyState === WebSocket.OPEN
+  }
+
+  public getReadyState(): number | undefined {
+    return this.client?.readyState
+  }
+
   public send(message: IAgentRequest) {
-    this.getClient.send(JSON.stringify(message))
+    if (!this.isReady()) {
+      throw new Error('WebSocket connection is not ready')
+    }
+
+    try {
+      this.getClient.send(JSON.stringify(message))
+    } catch (error) {
+      console.error(error)
+      if (error instanceof DOMException && error.name === 'InvalidStateError') {
+        console.warn('WebSocket is not in OPEN state, cannot send message')
+        throw new Error('WebSocket connection is not available')
+      }
+
+      throw error
+    }
   }
 
   public login(jwt: string) {
