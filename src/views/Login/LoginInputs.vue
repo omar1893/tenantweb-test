@@ -1,90 +1,171 @@
 <template>
   <ion-modal
-    :is-open="visible" :initial-breakpoint="1" :breakpoints="[0, 1]" class="bottom-modal"
+    :is-open="uiStore.loginModalVisible"
+    :initial-breakpoint="1"
+    :breakpoints="[0, 1]"
+    class="bottom-modal"
     @did-dismiss="closeModal"
   >
     <div class="flex flex-col gap-6 p-6">
       <div class="flex justify-between items-center">
         <i class="pi pi-times text-xl cursor-pointer" @click="closeModal" />
-        <!-- <div class="w-8 h-8 bg-red-100 rounded-lg" /> -->
+        <i class="pi pi-list text-xl cursor-pointer" @click="showPropertySelector = true" />
       </div>
 
-      <div class="text-center text-slate-900">
+      <div v-if="!emailSent" class="text-center text-slate-900">
         <h1 class="text-medium font-semibold mb-2">Say Hi to Eva,</h1>
         <h2 class="text-medium font-semibold mb-4">Your Future Living Assistant!</h2>
         <p class="text-gray-600 body-large">Enter your email to get started</p>
+
+        <div class="flex flex-col gap-4 mt-6">
+          <TInput
+            v-model="v$.email.$model"
+            placeholder="Email address"
+            class="w-full button-large"
+            :error="v$.email.$error"
+            :error-message="v$.email.$errors[0]?.$message?.toString()"
+          />
+
+          <TButton
+            :label="loading ? '' : 'Continue'"
+            variant="pink"
+            class="w-full !rounded-full py-[1.2rem] px-[1.6rem] button-large"
+            :disabled="v$.email.$invalid"
+            :loading="loading"
+            @click="handleSendEmail"
+          />
+
+          <div class="flex items-center gap-4 my-4">
+            <div class="h-[1px] flex-1 bg-gray-200" />
+            <span class="text-gray-500 body-medium">OR</span>
+            <div class="h-[1px] flex-1 bg-gray-200" />
+          </div>
+
+          <div class="flex grow items-center gap-4 w-full">
+            <TButton variant="dark" class="flex-1 !rounded-full py-5" @click="handleAppleLogin">
+              <template #default>
+                <img src="@/assets/icons/apple-icon.svg" alt="Apple" class="w-[24px] h-[24px]">
+              </template>
+            </TButton>
+
+            <TButton variant="dark" class="flex-1 !rounded-full py-5" @click="handleGoogleLogin">
+              <template #default>
+                <img src="@/assets/icons/google-icon.svg?inline" alt="Google" class="w-[24px] h-[24px]">
+              </template>
+            </TButton>
+          </div>
+
+          <p class="text-center label text-te-secondary my-8 opacity-50 leading-7">
+            By continuing, your agree to TenantEvaluation's
+            <a href="#"><b>Privacy policy</b></a> and
+            <a href="#"><b>Terms of service</b></a>
+          </p>
+        </div>
       </div>
 
-      <div class="flex flex-col gap-4">
-        <!-- <IconField class="w-full">
-          <InputIcon class="pi pi-envelope" style="font-size: 1.5rem" />
-        </IconField> -->
-        <TInput
-          v-model="v$.email.$model"
-          placeholder="Email address"
-          class="w-full button-large"
-          :error="v$.email.$error"
-          :error-message="v$.email.$errors[0]?.$message"
-        />
-
-        <TButton
-          label="Continue"
-          variant="pink"
-          class="w-full !rounded-full py-[1.2rem] px-[1.6rem] button-large"
-          :disabled="v$.email.$invalid"
-          @click="handleEmailLogin"
-        />
-
-        <div class="flex items-center gap-4 my-4">
-          <div class="h-[1px] flex-1 bg-gray-200" />
-          <span class="text-gray-500 body-medium">OR</span>
-          <div class="h-[1px] flex-1 bg-gray-200" />
+      <div v-else class="flex flex-col items-center gap-6">
+        <div class="text-center">
+          <div class="flex items-center justify-center mb-6">
+            <img src="@/assets/icons/mail.svg" alt="Email" class="w-[23px] h-[18px]">
+          </div>
+          <h2 class="text-medium mb-2">To continue, click the link sent to</h2>
+          <p class="text-medium mb-6"><b>{{ state.email }}</b></p>
+          <p v-if="countdown > 0" class="body-large text-gray-600">
+            Request New Link in {{ countdown }}s seconds
+          </p>
+          <TButton
+            v-else
+            label="Send Another Email"
+            variant="pink"
+            class="w-full !rounded-full py-[1.2rem] px-[1.6rem] button-large"
+            :loading="loading"
+            @click="handleSendEmail"
+          />
         </div>
 
-        <div class="flex grow items-center gap-4 w-full">
-          <TButton variant="dark" class="flex-1 !rounded-full py-5" @click="handleAppleLogin">
-            <template #default>
-              <img src="@/assets/icons/apple-icon.svg" alt="Google" class="w-[24px] h-[24px]">
-            </template>
-          </TButton>
+        <div class="w-full h-[1px] bg-gray-200 my-6" />
 
-          <TButton variant="dark" class="flex-1 !rounded-full py-5" @click="handleGoogleLogin">
-            <template #default>
-              <img src="@/assets/icons/google-icon.svg?inline" alt="Google" class="w-[24px] h-[24px]">
-            </template>
-          </TButton>
-        </div>
+        <button
+          class="button-large mb-6"
+          @click="goBack"
+        >
+          Back to login
+        </button>
+      </div>
+    </div>
+  </ion-modal>
+
+  <!-- Property Selector Modal -->
+  <ion-modal
+    :is-open="showPropertySelector"
+    :initial-breakpoint="0.95"
+    :breakpoints="[0, 0.95]"
+    class="property-selector-modal"
+    @did-dismiss="showPropertySelector = false"
+  >
+    <div class="p-6">
+      <div class="flex justify-between items-center mb-8">
+        <h2 class="text-2xl font-semibold">Select Property</h2>
+        <i class="pi pi-times text-xl cursor-pointer" @click="showPropertySelector = false" />
       </div>
 
-      <p class="text-center label text-gray-500">
-        By continuing, your agree to TenantEvaluation's
-        <a href="#" class="text-gray-700">Privacy policy</a> and
-        <a href="#" class="text-gray-700">Terms of service</a>
-      </p>
+      <div class="flex flex-col gap-4 pb-6">
+        <button
+          v-for="property in properties"
+          :key="property.id"
+          class="w-full text-left px-6 py-5 rounded-2xl hover:bg-gray-100 transition-colors text-lg"
+          :class="{ 'bg-gray-100': selectedPropertyId === property.id }"
+          @click="selectProperty(property.id)"
+        >
+          {{ property.name }}
+        </button>
+        <button
+          class="w-full text-left px-6 py-5 rounded-2xl hover:bg-gray-100 transition-colors text-lg"
+          :class="{ 'bg-gray-100': selectedPropertyId === null }"
+          @click="selectProperty(null)"
+        >
+          No Property (Go to Chatbot)
+        </button>
+      </div>
     </div>
   </ion-modal>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
+import { ref, reactive, onUnmounted, onMounted } from 'vue'
 import { IonModal } from '@ionic/vue'
-import { useRouter } from 'vue-router'
 import { useVuelidate } from '@vuelidate/core'
 import { required, email } from '@vuelidate/validators'
-
-import { useAuthStore } from '@/stores/AuthStore'
-
-import { ERouter } from '@/enums/router'
-
-
+import { authService } from '@/services/auth.service'
+import { useUIStore } from '@/stores/UIStore'
+import { useRouter } from 'vue-router'
 import TInput from '@/components/TInput.vue'
 import TButton from '@/components/TButton.vue'
-/* import TInput from '@/components/TInput.vue' */
 
-const visible = ref(false)
-const loading = ref(false)
-const authStore = useAuthStore()
 const router = useRouter()
+const loading = ref(false)
+const emailSent = ref(false)
+const uiStore = useUIStore()
+const showPropertySelector = ref(false)
+
+const properties = [
+  { id: '14791', name: 'Property 14791' },
+  { id: '14795', name: 'Property 14795' },
+  { id: '14798', name: 'Property 14798' },
+  { id: '14766', name: 'Property 14766' }
+]
+
+const selectedPropertyId = ref<string | null>(localStorage.getItem('selectedPropertyId'))
+
+const selectProperty = (propertyId: string | null) => {
+  selectedPropertyId.value = propertyId
+  if (propertyId) {
+    localStorage.setItem('selectedPropertyId', propertyId)
+  } else {
+    localStorage.removeItem('selectedPropertyId')
+  }
+  showPropertySelector.value = false
+}
 
 const state = reactive({
   email: ''
@@ -96,37 +177,112 @@ const rules = {
 
 const v$ = useVuelidate(rules, state)
 
-const closeModal = () => {
-  visible.value = false
+const countdown = ref(30)
+let countdownInterval: number | null = null
+
+const startCountdown = () => {
+  countdown.value = 30
+  if (countdownInterval) clearInterval(countdownInterval)
+  countdownInterval = window.setInterval(() => {
+    if (countdown.value > 0) {
+      countdown.value--
+    } else {
+      if (countdownInterval) clearInterval(countdownInterval)
+    }
+  }, 1000)
 }
 
-const handleEmailLogin = async () => {
-  const isValid = await v$.value.$validate()
+onUnmounted(() => {
+  if (countdownInterval) clearInterval(countdownInterval)
+})
+
+const closeModal = () => {
+  uiStore.hideLoginModal()
+  resetForm()
+}
+
+const resetForm = () => {
+  state.email = ''
+  emailSent.value = false
+  v$.value.$reset()
+}
+
+const goBack = () => {
+  emailSent.value = false
+}
+
+const handleSendEmail = async () => {
+  const isValid = await v$.value.email.$validate()
   if (!isValid) return
 
   try {
     loading.value = true
-    await authStore.signInMagicLink(state.email)
-    visible.value = false
-    router.push({ name: ERouter.PropertyVideo })
+    const success = await authService.sendPasswordlessEmail(state.email)
+    if (success) {
+      emailSent.value = true
+      startCountdown()
+    }
   } catch (error) {
-    console.error('Error during login:', error)
+    console.error('Error sending email:', error)
   } finally {
     loading.value = false
   }
 }
 
-const handleAppleLogin = () => {
-  // Handle Apple login
-  console.log('Apple login')
+const handleLoginSuccess = () => {
+  uiStore.hideLoginModal()
+  resetForm()
+  if (selectedPropertyId.value) {
+    router.push('/property-video')
+  } else {
+    router.push('/chatbot')
+  }
+}
+
+const handleAppleLogin = async () => {
+  try {
+    loading.value = true
+    await authService.initiateAppleLogin()
+  } catch (error) {
+    console.error('Apple login error:', error)
+  } finally {
+    loading.value = false
+  }
 }
 
 const handleGoogleLogin = async () => {
-  await authStore.signInGoogle()
+  try {
+    loading.value = true
+    await authService.initiateGoogleLogin()
+  } catch (error) {
+    console.error('Google login error:', error)
+  } finally {
+    loading.value = false
+  }
 }
 
-defineExpose({
-  visible
+const handleAuthCallback = async () => {
+  try {
+    const url = window.location.href
+    if (url.includes('auth-verify')) {
+      loading.value = true
+      await authService.handleGoogleCallback(url)
+      handleLoginSuccess()
+    }
+  } catch (error) {
+    console.error('Auth callback error:', error)
+  } finally {
+    loading.value = false
+  }
+}
+
+onMounted(() => {
+  const savedPropertyId = localStorage.getItem('selectedPropertyId')
+  if (savedPropertyId) {
+    selectedPropertyId.value = savedPropertyId
+  }
+
+  handleAuthCallback()
 })
 </script>
 
@@ -157,5 +313,19 @@ defineExpose({
   border-radius: var(--border-radius);
   overflow: hidden;
   background: white;
+}
+
+.property-selector-modal {
+  --height: auto;
+  --max-height: 95%;
+  --width: 100%;
+  --border-radius: 24px;
+
+  :deep(.ion-page) {
+    border-radius: var(--border-radius);
+    background: white;
+    position: relative;
+    padding: 1.5rem 0;
+  }
 }
 </style>

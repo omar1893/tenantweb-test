@@ -5,6 +5,7 @@ export enum ERouter {
   AudioTesting = 'AudioTesting',
   Chatbot = 'Chatbot',
   AuthCallback = 'AuthCallback',
+  AuthVerify = 'AuthVerify',
   PropertyVideo = 'PropertyVideo',
 }
 

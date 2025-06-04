@@ -166,8 +166,8 @@ const fetchPropertyData = async () => {
 }
 
 const applyNow = () => {
-  // Match the exact Branch configuration
-  const deepLinkUrl = `https://d3gs2.test-app.link/property-view?id=${propertyId.value}`
+  // Using Branch.io link format with property-view path
+  const deepLinkUrl = `https://d3gs2.test-app.link/property-view?id=${propertyId.value}&$fallback_url=https://www.tenantevaluation.ai/&$ios_url=https://apps.apple.com/us/app/tenantev/&$android_url=https://play.google.com/store/apps/details?id=com.tenantev.app`
   console.log('Opening deep link:', deepLinkUrl)
   window.location.href = deepLinkUrl
 }

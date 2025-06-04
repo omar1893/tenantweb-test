@@ -6,6 +6,7 @@ import AudioTesting from '../views/PropertyVideo/PropertyVideo.vue'
 import PropertyLanding from '../views/PropertyLanding/PropertyLanding.vue'
 import ChatbotView from '../views/Chatbot/ChatbotView.vue'
 import AuthCallback from '../views/Auth/AuthCallback.vue'
+import AuthVerify from '../views/Auth/AuthVerify.vue'
 
 import { ERouter, EPropertyRouter } from '../enums/router'
 
@@ -22,6 +23,14 @@ const routes: Array<RouteRecordRaw> = [
     path: '/auth-callback',
     name: ERouter.AuthCallback,
     component: AuthCallback,
+    meta: {
+      isPublic: true
+    }
+  },
+  {
+    path: '/auth-verify',
+    name: ERouter.AuthVerify,
+    component: AuthVerify,
     meta: {
       isPublic: true
     }

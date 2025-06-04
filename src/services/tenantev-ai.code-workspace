@@ -1,20 +1,23 @@
 {
 	"folders": [
-		{
-			"path": "../.."
-		},
-		{
-			"path": "../../../tenantev-ai-web"
-		},
-		{
-			"path": "../../../auth-front"
-		},
-		{
-			"path": "../../../new-tenantev"
-		},
-		{
-			"path": "../../../tenant-resources"
-		}
-	],
+    {
+      "path": "../.."
+    },
+    {
+      "path": "../../../tenantev-ai-web"
+    },
+    {
+      "path": "../../../auth-front"
+    },
+    {
+      "path": "../../../new-tenantev"
+    },
+    {
+      "path": "../../../tenant-resources"
+    },
+    {
+      "path": "../../../auth-service"
+    }
+  ],
 	"settings": {}
 }

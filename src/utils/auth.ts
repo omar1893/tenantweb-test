@@ -1,4 +1,4 @@
-import { magicLinkClient } from 'better-auth/client/plugins'
+import { emailOTPClient } from 'better-auth/client/plugins'
 import { createAuthClient } from 'better-auth/vue'
 import { jwtDecode } from 'jwt-decode'
 import env from '@/config/env'
@@ -9,8 +9,35 @@ let jwtExpiresAt: number | null = null
 export const authClient = createAuthClient({
   baseURL: env.apiUrl,
   plugins: [
-    magicLinkClient()
+    emailOTPClient()
   ],
+  fetchOptions: {
+    auth: {
+      type:"Bearer",
+      token: () => localStorage.getItem("bearer_token") || ""
+   },
+    onSuccess: (ctx) => {
+        const authToken = ctx.response.headers.get("set-auth-token")
+        const jwtToken = ctx.response.headers.get("set-auth-jwt")
+
+        console.log('Auth Token:', authToken);
+        console.log('JWT Token:', jwtToken);
+
+        if(authToken){
+          localStorage.setItem("bearer_token", authToken);
+        }
+
+        if(jwtToken){
+          localStorage.setItem("jwt_token", jwtToken);
+        }
+    },
+    onError: (ctx) => {
+      console.log('Error', ctx);
+    },
+    onResponse: (ctx) => {
+      console.log('Response', ctx);
+    }
+}
 })
 
 const getExpiresAt = (jwtToken: string): number => {

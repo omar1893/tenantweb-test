@@ -47,5 +47,20 @@
 	<true/>
 	<key>ITSAppUsesNonExemptEncryption</key>
   <false/>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>tenantev</string>
+			</array>
+			<key>CFBundleURLName</key>
+			<string>com.tenantev.app</string>
+		</dict>
+	</array>
+	<key>branch_key</key>
+	<string>key_test_oCzipvLcpzA0cZx0bh7m8lldywiF4TGR</string>
+	<key>branch_app_domain</key>
+	<string>d3gs2.test-app.link</string>
 </dict>
 </plist>

@@ -22,11 +22,13 @@ import { ref } from 'vue'
 import { IonPage } from '@ionic/vue'
 import TButton from '@/components/TButton.vue'
 import LoginInputs from '../Login/LoginInputs.vue'
+import { useUIStore } from '@/stores/UIStore'
 
 const loginModal = ref()
+const uiStore = useUIStore()
 
 const showLoginModal = () => {
-  loginModal.value.visible = true
+  uiStore.showLoginModal()
 }
 </script>
 

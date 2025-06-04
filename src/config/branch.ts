@@ -9,3 +9,4 @@ export const BRANCH_CONFIG = {
   DESKTOP_URL: 'https://tenantev.com',
   APP_SCHEME: 'tenantev'
 }
+ 

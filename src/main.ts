@@ -12,17 +12,13 @@ import { DeepLinkService } from './services/deepLink.service'
 import { createPinia } from 'pinia'
 import primeVueTheme from './prime-vue-theme'
 import { App as CapacitorApp } from '@capacitor/app'
-import axios from 'axios'
+import { useUIStore } from './stores/UIStore'
 
 /* Theme variables */
 import './theme/variables.css'
 
-// Import custom styles
 
-
-// Initialize deep link service
 console.log('Initializing app with deep link service')
-// Initialize deep linking
 DeepLinkService.getInstance().initialize()
 
 const app = createApp(App)
@@ -45,6 +41,29 @@ CapacitorApp.addListener('appUrlOpen', async (data: any) => {
   if (data && data.url) {
     try {
       const url = new URL(data.url)
+      const uiStore = useUIStore()
+      uiStore.hideLoginModal() // Close modal when receiving any deeplink
+
+      if (url.pathname === '/auth-callback' || url.searchParams.get('auth_callback') === '1') {
+        router.push({ name: 'AuthCallback', query: Object.fromEntries(url.searchParams.entries()) })
+        return
+      }
+
+      if (url.pathname === '/auth-verify') {
+        console.log(url)
+        // Decode and split the search params correctly
+        const searchString = url.search.substring(1) // Remove the leading '?'
+        const decodedSearch = decodeURIComponent(searchString)
+        const searchParams = new URLSearchParams(decodedSearch)
+
+        console.log('AuthVerify event received:', Object.fromEntries(searchParams.entries()))
+        router.push({
+          name: 'AuthVerify',
+          query: Object.fromEntries(searchParams.entries())
+        })
+        return
+      }
+
       if (url.protocol.startsWith('http')) {
         const propertyId = url.searchParams.get('id')
         if (propertyId) {
@@ -52,39 +71,6 @@ CapacitorApp.addListener('appUrlOpen', async (data: any) => {
             name: 'PropertyLanding',
             params: { propertyId }
           })
-        }
-      } else if (url.protocol.startsWith('tenantev')) {
-        const linkClickId = url.searchParams.get('link_click_id')
-        if (linkClickId) {
-          try {
-            const resp = await axios.post('https://api2.branch.io/v1/open', {
-              link_identifier: linkClickId,
-              branch_key: 'key_test_oCzipvLcpzA0cZx0bh7m8lldywiF4TGR',
-              branch_secret: 'secret_test_d7REYmTWAOfL17rBbkckjieKQQqITctY',
-              os: 'Android',
-              server_to_server: true,
-              app_version: '1.0.0',
-              model: 'Android Emulator',
-              os_version: '14',
-              user_agent: navigator.userAgent,
-              is_hardware_id_real: true,
-              ad_tracking_enabled: false
-            })
-            console.log('Branch link data:', resp.data)
-            const propertyId = resp.data.data_parsed?.id
-            if (propertyId) {
-              router.push({
-                name: 'PropertyLanding',
-                params: { propertyId }
-              })
-            } else {
-              /* alert('No se encontró el parámetro de la propiedad en el deep link.') */
-            }
-          } catch (e) {
-            console.error('Error fetching Branch link data:', e)
-            console.dir(e)
-            /* alert('No se pudo obtener la información del deep link.') */
-          }
         }
       }
     } catch (e) {

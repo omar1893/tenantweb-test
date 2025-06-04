@@ -1,11 +1,24 @@
 <template>
-  <ion-page class="bg-te-black video-intro-page" @ionViewWillLeave="handleIonViewWillLeave">
-    <video ref="videoRef" playsinline preload="auto" class="background-video" @loadedmetadata="handleVideoMetadata">
+  <ion-page class="bg-te-black video-intro-page" @ion-view-will-leave="handleIonViewWillLeave">
+    <!-- Loading State -->
+    <div v-if="assetsLoading" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80">
+      <ion-spinner name="crescent" class="text-white" />
+    </div>
+
+    <video
+      ref="videoRef"
+      playsinline
+      preload="auto"
+      :muted="isVideoMuted"
+      class="background-video"
+      @loadedmetadata="handleVideoMetadata"
+    >
       <source src="../../assets/video-test6.mp4" type="video/mp4">
     </video>
 
     <audio ref="audioRef" preload="auto">
-      <source src="../../assets/test-audio5.mp3" type="audio/mpeg">
+      <source :src="state.audioUrl" type="audio/mpeg">
+      Your browser does not support the audio element.
     </audio>
 
     <div v-if="currentCaption" class="caption-container body-large">
@@ -47,16 +60,16 @@
       :initial-breakpoint="1"
       :breakpoints="[1]"
       class="bottom-modal"
-      :backdrop-dismiss="false"
+      :backdrop-dismiss="!assetsLoading"
       :backdrop-breakpoint="1"
       :swipe-to-close="false"
       :presenting-element="null"
       :handle="false"
-      @did-dismiss="closeInfoModal"
+      @did-dismiss="handleModalDismiss"
     >
-      <div class="p-6">
-        <div class="flex justify-between items-center mb-6">
-          <i class="pi pi-times text-xl cursor-pointer" @click="closeInfoModal" />
+      <div class="p-7">
+        <div class="flex justify-between items-center mb-6 text-2xl">
+          <i class="pi pi-times text-xl cursor-pointer" :class="{ 'opacity-50 cursor-not-allowed': assetsLoading }" @click="handleCloseClick" />
         </div>
 
         <h2 class="mb-1 text-medium">Welcome to La Perla!</h2>
@@ -74,11 +87,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, reactive, onUnmounted } from 'vue'
+import TButton from '@/components/TButton.vue'
+import { propertyAudioService } from '@/services/property.audio.service'
+import { propertyCaptionsService } from '@/services/property.captions.service'
 import { IonPage, IonModal, IonSpinner } from '@ionic/vue'
 import { Capacitor } from '@capacitor/core'
-import TButton from '@/components/TButton.vue'
-/* import LoginInputs from './LoginInputs.vue' */
 
 interface Caption {
   type: string
@@ -87,123 +101,170 @@ interface Caption {
   endTime: number
 }
 
-const showContinueButtons = ref(false)
+interface State {
+  loading: boolean
+  property: any
+  audioUrl: string
+  captionsUrl: string
+}
 
-const captions: Caption[] = [
-  {
-    'type': 'WELCOME',
-    'text': "🌟 Hey there, welcome to Foster's Mill Homeowners Association Incorporated.",
-    'time': 0.0,
-    'endTime': 4.0
-  },
-  {
-    'type': 'CREDIT',
-    'text': "💳 No credit score needed, you're all set.",
-    'time': 4.1,
-    'endTime': 7.0
-  },
-  {
-    'type': 'PETS',
-    'text': '🐾 Bring two pets under 50 pounds, keep them leashed outside and ESAs are always okay.',
-    'time': 7.1,
-    'endTime': 12.0
-  },
-  {
-    'type': 'BREEDS',
-    'text': '🚫 Aggressive breeds must be muzzled or removed.',
-    'time': 12.1,
-    'endTime': 15.0
-  },
-  {
-    'type': 'VEHICLES',
-    'text': '🚗 Park up to two cars in your garage or driveway.',
-    'time': 15.1,
-    'endTime': 18.0
-  },
-  {
-    'type': 'PARKING',
-    'text': '🚫 No street parking overnight or on the grass.',
-    'time': 18.1,
-    'endTime': 20.0
-  },
-  {
-    'type': 'LEASE',
-    'text': '📅 Flexible leases from 6 to 12 months.',
-    'time': 20.1,
-    'endTime': 23.0
-  },
-  {
-    'type': 'RENEW',
-    'text': '🔄 Renew and stay as long as you like.',
-    'time': 23.1,
-    'endTime': 25.0
-  },
-  {
-    'type': 'REVIEW',
-    'text': "📄 Next, you'll review the full property requirements before agreeing and continuing with your application.",
-    'time': 25.1,
-    'endTime': 28.9
-  }
-]
+const DEFAULT_PROPERTY_ID = '14791'
 
 const videoRef = ref()
 const audioRef = ref()
-const isLoading = ref(false)
+const assetsLoading = ref(true)
 const currentCaption = ref<Caption | null>(null)
+const captions = ref<Caption[]>([])
 let timeUpdateInterval: number | null = null
 
 const isPlaying = ref(false)
 const isAudioMuted = ref(false)
+const isVideoMuted = ref(true)
 const infoModalVisible = ref(true)
+const showContinueButtons = ref(false)
 
-const startMedia = async () => {
-  if (videoRef.value && audioRef.value) {
-    try {
-      await videoRef.value.play()
+const state = reactive<State>({
+  loading: true,
+  property: {},
+  audioUrl: '',
+  captionsUrl: ''
+})
 
-      // Luego intentar reproducir el audio
-      await audioRef.value.play()
-      isPlaying.value = true
-      timeUpdateInterval = window.setInterval(updateCaption, 100)
+const loadPropertyAssets = async () => {
+  try {
+    const propertyId = localStorage.getItem('selectedPropertyId') || DEFAULT_PROPERTY_ID
+    console.log('Loading assets for property:', propertyId)
+    const files = await propertyAudioService.getPropertyFiles(propertyId)
 
-      audioRef.value.addEventListener('ended', async () => {
-        if (videoRef.value) {
-          await videoRef.value.pause()
-        }
-        showContinueButtons.value = true
-      })
-    } catch (err) {
-      console.error('Error playing media:', err)
+    if (files) {
+      console.log('Received files:', files)
+      state.audioUrl = files.audio_url
+      state.captionsUrl = files.captions_url
+      console.log('Audio URL set to:', state.audioUrl)
+
+      if (audioRef.value && state.audioUrl) {
+        audioRef.value.src = state.audioUrl
+        await new Promise((resolve) => {
+          audioRef.value.addEventListener('loadeddata', resolve, { once: true })
+          audioRef.value.addEventListener('error', resolve, { once: true })
+        })
+      }
+
+      if (state.captionsUrl) {
+        captions.value = await propertyCaptionsService.getCaptions(state.captionsUrl)
+      }
     }
+  } catch (error) {
+    console.error('Error loading property assets:', error)
+  } finally {
+    assetsLoading.value = false
+  }
+}
+
+const handleVideoMetadata = () => {
+  if (videoRef.value) {
+    videoRef.value.currentTime = 0
+  }
+}
+
+const handleModalDismiss = async () => {
+  console.log('handleModalDismiss')
+  if (!videoRef.value || !audioRef.value) return
+
+  try {
+    videoRef.value.currentTime = 0
+    audioRef.value.currentTime = 0
+
+    if (Capacitor.getPlatform() === 'ios') {
+      // Intentamos reproducir primero el video
+      await videoRef.value.play()
+      await audioRef.value.play()
+      // Una vez que ambos están reproduciendo, intentamos activar el audio del video
+      try {
+        isVideoMuted.value = false
+        audioRef.value.volume = 0 // Bajamos el volumen del audio de respaldo
+      } catch (error) {
+        console.log('Fallback to audio element')
+        isVideoMuted.value = true
+        audioRef.value.volume = 1
+      }
+    } else {
+      await Promise.all([
+        videoRef.value.play(),
+        audioRef.value.play()
+      ])
+    }
+
+    isPlaying.value = true
+    timeUpdateInterval = window.setInterval(updateCaption, 100)
+
+    audioRef.value.addEventListener('ended', async () => {
+      if (videoRef.value) {
+        await videoRef.value.pause()
+      }
+      showContinueButtons.value = true
+    })
+  } catch (error) {
+    console.error('Error starting media:', error)
   }
 }
 
 const showInfoModal = () => {
-  infoModalVisible.value = true
+  if (!assetsLoading.value) {
+    infoModalVisible.value = true
+  }
 }
 
-const closeInfoModal = async () => {
-  infoModalVisible.value = false
-  await startMedia()
+const handleCloseClick = () => {
+  if (!assetsLoading.value) {
+    infoModalVisible.value = false
+  }
 }
 
 const togglePlayback = async () => {
   if (videoRef.value && audioRef.value) {
-    if (isPlaying.value) {
-      await videoRef.value.pause()
-      await audioRef.value.pause()
-    } else {
-      await videoRef.value.play()
-      await audioRef.value.play()
+    try {
+      if (isPlaying.value) {
+        await Promise.all([
+          videoRef.value.pause(),
+          audioRef.value.pause()
+        ])
+      } else {
+        await Promise.all([
+          videoRef.value.play(),
+          audioRef.value.play()
+        ])
+
+        if (Capacitor.getPlatform() === 'ios') {
+          try {
+            isVideoMuted.value = false
+            audioRef.value.volume = 0
+          } catch {
+            isVideoMuted.value = true
+            audioRef.value.volume = 1
+          }
+        }
+      }
+      isPlaying.value = !isPlaying.value
+    } catch (err) {
+      console.error('Error toggling playback:', err)
     }
-    isPlaying.value = !isPlaying.value
   }
 }
 
 const toggleAudioMute = () => {
-  if (audioRef.value) {
+  if (Capacitor.getPlatform() === 'ios') {
+    try {
+      isVideoMuted.value = !isVideoMuted.value
+      audioRef.value.volume = isVideoMuted.value ? 1 : 0
+    } catch {
+      isVideoMuted.value = true
+      audioRef.value.volume = 1
+    }
+    isAudioMuted.value = isVideoMuted.value
+  } else if (audioRef.value) {
     audioRef.value.muted = !audioRef.value.muted
-    isAudioMuted.value = !isAudioMuted.value
+    isAudioMuted.value = audioRef.value.muted
   }
 }
 
@@ -211,7 +272,7 @@ const updateCaption = () => {
   if (!audioRef.value) return
 
   const currentTime = audioRef.value.currentTime
-  const caption = captions.find(c => currentTime >= c.time && currentTime < c.endTime)
+  const caption = captions.value.find(c => currentTime >= c.time && currentTime < c.endTime)
   currentCaption.value = caption || null
 }
 
@@ -219,24 +280,8 @@ const restartMedia = async () => {
   if (videoRef.value && audioRef.value) {
     videoRef.value.currentTime = 0
     audioRef.value.currentTime = 0
-    await startMedia()
+    await handleModalDismiss()
     showContinueButtons.value = false
-  }
-}
-
-const handleVideoError = (e: Event) => {
-  const video = e.target as HTMLVideoElement
-  console.error('Video error:', video.error)
-}
-
-const handleAudioError = (e: Event) => {
-  const audio = e.target as HTMLAudioElement
-  console.error('Audio error:', audio.error)
-}
-
-const handleVideoMetadata = () => {
-  if (videoRef.value) {
-    videoRef.value.currentTime = 0.1
   }
 }
 
@@ -244,25 +289,14 @@ const handleIonViewWillLeave = () => {
   infoModalVisible.value = false
 }
 
-onMounted(() => {
-  // El modal se mostrará automáticamente porque infoModalVisible está inicializado como true
-})
-
 onMounted(async () => {
-  if (Capacitor.getPlatform() === 'android') {
-    console.log('Running on Android')
-    // Dar tiempo al WebView para inicializarse
-    await new Promise(resolve => setTimeout(resolve, 1000))
-  }
+  loadPropertyAssets()
 
-  // Intentar cargar el video
-        if (videoRef.value) {
-    try {
-      await videoRef.value.load()
-      console.log('Video loaded')
-    } catch (err) {
-      console.error('Error loading video:', err)
-    }
+  // Aseguramos que el video empiece muteado para permitir la precarga
+  isVideoMuted.value = true
+
+  if (Capacitor.getPlatform() === 'android') {
+    await new Promise(resolve => setTimeout(resolve, 1000))
   }
 })
 

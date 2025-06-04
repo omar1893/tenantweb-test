@@ -1,7 +1,5 @@
 import { BranchDeepLinks } from 'capacitor-branch-deep-links'
-import { EPropertyRouter } from '@/enums/router'
 import { BRANCH_CONFIG } from '@/config/branch'
-import router from '@/router'
 import { Capacitor } from '@capacitor/core'
 
 interface BranchError extends Error {
@@ -66,14 +64,14 @@ export class DeepLinkService {
       BranchDeepLinks.addListener('init', (event) => {
         console.log('=== Branch Init Event ===')
         console.log('Raw event data:', event)
-        alert(event)
+        alert(JSON.stringify(event))
       })
 
       // Add listener for deep link data
       BranchDeepLinks.addListener('deeplink', (event) => {
         console.log('=== Branch Deeplink Event ===')
         console.log('Raw event data:', event)
-        alert(event)
+        alert(JSON.stringify(event))
       })
 
       // @ts-expect-error: BranchDeepLinks plugin puede emitir 'initError' aunque no esté en los tipos

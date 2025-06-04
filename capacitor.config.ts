@@ -18,8 +18,16 @@ const config: CapacitorConfig = {
       androidDeepLinkDomain: 'd3gs2.test-app.link',
       androidPrefix: '/app',
       androidTestMode: true,
-      androidDebugMode: true
-    }
+      androidDebugMode: true,
+      iosAppScheme: 'tenantev',
+      iosDeepLinkDomain: 'd3gs2.test-app.link',
+      iosPrefix: '/app',
+      iosTestMode: true,
+      iosDebugMode: true
+    },
+    CapacitorCookies: {
+      enabled: true,
+    },
   }
 }
 
