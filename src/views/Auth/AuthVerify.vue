@@ -21,9 +21,6 @@ onMounted(async () => {
     const email = route.query.email as string
     const type = route.query.type as string
     const token = route.query.token as string
-    console.log(type)
-    console.log(token)
-    console.log(email)
 
     if (!email) {
       throw new Error('Missing email')
@@ -32,11 +29,8 @@ onMounted(async () => {
     let success = false
     if (type === 'email' && token) {
       success = await authService.verifyEmailWithToken(token, email)
-    } else if (type === 'google' && token) {
-      await authService.validateGoogleCallback(token, email)
-      success = true
-    } else if (type === 'apple' && token) {
-      await authService.validateAppleCallback(token, email)
+    } else if (type === 'provider' && token) {
+      await authService.validateProviderCallback(token, email)
       success = true
     } else {
       throw new Error('Invalid verification parameters')

@@ -44,6 +44,7 @@
           class="w-full !rounded-[100px] button-large"
           variant="white"
           label="Start Application"
+          @click="handleStartApplication"
         />
         <TButton
           class="w-full !rounded-[100px] button-large"
@@ -88,11 +89,14 @@
 
 <script setup lang="ts">
 import { ref, onMounted, reactive, onUnmounted } from 'vue'
+import { useRouter } from 'vue-router'
 import TButton from '@/components/TButton.vue'
 import { propertyAudioService } from '@/services/property.audio.service'
 import { propertyCaptionsService } from '@/services/property.captions.service'
 import { IonPage, IonModal, IonSpinner } from '@ionic/vue'
 import { Capacitor } from '@capacitor/core'
+import { authService } from '@/services/auth.service'
+import { ERouter } from '@/enums/router'
 
 interface Caption {
   type: string
@@ -129,6 +133,8 @@ const state = reactive<State>({
   audioUrl: '',
   captionsUrl: ''
 })
+
+const router = useRouter()
 
 const loadPropertyAssets = async () => {
   try {
@@ -287,6 +293,17 @@ const restartMedia = async () => {
 
 const handleIonViewWillLeave = () => {
   infoModalVisible.value = false
+}
+
+const handleStartApplication = async () => {
+  if (!authService.isAuthenticated()) {
+    // If not authenticated, redirect to login
+    router.push({ name: ERouter.AuthVerify })
+    return
+  }
+
+  // If authenticated, proceed to chatbot
+  router.push({ name: ERouter.Chatbot })
 }
 
 onMounted(async () => {

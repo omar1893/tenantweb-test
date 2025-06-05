@@ -1,6 +1,7 @@
 import { BranchDeepLinks } from 'capacitor-branch-deep-links'
 import { BRANCH_CONFIG } from '@/config/branch'
 import { Capacitor } from '@capacitor/core'
+import router from '@/router'
 
 interface BranchError extends Error {
   message: string
@@ -12,11 +13,11 @@ interface BranchError extends Error {
 
 export class DeepLinkService {
   private static instance: DeepLinkService
-  private isInitialized = false
+  private isInitialized: boolean = false
 
   private constructor() {}
 
-  static getInstance(): DeepLinkService {
+  public static getInstance(): DeepLinkService {
     if (!DeepLinkService.instance) {
       DeepLinkService.instance = new DeepLinkService()
     }
@@ -30,6 +31,36 @@ export class DeepLinkService {
     console.log('Platform:', Capacitor.getPlatform())
     console.log('Is native:', Capacitor.isNativePlatform())
     console.log('========================')
+  }
+
+  private handleBranchParams(params: any) {
+    console.log('Processing Branch params:', params)
+
+    // Verify if this is a Branch link click
+    if (!params['+clicked_branch_link']) {
+      console.log('Not a Branch link click')
+      return
+    }
+
+    try {
+      // Handle property view deep links
+      if (params['$canonical_url']?.includes('property-view')) {
+        const propertyId = params['propertyId'] || params['id']
+        if (propertyId) {
+          router.push({
+            name: 'PropertyLanding',
+            params: { propertyId }
+          })
+          return
+        }
+      }
+
+      // Handle other deep link types here
+      // ...
+
+    } catch (error) {
+      console.error('Error processing Branch params:', error)
+    }
   }
 
   async initialize(): Promise<void> {
@@ -64,20 +95,16 @@ export class DeepLinkService {
       BranchDeepLinks.addListener('init', (event) => {
         console.log('=== Branch Init Event ===')
         console.log('Raw event data:', event)
-        alert(JSON.stringify(event))
+
+        if (event.referringParams) {
+          this.handleBranchParams(event.referringParams)
+        }
       })
 
-      // Add listener for deep link data
-      BranchDeepLinks.addListener('deeplink', (event) => {
-        console.log('=== Branch Deeplink Event ===')
-        console.log('Raw event data:', event)
-        alert(JSON.stringify(event))
-      })
-
-      // @ts-expect-error: BranchDeepLinks plugin puede emitir 'initError' aunque no esté en los tipos
-      BranchDeepLinks.addListener('initError', (event) => {
+      // Add listener for errors
+      BranchDeepLinks.addListener('initError', (error) => {
         console.error('=== Branch Init Error Event ===')
-        console.error('Raw event data:', event)
+        console.error('Error initializing Branch:', error)
       })
 
       this.isInitialized = true
@@ -104,14 +131,19 @@ export class DeepLinkService {
 
       console.log('Generating Branch link with params:', params)
       const { url } = await BranchDeepLinks.generateShortUrl({
+        analytics: {
+          feature: 'sharing',
+          channel: 'app',
+          campaign: 'property_view'
+        },
         properties: {
           $android_url: BRANCH_CONFIG.ANDROID_URL,
           $desktop_url: BRANCH_CONFIG.DESKTOP_URL,
           $ios_url: BRANCH_CONFIG.IOS_URL,
           $always_deeplink: true,
           $uri_redirect_mode: 2,
-          custom_data: params,
-          propertyId: params.propertyId
+          propertyId: params.propertyId,
+          ...params
         }
       })
       console.log('Generated Branch URL:', url)

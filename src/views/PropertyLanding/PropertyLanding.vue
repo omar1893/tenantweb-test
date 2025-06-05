@@ -47,13 +47,13 @@
         />
       </div>
       <div class="button-bar w-full p-4 z-10">
-        <TButton
-          class="w-full !rounded-[100px] button-large"
-          variant="white"
-          label="Apply Now"
-          icon="pi pi-apple"
-          @click="applyNow"
-        />
+        <a
+          :href="`https://d3gs2.test-app.link/property-view?id=${propertyId}&$fallback_url=https://www.tenantevaluation.ai/&$ios_url=https://apps.apple.com/us/app/tenantev/&$android_url=https://play.google.com/store/apps/details?id=com.tenantev.app`"
+          class="block w-full py-3 px-4 text-center bg-white text-black rounded-[100px] button-large no-underline"
+        >
+          <i class="pi pi-apple mr-2"></i>
+          Apply Now
+        </a>
       </div>
 
       <div v-if="googlePlaceInfo" class="mt-6 p-4 rounded-lg bg-white/10 border border-white/10">
@@ -75,10 +75,9 @@ import { useRoute } from 'vue-router'
 import TAccordion from '@/components/TAccordion.vue'
 import TLabel from '@/components/TLabel.vue'
 import TGoogleMaps from '@/components/TGoogleMaps.vue'
-import TButton from '@/components/TButton.vue'
+import { IonPage } from '@ionic/vue'
 import { propertyService } from '@/services/propertyService'
 import axios from 'axios'
-import { IonPage } from '@ionic/vue'
 
 const propertyImage = 'https://te-ai-pub-docs.s3.us-east-1.amazonaws.com/property/property-image.png'
 
@@ -163,13 +162,6 @@ const fetchPropertyData = async () => {
   } finally {
     state.loading = false
   }
-}
-
-const applyNow = () => {
-  // Using Branch.io link format with property-view path
-  const deepLinkUrl = `https://d3gs2.test-app.link/property-view?id=${propertyId.value}&$fallback_url=https://www.tenantevaluation.ai/&$ios_url=https://apps.apple.com/us/app/tenantev/&$android_url=https://play.google.com/store/apps/details?id=com.tenantev.app`
-  console.log('Opening deep link:', deepLinkUrl)
-  window.location.href = deepLinkUrl
 }
 
 onMounted(() => {

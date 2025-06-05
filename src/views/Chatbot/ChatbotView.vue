@@ -22,11 +22,16 @@
 
 <script setup lang="ts">
 import { onMounted, reactive } from 'vue'
+import { useRouter } from 'vue-router'
 import { useAgentStore } from '@/stores/AgentStore'
+import { authService } from '@/services/auth.service'
+import { ERouter } from '@/enums/router'
 
 import Button from 'primevue/button'
 
 import ChatbotMain from '@/components/chatbot/ChatbotMain.vue'
+
+const router = useRouter()
 const agentStore = useAgentStore()
 
 interface IState {
@@ -43,11 +48,22 @@ const send = (message: string) => {
   agentStore.sendMessage(message)
 }
 
-const connect = () => {
+const connect = async () => {
   try {
+    if (!authService.isAuthenticated()) {
+      router.push({ name: ERouter.AuthVerify })
+      return
+    }
+
+    const token = authService.getAccessToken()
+    if (!token) {
+      router.push({ name: ERouter.AuthVerify })
+      return
+    }
+
     state.loading = true
     state.error = null
-    agentStore.connect()
+    await agentStore.connect(encodeURIComponent(token))
   } catch (error) {
     console.error('Error connecting to agent', error)
     state.error = 'Error connecting to agent'

@@ -11,7 +11,10 @@ export interface IAgentStoreState {
   quickAction: IAgentQuickActionData | null
   connected: boolean
   client: AgentClientService | null
+  lastMessageTimestamp: number
+  currentStreamingId: string | null
 }
+
 export const useAgentStore = defineStore('agent', {
   state: (): IAgentStoreState => ({
     waiting: false,
@@ -19,34 +22,42 @@ export const useAgentStore = defineStore('agent', {
     quickAction: null,
     connected: false,
     client: null,
+    lastMessageTimestamp: 0,
+    currentStreamingId: null
   }),
   getters: {
     isConnected: (state) => state.connected && state.client?.isReady() === true,
   },
   actions: {
-    _addTextMessage (message: IAgentResponse) {
-      if (message.type !== EAgentResponseType.TEXT) {
-        throw new Error('Invalid message type')
+    _addTextMessage(message: IAgentResponse) {
+      if (!('type' in message) || message.type !== EAgentResponseType.TEXT) {
+        return
       }
 
-      const existingMessage = this.messages.find((m) => m.id === message.id)
-      if (existingMessage && existingMessage.type !== EAgentMessageType.TEXT) return
+      const now = Date.now()
+      const timeSinceLastMessage = now - this.lastMessageTimestamp
+      const shouldCreateNewBubble = timeSinceLastMessage > 1000 || this.currentStreamingId !== message.id
 
-      if (existingMessage) {
-        const existingData = existingMessage.data
-        existingData.message += message.data.message
-      } else {
+      if (shouldCreateNewBubble) {
+        this.currentStreamingId = message.id
         this.messages.push({
           id: message.id,
           role: EAgentMessageRole.AGENT,
           type: EAgentMessageType.TEXT,
-          data: message.data,
+          data: { message: message.data.message.trim() }
         })
+      } else {
+        const existingMessage = this.messages[this.messages.length - 1]
+        if (existingMessage && existingMessage.type === EAgentMessageType.TEXT) {
+          existingMessage.data.message += message.data.message
+        }
       }
+
+      this.lastMessageTimestamp = now
     },
-    _addComponentMessage (message: IAgentResponse) {
-      if (message.type !== EAgentResponseType.COMPONENT) {
-        throw new Error('Invalid message type')
+    _addComponentMessage(message: IAgentResponse) {
+      if (!('type' in message) || message.type !== EAgentResponseType.COMPONENT) {
+        return
       }
 
       this.messages.push({
@@ -60,15 +71,26 @@ export const useAgentStore = defineStore('agent', {
       this.connected = false
       this.messages = []
       this.quickAction = null
+      this.lastMessageTimestamp = 0
+      this.currentStreamingId = null
     },
-    connect() {
+    connect(token: string) {
       this._cleanState()
       this.client = new AgentClientService({
-        url: 'ws://localhost:8787/ws',
+        url: 'ws://supervisor.tenantev.dev/ws',
+        token,
         onOpen: () => {
           this.connected = true
         },
         onMessage: (message: IAgentResponse) => {
+          if (!('type' in message)) {
+            if ('status' in message && message.status === 'error') {
+              console.error('Server error:', message.detail)
+              this.connected = false
+            }
+            return
+          }
+
           switch (message.type) {
             case EAgentResponseType.START:
               this.waiting = true
@@ -83,6 +105,8 @@ export const useAgentStore = defineStore('agent', {
               this._addComponentMessage(message)
               break
             case EAgentResponseType.QUICK_ACTION:
+              console.log('QUICK_ACTION', message)
+              console.log('Message', message.data)
               this.quickAction = message.data
               break
             default:
@@ -95,6 +119,7 @@ export const useAgentStore = defineStore('agent', {
         },
         onError: (event: Event) => {
           console.error('Agent client error', event)
+          this.connected = false
         },
       })
       this.client.connect()
@@ -108,6 +133,9 @@ export const useAgentStore = defineStore('agent', {
         this.connected = false
         throw new Error('Agent client is not ready to send messages')
       }
+
+      console.log('Request', request)
+      console.log('Message 2', message)
 
       try {
         this.client.send(request)
@@ -143,11 +171,12 @@ export const useAgentStore = defineStore('agent', {
       }, message)
     },
     sendCommand(command: IAgentQuickActionItem, message?: string) {
+      console.log('Send command', command)
       this.send({
         type: EAgentRequestType.COMMAND,
         data: {
           type: command.type,
-          value: command.value,
+          value: command.label,
         },
       }, message)
     },

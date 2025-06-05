@@ -242,7 +242,7 @@ const handleLoginSuccess = () => {
 const handleAppleLogin = async () => {
   try {
     loading.value = true
-    await authService.initiateAppleLogin()
+    await authService.initiateProviderLogin('apple')
   } catch (error) {
     console.error('Apple login error:', error)
   } finally {
@@ -253,7 +253,7 @@ const handleAppleLogin = async () => {
 const handleGoogleLogin = async () => {
   try {
     loading.value = true
-    await authService.initiateGoogleLogin()
+    await authService.initiateProviderLogin('google')
   } catch (error) {
     console.error('Google login error:', error)
   } finally {
@@ -266,7 +266,7 @@ const handleAuthCallback = async () => {
     const url = window.location.href
     if (url.includes('auth-verify')) {
       loading.value = true
-      await authService.handleGoogleCallback(url)
+      await authService.handleProviderCallback(url)
       handleLoginSuccess()
     }
   } catch (error) {

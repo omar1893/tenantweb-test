@@ -1,7 +1,7 @@
 <template>
   <div class="chatbot-component">
     <div v-if="quickAction.component === EAgentQuickActionComponent.MULTIPLE_CHOICE" class="chatbot-component-multiple-choice">
-      <div v-for="(item, index) in quickAction.items" :key="`multiple-choice-${index}`" class="chatbot-component-multiple-choice-item">
+      <div v-for="(item, index) in quickAction.options" :key="`multiple-choice-${index}`" class="chatbot-component-multiple-choice-item">
         <button
           class="chatbot-component-multiple-choice-item-button"
           @click="onActionClick(item)"
@@ -17,10 +17,11 @@
 import { useAgentStore } from '@/stores/AgentStore'
 import type { IAgentQuickActionData, IAgentQuickActionItem } from '@/types/agent.d'
 import { EAgentQuickActionComponent, EAgentQuickActionAction } from '@/enums/agent'
+import { onMounted } from 'vue'
 
 const agentStore = useAgentStore()
 
-defineProps<{
+const props = defineProps<{
   quickAction: IAgentQuickActionData
 }>()
 
@@ -34,6 +35,10 @@ const onActionClick = (item: IAgentQuickActionItem) => {
       break
   }
 }
+
+onMounted(() => {
+  console.log('Quick action', props.quickAction)
+})
 </script>
 
 <style scoped lang="scss">
