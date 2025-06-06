@@ -1,5 +1,5 @@
 <template>
-  <div class="chatbot-component">
+  <div class="chatbot-component button-small">
     <div v-if="quickAction.component === EAgentQuickActionComponent.MULTIPLE_CHOICE" class="chatbot-component-multiple-choice">
       <div v-for="(item, index) in quickAction.options" :key="`multiple-choice-${index}`" class="chatbot-component-multiple-choice-item">
         <button
@@ -60,11 +60,9 @@ onMounted(() => {
       width: 100%;
       height: 100%;
       border-radius: 50rem;
-      background-color: #c6c6c6;
-      font-size: 1.2rem;
-      font-weight: 600;
-      padding: 1.2rem 1rem;
-      border: none;
+      padding: 1.2rem 1.6rem 1.2rem 1.6rem;
+      border: 1px solid var(--te-light);
+      background-color: #3F39490F;
     }
   }
 }

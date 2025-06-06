@@ -36,6 +36,14 @@ const routes: Array<RouteRecordRaw> = [
     }
   },
   {
+    path: '/redirect-login',
+    name: ERouter.RedirectLogin,
+    component: () => import('../views/RedirectLogin/RedirectLogin.vue'),
+    meta: {
+      isPublic: true
+    }
+  },
+  {
     path: '/property-video',
     name: ERouter.PropertyVideo,
     component: AudioTesting

@@ -53,8 +53,8 @@ export interface IAgentTextData {
 }
 
 export interface IAgentComponentData {
-  component: EAgentComponent
-  properties: any
+  type: EAgentComponent
+  parameters: any
 }
 
 export interface IAgentStartData {}

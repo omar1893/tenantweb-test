@@ -98,6 +98,15 @@
   letter-spacing: 0.1px !important;
 }
 
+.label-subtitle {
+  // Label - Roboto flex 400 12/10 +0.1
+  font-family: 'Roboto Flex', sans-serif !important;
+  font-size: 1.2rem !important; // 12px
+  line-height: 1.8rem !important; // 10px
+  font-weight: 700 !important;
+  letter-spacing: 0.1px !important;
+}
+
 .note {
   // Note - Roboto flex 400 8/13 +0.5
   font-family: 'Roboto Flex', sans-serif !important;
@@ -121,5 +130,12 @@
 
 .te-text-lg {
   font-size: 18px;
+}
+
+.chatbot-input {
+  font-size: 1.5rem;
+  line-height: 2rem;
+  font-weight: 400;
+  letter-spacing: -0.23px;
 }
 

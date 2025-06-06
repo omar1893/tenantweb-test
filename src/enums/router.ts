@@ -7,6 +7,7 @@ export enum ERouter {
   AuthCallback = 'AuthCallback',
   AuthVerify = 'AuthVerify',
   PropertyVideo = 'PropertyVideo',
+  RedirectLogin = 'RedirectLogin',
 }
 
 export const EPropertyRouter = {

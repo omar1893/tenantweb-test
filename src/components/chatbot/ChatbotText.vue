@@ -26,13 +26,13 @@ defineProps<{
   border: none
 }
 
-.chat-text-agent {
+/* .chat-text-agent {
   align-self: flex-start;
   background: #d8c8c8 !important;
   padding: 1.2rem 1.6rem 1.2rem 2rem;
   border: 1px solid #3F39491A;
   border-radius: 4rem 2rem 0.6rem 4rem;
-}
+} */
 
 .chat-text-user {
   align-self: flex-end;
@@ -40,5 +40,6 @@ defineProps<{
   padding: 1.2rem 1.6rem 1.2rem 2rem;
   border: 1px solid #3F39491A;
   border-radius: 4rem 2rem 0.6rem 4rem;
+  backdrop-filter: blur(2.42rem);
 }
 </style>

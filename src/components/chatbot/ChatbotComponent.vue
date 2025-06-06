@@ -19,6 +19,9 @@ const props = defineProps<{
   properties: any
 }>()
 
+console.log('component', props.component)
+console.log('properties', props.properties)
+
 const selectedComponent = computed(() => components[props.component])
 </script>
 
