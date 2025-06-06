@@ -33,7 +33,7 @@ export const authService = {
   },
 
   async initiateProviderLogin(provider: 'google' | 'apple') {
-    window.location.href = `https://auth.tenantev.dev/oauth2/authorization/${provider}`
+    window.location.href = `https://auth-qa.tenantev.dev/oauth2/authorization/${provider}`
   },
 
   async validateProviderCallback(token: string, email: string): Promise<boolean> {

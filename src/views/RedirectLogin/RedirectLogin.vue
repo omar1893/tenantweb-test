@@ -5,7 +5,7 @@
 
     <a
       v-if="!clicked"
-      :href="deepLink"
+      :href="appSchemeLink"
       class="px-6 py-3 bg-white text-black rounded-full text-lg font-semibold"
       @click="handleClick"
     >
@@ -28,7 +28,7 @@ const token = route.query.token as string || ''
 const email = route.query.email as string || ''
 const type = route.query.type as string || ''
 
-const deepLink = `https://d3gs2.test-app.link/auth-verify?token=${token}&email=${email}&type=${type}`
+const appSchemeLink = `tenantev://open?token=${token}&email=${email}&type=${type}`
 
 const clicked = ref(false)
 const isWebView = ref(false)
@@ -40,17 +40,14 @@ const detectWebView = () => {
 
 const handleClick = () => {
   clicked.value = true
-  // el href del <a> ya redirige, pero lo dejamos por claridad
-  window.location.href = deepLink
 }
 
 onMounted(() => {
   isWebView.value = detectWebView()
 
-  // redirección automática si no hay interacción
   setTimeout(() => {
     if (!clicked.value) {
-      window.location.href = deepLink
+      window.location.href = appSchemeLink
     }
   }, 2000)
 })
