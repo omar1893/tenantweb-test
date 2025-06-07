@@ -34,14 +34,7 @@
           <TLabel
             label="Property Code"
             :copy-value="state.property.code"
-          />
-        </div>
-
-        <div class="flex items-center gap-2">
-          <TLabel
-            label="Share Property"
-            :copy-value="shareUrl"
-            @copy-success="showCopyToast"
+            @copy-success="showToast = true"
           />
         </div>
       </div>
@@ -74,8 +67,12 @@
         </div>
       </div>
     </template>
-
-    <Toast position="top-right" />
+    <ion-toast
+      :is-open="showToast"
+      message="Copied!"
+      :duration="5000"
+      @did-dismiss="showToast = false"
+    />
   </ion-page>
 </template>
 
@@ -88,11 +85,8 @@ import TGoogleMaps from '@/components/TGoogleMaps.vue'
 import TButton from '@/components/TButton.vue'
 import { propertyService } from '@/services/propertyService'
 import axios from 'axios'
-import { IonPage } from '@ionic/vue'
-import { useToast } from 'primevue/usetoast'
-import Toast from 'primevue/toast'
+import { IonPage, IonToast } from '@ionic/vue'
 
-const toast = useToast()
 const propertyImage = 'https://te-ai-pub-docs.s3.us-east-1.amazonaws.com/property/property-image.png'
 
 interface Property {
@@ -113,6 +107,7 @@ interface Property {
 
 const route = useRoute()
 const propertyId = computed(() => route.params.propertyId as string)
+const showToast = ref(false)
 const state = reactive({
   loading: true,
   property: {} as Property
@@ -178,30 +173,9 @@ const fetchPropertyData = async () => {
   }
 }
 
-const shareUrl = computed(() => {
-  return `${window.location.origin}/property/${propertyId.value}`
-})
-
-const showCopyToast = () => {
-  toast.add({ severity: 'success', summary: 'Success', detail: 'Copied!', life: 2000 })
-}
-
 const applyNow = () => {
-  const propertyIdValue = propertyId.value
-
-  // Using custom URL scheme for the app
-  const appScheme = 'tenantev://'
-  const webFallback = `${window.location.origin}/property/${propertyIdValue}`
-  const deepLinkUrl = `${appScheme}property?id=${propertyIdValue}`
-
-  // Try to open the app first
+  const deepLinkUrl = `tenantev://property?id=${propertyId.value}`
   window.location.href = deepLinkUrl
-
-  // Fallback after a short delay if app doesn't open
-  setTimeout(() => {
-    if (document.hidden) return // User switched to the app
-    window.location.href = webFallback
-  }, 1000)
 }
 
 onMounted(() => {

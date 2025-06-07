@@ -8,6 +8,8 @@ import App from './App.vue'
 import router from './router'
 import { IonicVue } from '@ionic/vue'
 import PrimeVue from 'primevue/config'
+import ToastService from 'primevue/toastservice'
+import Toast from 'primevue/toast'
 import { DeepLinkService } from './services/deepLink.service'
 import { createPinia } from 'pinia'
 import primeVueTheme from './prime-vue-theme'
@@ -16,7 +18,6 @@ import { useUIStore } from './stores/UIStore'
 
 /* Theme variables */
 import './theme/variables.css'
-
 
 console.log('Initializing app with deep link service')
 DeepLinkService.getInstance().initialize()
@@ -28,13 +29,14 @@ app.use(IonicVue)
 app.use(PrimeVue, {
   theme: primeVueTheme,
 })
+app.use(ToastService)
+app.component('PrimeToast', Toast)
 app.use(pinia)
 app.use(router)
 
 router.isReady().then(() => {
   app.mount('#app')
 })
-
 
 CapacitorApp.addListener('appUrlOpen', async (data: any) => {
   console.log('AppUrlOpen event received:', data)

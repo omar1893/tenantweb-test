@@ -51,8 +51,12 @@ class AgentClientService {
 
     this.client.onopen = async (event) => {
       try {
-        // Send authentication token as first message
-        this.getClient.send(this.token)
+        // Send authentication token and property code as first message
+        const authData = {
+          token: this.token,
+          property_code: localStorage.getItem('current_property_id') || null
+        }
+        this.getClient.send(JSON.stringify(authData))
 
         // Wait for auth response
         const authResponse = await new Promise<any>((resolve) => {

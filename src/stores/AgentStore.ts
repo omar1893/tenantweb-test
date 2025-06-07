@@ -84,8 +84,8 @@ export const useAgentStore = defineStore('agent', {
         },
         onMessage: (message: IAgentResponse) => {
           if (!('type' in message)) {
-            if ('status' in message && message.status === 'error') {
-              console.error('Server error:', message.detail)
+            if ('status' in message && message.status === 'error' && 'message' in message) {
+              console.error('Server error:', message.message)
               this.connected = false
             }
             return

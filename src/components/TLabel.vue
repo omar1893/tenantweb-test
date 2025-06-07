@@ -24,25 +24,34 @@ const props = defineProps<{
     copyValue?: string
 }>()
 
+const emit = defineEmits<{
+  'copy-success': []
+}>()
+
 const copyToClipboard = async () => {
   if (props.copyValue) {
     await navigator.clipboard.writeText(props.copyValue)
-    // Optionally, show a toast or feedback
+    emit('copy-success')
   }
 }
 
 const shareValue = async () => {
-  if (navigator.share && props.copyValue) {
+  const shareUrl = window.location.href
+
+  if (navigator.share) {
     try {
       await navigator.share({
-        title: props.label,
-        text: `${props.label}: ${props.copyValue}`
+        title:'Property Details',
+        text: 'Check out this property',
+        url: shareUrl
       })
     } catch (e) {
-      // Optionally, handle error or cancellation
+      console.log('Share failed:', e)
     }
   } else {
-    // Optionally, fallback or show message
+    // Fallback to copy if share is not available
+    await navigator.clipboard.writeText(shareUrl)
+    emit('copy-success')
   }
 }
 </script>
