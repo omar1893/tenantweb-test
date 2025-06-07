@@ -13,6 +13,7 @@ export enum EAgentResponseType {
 
 export enum EAgentQuickActionComponent {
   MULTIPLE_CHOICE = 'MULTIPLE_CHOICE',
+  MULTIPLE_CHOICE_PLATINUM = 'MULTIPLE_CHOICE_PLATINUM',
 }
 
 export enum EAgentQuickActionItemComponent {
@@ -37,4 +38,5 @@ export enum EAgentMessageRole {
 export enum EAgentComponent {
   TEST_COMPONENT = 'TEST_COMPONENT',
   APPLICATION_FEE_COMPONENT = 'FEE_REPORT',
+  PLATINUM_SERVICE = 'PLATINUM_SERVICE'
 }

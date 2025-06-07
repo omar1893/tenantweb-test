@@ -42,31 +42,61 @@ CapacitorApp.addListener('appUrlOpen', async (data: any) => {
     try {
       const url = new URL(data.url)
       const uiStore = useUIStore()
-      uiStore.hideLoginModal() // Close modal when receiving any deeplink
+      uiStore.hideLoginModal()
+      console.log('url', url)
+      console.log('protocol', url.protocol)
+      console.log('pathname', url.pathname)
 
-      if (url.pathname === '/auth-callback' || url.searchParams.get('auth_callback') === '1') {
-        router.push({ name: 'AuthCallback', query: Object.fromEntries(url.searchParams.entries()) })
-        return
+      if (url.protocol === 'tenantev:') {
+        if (url.pathname === '//open' || url.pathname === '') {
+          console.log('Processing tenantev:// deeplink')
+
+          const searchParams = new URLSearchParams(url.search)
+          console.log('Auth params received:', Object.fromEntries(searchParams.entries()))
+          router.push({
+            name: 'AuthVerify',
+            query: Object.fromEntries(searchParams.entries())
+          })
+          return
+        }
+
+        // Handle property deep link
+        if (url.pathname === '//property') {
+          const searchParams = new URLSearchParams(url.search)
+          const propertyId = searchParams.get('id')
+          if (propertyId) {
+            localStorage.setItem('current_property_id', propertyId)
+          }
+          return
+        }
       }
 
-      if (url.pathname === '/auth-verify') {
-        console.log(url)
-        // Decode and split the search params correctly
-        const searchString = url.search.substring(1) // Remove the leading '?'
-        const decodedSearch = decodeURIComponent(searchString)
-        const searchParams = new URLSearchParams(decodedSearch)
-
-        console.log('AuthVerify event received:', Object.fromEntries(searchParams.entries()))
-        router.push({
-          name: 'AuthVerify',
-          query: Object.fromEntries(searchParams.entries())
-        })
-        return
-      }
-
+      // Mantener el soporte para URLs http/https
       if (url.protocol.startsWith('http')) {
+        // Manejar auth-callback
+        if (url.pathname === '/auth-callback' || url.searchParams.get('auth_callback') === '1') {
+          router.push({ name: 'AuthCallback', query: Object.fromEntries(url.searchParams.entries()) })
+          return
+        }
+
+        // Manejar auth-verify
+        if (url.pathname === '/auth-verify') {
+          const searchString = url.search.substring(1)
+          const decodedSearch = decodeURIComponent(searchString)
+          const searchParams = new URLSearchParams(decodedSearch)
+
+          console.log('AuthVerify event received:', Object.fromEntries(searchParams.entries()))
+          router.push({
+            name: 'AuthVerify',
+            query: Object.fromEntries(searchParams.entries())
+          })
+          return
+        }
+
+        // Manejar property landing
         const propertyId = url.searchParams.get('id')
         if (propertyId) {
+          localStorage.setItem('current_property_id', propertyId)
           router.push({
             name: 'PropertyLanding',
             params: { propertyId }

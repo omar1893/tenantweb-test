@@ -8,10 +8,12 @@ import { EAgentComponent } from '@/enums/agent'
 
 import TestComponent from '@/components/chatbot/custom-components/TestComponent.vue'
 import ApplicationFeeComponent from '@/components/chatbot/custom-components/ApplicationFeeComponent.vue'
+import PlatinumFeeComponent from '@/components/chatbot/custom-components/PlatinumFeeComponent.vue'
 
 const components = {
   [EAgentComponent.TEST_COMPONENT]: TestComponent,
   [EAgentComponent.APPLICATION_FEE_COMPONENT]: ApplicationFeeComponent,
+  [EAgentComponent.PLATINUM_SERVICE]: PlatinumFeeComponent,
 }
 
 const props = defineProps<{

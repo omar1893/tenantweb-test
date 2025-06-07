@@ -1,12 +1,17 @@
 <template>
   <div class="chatbot-component button-small">
-    <div v-if="quickAction.component === EAgentQuickActionComponent.MULTIPLE_CHOICE" class="chatbot-component-multiple-choice">
+    <div
+      v-if="quickAction.component === EAgentQuickActionComponent.MULTIPLE_CHOICE || quickAction.component === EAgentQuickActionComponent.MULTIPLE_CHOICE_PLATINUM"
+      class="chatbot-component-multiple-choice"
+      :class="{ 'platinum': quickAction.component === EAgentQuickActionComponent.MULTIPLE_CHOICE_PLATINUM }"
+    >
       <div v-for="(item, index) in quickAction.options" :key="`multiple-choice-${index}`" class="chatbot-component-multiple-choice-item">
         <button
           class="chatbot-component-multiple-choice-item-button"
+          :class="{ 'orange button-large': item.style === 'Orange', 'empty': item.style === 'Empty' }"
           @click="onActionClick(item)"
         >
-          {{ item.label }}
+          {{ item.value }}
         </button>
       </div>
     </div>
@@ -28,7 +33,7 @@ const props = defineProps<{
 const onActionClick = (item: IAgentQuickActionItem) => {
   switch (item.action) {
     case EAgentQuickActionAction.COMMAND:
-      agentStore.sendCommand(item, item.showMessage ? item.label : undefined)
+      agentStore.sendCommand(item, item.showMessage ? item.value : undefined)
       break
     default:
       console.error('Unknown action type', item.action)
@@ -53,6 +58,11 @@ onMounted(() => {
   flex-direction: row;
   gap: 1rem;
 
+  &.platinum {
+    flex-direction: column;
+    width: 100%;
+  }
+
   &-item {
     flex: 1;
 
@@ -63,6 +73,19 @@ onMounted(() => {
       padding: 1.2rem 1.6rem 1.2rem 1.6rem;
       border: 1px solid var(--te-light);
       background-color: #3F39490F;
+
+      &.orange {
+        background: linear-gradient(to right, #FF5148, #FF7E6A);
+        padding: 1.6rem;
+        color: white;
+        border: none;
+      }
+
+      &.empty {
+        background-color: transparent;
+        border: none;
+        color: var(--te-dark);
+      }
     }
   }
 }

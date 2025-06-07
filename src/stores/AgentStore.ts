@@ -176,7 +176,7 @@ export const useAgentStore = defineStore('agent', {
         type: EAgentRequestType.COMMAND,
         data: {
           type: command.type,
-          value: command.label,
+          value: command.value,
         },
       }, message)
     },

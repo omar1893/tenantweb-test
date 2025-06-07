@@ -126,6 +126,7 @@ const isAudioMuted = ref(false)
 const isVideoMuted = ref(true)
 const infoModalVisible = ref(true)
 const showContinueButtons = ref(false)
+const isFirstInteraction = ref(true)
 
 const state = reactive<State>({
   loading: true,
@@ -135,6 +136,8 @@ const state = reactive<State>({
 })
 
 const router = useRouter()
+
+const propertyId = ref('')
 
 const loadPropertyAssets = async () => {
   try {
@@ -176,6 +179,10 @@ const handleVideoMetadata = () => {
 const handleModalDismiss = async () => {
   console.log('handleModalDismiss')
   if (!videoRef.value || !audioRef.value) return
+
+  // Only start video on first interaction
+  if (!isFirstInteraction.value) return
+  isFirstInteraction.value = false
 
   try {
     videoRef.value.currentTime = 0
@@ -315,6 +322,9 @@ onMounted(async () => {
   if (Capacitor.getPlatform() === 'android') {
     await new Promise(resolve => setTimeout(resolve, 1000))
   }
+
+  propertyId.value = localStorage.getItem('current_property_id') || ''
+  // You can use propertyId.value here to fetch property-specific data
 })
 
 onUnmounted(() => {

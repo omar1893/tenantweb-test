@@ -36,6 +36,14 @@
             :copy-value="state.property.code"
           />
         </div>
+
+        <div class="flex items-center gap-2">
+          <TLabel
+            label="Share Property"
+            :copy-value="shareUrl"
+            @copy-success="showCopyToast"
+          />
+        </div>
       </div>
 
       <!-- Property Requirements Section -->
@@ -66,6 +74,8 @@
         </div>
       </div>
     </template>
+
+    <Toast position="top-right" />
   </ion-page>
 </template>
 
@@ -79,7 +89,10 @@ import TButton from '@/components/TButton.vue'
 import { propertyService } from '@/services/propertyService'
 import axios from 'axios'
 import { IonPage } from '@ionic/vue'
+import { useToast } from 'primevue/usetoast'
+import Toast from 'primevue/toast'
 
+const toast = useToast()
 const propertyImage = 'https://te-ai-pub-docs.s3.us-east-1.amazonaws.com/property/property-image.png'
 
 interface Property {
@@ -165,11 +178,30 @@ const fetchPropertyData = async () => {
   }
 }
 
+const shareUrl = computed(() => {
+  return `${window.location.origin}/property/${propertyId.value}`
+})
+
+const showCopyToast = () => {
+  toast.add({ severity: 'success', summary: 'Success', detail: 'Copied!', life: 2000 })
+}
+
 const applyNow = () => {
-  // Using Branch.io link format with property-view path
-  const deepLinkUrl = `https://d3gs2.test-app.link/property-view?id=${propertyId.value}&$fallback_url=https://www.tenantevaluation.ai/&$ios_url=https://apps.apple.com/us/app/tenantev/&$android_url=https://play.google.com/store/apps/details?id=com.tenantev.app`
-  console.log('Opening deep link:', deepLinkUrl)
+  const propertyIdValue = propertyId.value
+
+  // Using custom URL scheme for the app
+  const appScheme = 'tenantev://'
+  const webFallback = `${window.location.origin}/property/${propertyIdValue}`
+  const deepLinkUrl = `${appScheme}property?id=${propertyIdValue}`
+
+  // Try to open the app first
   window.location.href = deepLinkUrl
+
+  // Fallback after a short delay if app doesn't open
+  setTimeout(() => {
+    if (document.hidden) return // User switched to the app
+    window.location.href = webFallback
+  }, 1000)
 }
 
 onMounted(() => {

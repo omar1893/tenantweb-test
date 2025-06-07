@@ -12,6 +12,7 @@
     "test:coverage": "vitest run --coverage",
     "lint": "eslint .",
     "ios:build": "ionic capacitor build ios",
+    "ios:dev": "ionic capacitor run ios -l --external",
     "android:build": "ionic capacitor build android",
     "android:dev": "ionic capacitor run android -l --external --consolelogs --serverlogs"
   },
@@ -36,6 +37,7 @@
     "express": "^5.1.0",
     "ionicons": "^7.0.0",
     "jwt-decode": "^4.0.0",
+    "marked": "^15.0.12",
     "pinia": "^3.0.2",
     "primeicons": "^7.0.0",
     "primevue": "^4.3.3",

@@ -4,17 +4,24 @@
     class="chat-message"
     :class="message.role === EAgentMessageRole.AGENT ? 'chat-text-agent body-large' : 'chat-text-user body-medium'"
   >
-    <span>{{ message.data.message }}</span>
+    <span v-html="formattedMessage"></span>
   </div>
 </template>
 
 <script setup lang="ts">
 import { EAgentMessageRole, EAgentMessageType } from '@/enums/agent'
 import type { IAgentMessage } from '@/types/agent.d'
+import { marked } from 'marked'
+import { computed } from 'vue'
 
-defineProps<{
+const props = defineProps<{
   message: IAgentMessage
 }>()
+
+const formattedMessage = computed(() => {
+  if (!props.message.data.message) return ''
+  return marked.parse(props.message.data.message, { breaks: true })
+})
 </script>
 
 <style scoped lang="scss">
@@ -23,7 +30,20 @@ defineProps<{
   padding: 0.75rem 1rem;
   font-size: 1rem;
   margin-bottom: 0.25rem;
-  border: none
+  border: none;
+
+  :deep(p) {
+    margin: 0;
+  }
+
+  :deep(ul) {
+    margin: 0.5rem 0;
+    padding-left: 1.5rem;
+  }
+
+  :deep(strong) {
+    font-weight: 600;
+  }
 }
 
 /* .chat-text-agent {

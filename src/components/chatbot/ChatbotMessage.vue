@@ -9,7 +9,7 @@
     :component="message.data.type"
     :properties="message.data.parameters"
   />
-  <PlatinumFeeComponent />
+  <!-- <PlatinumFeeComponent /> -->
 </template>
 
 <script setup lang="ts">
@@ -18,7 +18,7 @@ import type { IAgentMessage } from '@/types/agent.d'
 
 import ChatbotText from '@/components/chatbot/ChatbotText.vue'
 import ChatbotComponent from '@/components/chatbot/ChatbotComponent.vue'
-import PlatinumFeeComponent from '@/components/chatbot/custom-components/PlatinumFeeComponent.vue'
+// import PlatinumFeeComponent from '@/components/chatbot/custom-components/PlatinumFeeComponent.vue'
 
 
 const props = defineProps<{

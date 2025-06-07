@@ -38,7 +38,7 @@ onMounted(async () => {
 
     if (success) {
       router.push({ name: ERouter.PropertyVideo })
-    } else {
+      } else {
       throw new Error('Verification failed')
     }
   } catch (error) {
