@@ -50,7 +50,7 @@ CapacitorApp.addListener('appUrlOpen', async (data: any) => {
       console.log('pathname', url.pathname)
 
       if (url.protocol === 'tenantev:') {
-        if (url.pathname === '//open' || url.pathname === '') {
+        if (url.host === 'open' || url.host === '') {
           console.log('Processing tenantev:// deeplink')
 
           const searchParams = new URLSearchParams(url.search)
@@ -63,9 +63,13 @@ CapacitorApp.addListener('appUrlOpen', async (data: any) => {
         }
 
         // Handle property deep link
-        if (url.pathname === '//property') {
+        console.log(url)
+
+        if (url.host === 'property') {
           const searchParams = new URLSearchParams(url.search)
           const propertyId = searchParams.get('id')
+          console.log('propertyId', propertyId)
+
           if (propertyId) {
             localStorage.setItem('current_property_id', propertyId)
           }

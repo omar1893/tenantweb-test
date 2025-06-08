@@ -49,7 +49,7 @@
       </div>
       <div class="button-bar w-full p-4 z-10">
         <a
-          :href="`tenantev://property?id=${propertyId}`"
+          :href="`tenantev://property?id=${state.property.code}`"
           class="block w-full text-center !rounded-[100px] button-large bg-white text-black py-4 no-underline"
         >
           Apply Now
