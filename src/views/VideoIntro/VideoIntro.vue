@@ -1,8 +1,19 @@
 <template>
   <ion-page class="video-intro-page">
-    <video autoplay muted loop playsinline class="background-video">
+    <video
+      ref="videoRef"
+      playsinline
+      preload="auto"
+      :muted="isVideoMuted"
+      loop
+      class="background-video"
+    >
       <source src="../../assets/application-intro.mp4" type="video/mp4">
     </video>
+
+    <audio ref="audioRef" loop preload="auto">
+      <source src="../../assets/application-intro.mp4" type="video/mp4">
+    </audio>
 
     <div class="absolute bottom-[1rem] w-full p-4 z-10">
       <TButton
@@ -18,18 +29,112 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted, onUnmounted, watch } from 'vue'
 import { IonPage } from '@ionic/vue'
 import TButton from '@/components/TButton.vue'
 import LoginInputs from '../Login/LoginInputs.vue'
 import { useUIStore } from '@/stores/UIStore'
+import { Capacitor } from '@capacitor/core'
+import { App } from '@capacitor/app'
 
+const videoRef = ref()
+const audioRef = ref()
+const isVideoMuted = ref(true)
 const loginModal = ref()
 const uiStore = useUIStore()
 
 const showLoginModal = () => {
   uiStore.showLoginModal()
 }
+
+const startMedia = async () => {
+  if (!videoRef.value || !audioRef.value) return
+
+  try {
+    if (Capacitor.getPlatform() === 'ios') {
+      // En iOS intentamos primero reproducir el video con audio
+      videoRef.value.muted = false
+      try {
+        await videoRef.value.play()
+        // Si el video se reproduce con audio, mantenemos el audio muted
+        audioRef.value.muted = true
+      } catch (error) {
+        // Si falla reproducir el video con audio, usamos el elemento de audio
+        console.log('Fallback to audio element')
+        videoRef.value.muted = true
+        audioRef.value.muted = false
+        await Promise.all([
+          videoRef.value.play(),
+          audioRef.value.play()
+        ])
+      }
+    } else {
+      // En Android intentamos directamente con el video
+      videoRef.value.muted = false
+      audioRef.value.muted = true
+      try {
+        await videoRef.value.play()
+      } catch (error) {
+        // Si falla, intentamos con el audio
+        console.log('Fallback to audio element')
+        videoRef.value.muted = true
+        audioRef.value.muted = false
+        await Promise.all([
+          videoRef.value.play(),
+          audioRef.value.play()
+        ])
+      }
+    }
+  } catch (error) {
+    console.error('Error starting media:', error)
+    // Si todo falla, al menos reproducimos el video sin sonido
+    videoRef.value.muted = true
+    audioRef.value.muted = true
+    videoRef.value.play()
+  }
+}
+
+const pauseAllMedia = async () => {
+  if (videoRef.value && audioRef.value) {
+    try {
+      await Promise.all([
+        videoRef.value.pause(),
+        audioRef.value.pause()
+      ])
+    } catch (err) {
+      console.error('Error pausing media:', err)
+    }
+  }
+}
+
+// Watch for login modal visibility changes
+watch(() => uiStore.loginModalVisible, (isVisible) => {
+  if (isVisible) {
+    pauseAllMedia()
+  } else {
+    startMedia()
+  }
+})
+
+onMounted(async () => {
+  // Esperamos un momento para asegurar que todo esté cargado
+  await new Promise(resolve => setTimeout(resolve, 500))
+  await startMedia()
+
+  // Add app state change listeners
+  App.addListener('appStateChange', ({ isActive }: { isActive: boolean }) => {
+    if (!isActive) {
+      pauseAllMedia()
+    } else {
+      startMedia()
+    }
+  })
+})
+
+onUnmounted(() => {
+  // Remove app state change listeners
+  App.removeAllListeners()
+})
 </script>
 
 <style scoped lang="scss">

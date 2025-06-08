@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { v4 as uuidv4 } from 'uuid'
+import { Capacitor } from '@capacitor/core'
 
 import type { IAgentMessage, IAgentResponse, IAgentRequest, IAgentQuickActionData, IAgentQuickActionItem } from '@/types/agent.d'
 import AgentClientService from '@/services/agentClientService'
@@ -13,6 +14,16 @@ export interface IAgentStoreState {
   client: AgentClientService | null
   lastMessageTimestamp: number
   currentStreamingId: string | null
+}
+
+const getWebSocketUrl = () => {
+  const isNative = Capacitor.isNativePlatform()
+  const isAndroid = Capacitor.getPlatform() === 'android'
+
+  if (isNative && isAndroid) {
+    return 'ws://supervisor.tenantev.dev/ws'
+  }
+  return 'wss://supervisor.tenantev.dev/ws'
 }
 
 export const useAgentStore = defineStore('agent', {
@@ -77,7 +88,7 @@ export const useAgentStore = defineStore('agent', {
     connect(token: string) {
       this._cleanState()
       this.client = new AgentClientService({
-        url: 'ws://supervisor.tenantev.dev/ws',
+        url: getWebSocketUrl(),
         token,
         onOpen: () => {
           this.connected = true

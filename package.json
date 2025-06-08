@@ -25,7 +25,7 @@
     "@capacitor/haptics": "6.0.0",
     "@capacitor/ios": "6.0.0",
     "@capacitor/keyboard": "6.0.0",
-    "@capacitor/status-bar": "6.0.0",
+    "@capacitor/status-bar": "^6.0.0",
     "@ionic/vue": "^8.0.0",
     "@primeuix/themes": "^1.0.3",
     "@tailwindcss/vite": "^4.1.7",

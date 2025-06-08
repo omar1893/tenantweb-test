@@ -95,6 +95,7 @@ import { propertyAudioService } from '@/services/property.audio.service'
 import { propertyCaptionsService } from '@/services/property.captions.service'
 import { IonPage, IonModal, IonSpinner } from '@ionic/vue'
 import { Capacitor } from '@capacitor/core'
+import { App } from '@capacitor/app'
 import { authService } from '@/services/auth.service'
 import { ERouter } from '@/enums/router'
 
@@ -313,6 +314,20 @@ const handleStartApplication = async () => {
   router.push({ name: ERouter.Chatbot })
 }
 
+const pauseAllMedia = async () => {
+  if (videoRef.value && audioRef.value) {
+    try {
+      await Promise.all([
+        videoRef.value.pause(),
+        audioRef.value.pause()
+      ])
+      isPlaying.value = false
+    } catch (err) {
+      console.error('Error pausing media:', err)
+    }
+  }
+}
+
 onMounted(async () => {
   loadPropertyAssets()
 
@@ -324,13 +339,21 @@ onMounted(async () => {
   }
 
   propertyId.value = localStorage.getItem('current_property_id') || ''
-  // You can use propertyId.value here to fetch property-specific data
+
+  // Add app state change listeners
+  App.addListener('appStateChange', ({ isActive }: { isActive: boolean }) => {
+    if (!isActive) {
+      pauseAllMedia()
+    }
+  })
 })
 
 onUnmounted(() => {
   if (timeUpdateInterval) {
     clearInterval(timeUpdateInterval)
   }
+  // Remove app state change listeners
+  App.removeAllListeners()
 })
 </script>
 

@@ -37,8 +37,13 @@ onMounted(async () => {
     }
 
     if (success) {
+      const storedPropertyId = localStorage.getItem('current_property_id')
+      if (!storedPropertyId) {
+        router.push({ name: ERouter.Chatbot })
+        return
+      }
       router.push({ name: ERouter.PropertyVideo })
-      } else {
+    } else {
       throw new Error('Verification failed')
     }
   } catch (error) {

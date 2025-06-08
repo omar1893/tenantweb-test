@@ -2,7 +2,7 @@ import { CapacitorConfig } from '@capacitor/cli'
 
 const config: CapacitorConfig = {
   appId: 'com.tenantev.app',
-  appName: 'TenantEv',
+  appName: 'TenantEV',
   webDir: 'dist',
   ios: {
     scheme: 'TenantEv'
@@ -10,7 +10,7 @@ const config: CapacitorConfig = {
   plugins: {
     SplashScreen: {
       launchShowDuration: 0,
-      backgroundColor: "#FFFFFF"
+      backgroundColor: '#FFFFFF'
     },
     BranchDeepLinks: {
       enableTestMode: true,
@@ -28,6 +28,10 @@ const config: CapacitorConfig = {
     CapacitorCookies: {
       enabled: true,
     },
+  },
+  android: {
+    appendUserAgent: 'TenantEV Android App',
+    allowMixedContent: true
   }
 }
 

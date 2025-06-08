@@ -48,13 +48,12 @@
         />
       </div>
       <div class="button-bar w-full p-4 z-10">
-        <TButton
-          class="w-full !rounded-[100px] button-large"
-          variant="white"
-          label="Apply Now"
-          icon="pi pi-apple"
-          @click="applyNow"
-        />
+        <a
+          :href="`tenantev://property?id=${propertyId}`"
+          class="block w-full text-center !rounded-[100px] button-large bg-white text-black py-4 no-underline"
+        >
+          Apply Now
+        </a>
       </div>
 
       <div v-if="googlePlaceInfo" class="mt-6 p-4 rounded-lg bg-white/10 border border-white/10">
@@ -82,7 +81,6 @@ import { useRoute } from 'vue-router'
 import TAccordion from '@/components/TAccordion.vue'
 import TLabel from '@/components/TLabel.vue'
 import TGoogleMaps from '@/components/TGoogleMaps.vue'
-import TButton from '@/components/TButton.vue'
 import { propertyService } from '@/services/propertyService'
 import axios from 'axios'
 import { IonPage, IonToast } from '@ionic/vue'
@@ -171,11 +169,6 @@ const fetchPropertyData = async () => {
   } finally {
     state.loading = false
   }
-}
-
-const applyNow = () => {
-  const deepLinkUrl = `tenantev://property?id=${propertyId.value}`
-  window.location.href = deepLinkUrl
 }
 
 onMounted(() => {

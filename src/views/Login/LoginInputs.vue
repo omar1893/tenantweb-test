@@ -9,7 +9,6 @@
     <div class="flex flex-col gap-6 p-6">
       <div class="flex justify-between items-center">
         <i class="pi pi-times text-xl cursor-pointer" @click="closeModal" />
-        <i class="pi pi-list text-xl cursor-pointer" @click="showPropertySelector = true" />
       </div>
 
       <div v-if="!emailSent" class="text-center text-slate-900">
