@@ -73,9 +73,18 @@
           <i class="pi pi-times text-xl cursor-pointer" :class="{ 'opacity-50 cursor-not-allowed': assetsLoading }" @click="handleCloseClick" />
         </div>
 
-        <h2 class="mb-1 text-medium">Welcome to La Perla!</h2>
+        <h2 class="mb-1 text-medium">{{ state.propertyData?.name || 'Welcome!' }}</h2>
         <h3 class="mb-4 text-medium">Here's the quick rundown <span>👇</span></h3>
-        <ul class="body-large text-gray-800 mb-2 list-disc pl-4">
+        <ul v-if="state.propertyData?.configuration?.[0]" class="body-large text-gray-800 mb-2 list-disc pl-4">
+          <li
+            v-for="(requirement, index) in state.propertyData.configuration[0].requirements"
+            :key="index"
+            class="mb-4"
+          >
+            {{ requirement }}
+          </li>
+        </ul>
+        <ul v-else class="body-large text-gray-800 mb-2 list-disc pl-4">
           <li class="mb-4">Processing Time: up to 5 business days</li>
           <li class="mb-4">No Pets only ESA / SA</li>
           <li class="mb-4">Short-Term Lease applications only</li>
@@ -93,6 +102,7 @@ import { useRouter } from 'vue-router'
 import TButton from '@/components/TButton.vue'
 import { propertyAudioService } from '@/services/property.audio.service'
 import { propertyCaptionsService } from '@/services/property.captions.service'
+import { propertyService } from '@/services/propertyService'
 import { IonPage, IonModal, IonSpinner } from '@ionic/vue'
 import { Capacitor } from '@capacitor/core'
 import { App } from '@capacitor/app'
@@ -111,6 +121,7 @@ interface State {
   property: any
   audioUrl: string
   captionsUrl: string
+  propertyData: any
 }
 
 const DEFAULT_PROPERTY_ID = '14791'
@@ -133,7 +144,8 @@ const state = reactive<State>({
   loading: true,
   property: {},
   audioUrl: '',
-  captionsUrl: ''
+  captionsUrl: '',
+  propertyData: null
 })
 
 const router = useRouter()
@@ -142,8 +154,20 @@ const propertyId = ref('')
 
 const loadPropertyAssets = async () => {
   try {
-    const propertyId = localStorage.getItem('selectedPropertyId') || DEFAULT_PROPERTY_ID
+    const propertyId = localStorage.getItem('current_property_id') || DEFAULT_PROPERTY_ID
+    const propertyUid = localStorage.getItem('current_property_uid')
     console.log('Loading assets for property:', propertyId)
+
+    // Fetch property data if we have the uid
+    if (propertyUid) {
+      try {
+        state.propertyData = await propertyService.getPropertyLandingPage(propertyUid)
+        console.log('Property data loaded:', state.propertyData)
+      } catch (error) {
+        console.error('Error loading property data:', error)
+      }
+    }
+
     const files = await propertyAudioService.getPropertyFiles(propertyId)
 
     if (files) {

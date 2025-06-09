@@ -50,6 +50,23 @@ CapacitorApp.addListener('appUrlOpen', async (data: any) => {
       console.log('pathname', url.pathname)
 
       if (url.protocol === 'tenantev:') {
+        if (url.host === 'property') {
+          const searchParams = new URLSearchParams(url.search)
+          const propertyId = searchParams.get('id')
+          const propertyUid = searchParams.get('property_uid')
+          console.log('propertyId', propertyId)
+          console.log('propertyUid', propertyUid)
+
+          if (propertyId && propertyUid) {
+            await new Promise(resolve => {
+              localStorage.setItem('current_property_id', propertyId)
+              localStorage.setItem('current_property_uid', propertyUid)
+              resolve(true)
+            })
+          }
+          return
+        }
+
         if (url.host === 'open' || url.host === '') {
           console.log('Processing tenantev:// deeplink')
 
@@ -59,20 +76,6 @@ CapacitorApp.addListener('appUrlOpen', async (data: any) => {
             name: 'AuthVerify',
             query: Object.fromEntries(searchParams.entries())
           })
-          return
-        }
-
-        // Handle property deep link
-        console.log(url)
-
-        if (url.host === 'property') {
-          const searchParams = new URLSearchParams(url.search)
-          const propertyId = searchParams.get('id')
-          console.log('propertyId', propertyId)
-
-          if (propertyId) {
-            localStorage.setItem('current_property_id', propertyId)
-          }
           return
         }
       }

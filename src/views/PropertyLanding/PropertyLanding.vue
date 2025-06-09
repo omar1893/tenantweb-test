@@ -49,7 +49,7 @@
       </div>
       <div class="button-bar w-full p-4 z-10">
         <a
-          :href="`tenantev://property?id=${state.property.code}`"
+          @click.prevent="handleDeepLink"
           class="block w-full text-center !rounded-[100px] button-large bg-white text-black py-4 no-underline"
         >
           Apply Now
@@ -84,6 +84,7 @@ import TGoogleMaps from '@/components/TGoogleMaps.vue'
 import { propertyService } from '@/services/propertyService'
 import axios from 'axios'
 import { IonPage, IonToast } from '@ionic/vue'
+import { Capacitor } from '@capacitor/core'
 
 const propertyImage = 'https://te-ai-pub-docs.s3.us-east-1.amazonaws.com/property/property-image.png'
 
@@ -169,6 +170,33 @@ const fetchPropertyData = async () => {
   } finally {
     state.loading = false
   }
+}
+
+const handleDeepLink = () => {
+  const deepLinkUrl = `tenantev://property?id=${state.property.code}&property_uid=${state.property.id}`
+  const testFlightUrl = 'https://testflight.apple.com/join/Pu3oOXDl'
+  const playStoreUrl = 'https://play.google.com/store/apps/details?id=com.tenantev.app'
+
+  // Create a timestamp to check if app opened
+  const clickedAt = Date.now()
+
+  // Try to open the app
+  window.location.href = deepLinkUrl
+
+  // If app is not installed, redirect after a short delay
+  setTimeout(() => {
+    // Only redirect if user hasn't left the page
+    if (document.hidden || Date.now() - clickedAt < 2000) {
+      return
+    }
+
+    // Redirect based on platform
+    if (Capacitor.getPlatform() === 'ios') {
+      window.location.href = testFlightUrl
+    } else {
+      window.location.href = playStoreUrl
+    }
+  }, 2000)
 }
 
 onMounted(() => {

@@ -5,7 +5,9 @@ const config: CapacitorConfig = {
   appName: 'TenantEV',
   webDir: 'dist',
   ios: {
-    scheme: 'TenantEv'
+    scheme: 'TenantEv',
+    webContentsDebuggingEnabled: true,
+    limitsNavigationsToAppBoundDomains: false
   },
   plugins: {
     SplashScreen: {
