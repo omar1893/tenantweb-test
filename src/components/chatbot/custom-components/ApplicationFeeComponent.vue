@@ -20,7 +20,7 @@
 
     <!-- Expedite Fee -->
     <div class="flex justify-between mb-4 te-text-sm">
-      <span>Expedite Fee</span>
+      <span>Platinum Service</span>
       <span class="font-medium">${{ properties.tenatExpediteFee }}</span>
     </div>
 

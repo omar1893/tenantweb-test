@@ -49,8 +49,8 @@
       </div>
       <div class="button-bar w-full p-4 z-10">
         <a
-          @click.prevent="handleDeepLink"
           class="block w-full text-center !rounded-[100px] button-large bg-white text-black py-4 no-underline"
+          @click.prevent="handleDeepLink"
         >
           Apply Now
         </a>

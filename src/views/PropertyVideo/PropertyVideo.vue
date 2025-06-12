@@ -26,8 +26,8 @@
     </div>
 
     <div class="text-container w-full">
-      <p class="text-medium">La Perla</p>
-      <p class="body-large">We're thrilled to have you at La Perla...</p>
+      <p class="text-medium">{{ state.propertyData?.name || 'Welcome!' }}</p>
+      <p class="body-large">We're thrilled to have you{{ state.propertyData?.name ? ` at ${state.propertyData.name}` : '' }}...</p>
       <p class="button-large" style="cursor:pointer;" @click="showInfoModal">Read more</p>
       <div v-if="!showContinueButtons" class="controls-container">
         <div class="control-group">
@@ -69,28 +69,33 @@
       @did-dismiss="handleModalDismiss"
     >
       <div class="p-7">
-        <div class="flex justify-between items-center mb-6 text-2xl">
-          <i class="pi pi-times text-xl cursor-pointer" :class="{ 'opacity-50 cursor-not-allowed': assetsLoading }" @click="handleCloseClick" />
+        <div v-if="state.propertyDataLoading" class="flex items-center justify-center min-h-[200px]">
+          <ion-spinner name="crescent" />
         </div>
+        <template v-else>
+          <div class="flex justify-between items-center mb-6 text-2xl">
+            <img src="@/assets/icons/close-icon.svg" alt="Close" class="w-[17px] h-[17px] cursor-pointer" @click="handleCloseClick">
+          </div>
 
-        <h2 class="mb-1 text-medium">{{ state.propertyData?.name || 'Welcome!' }}</h2>
-        <h3 class="mb-4 text-medium">Here's the quick rundown <span>👇</span></h3>
-        <ul v-if="state.propertyData?.configuration?.[0]" class="body-large text-gray-800 mb-2 list-disc pl-4">
-          <li
-            v-for="(requirement, index) in state.propertyData.configuration[0].requirements"
-            :key="index"
-            class="mb-4"
-          >
-            {{ requirement }}
-          </li>
-        </ul>
-        <ul v-else class="body-large text-gray-800 mb-2 list-disc pl-4">
-          <li class="mb-4">Processing Time: up to 5 business days</li>
-          <li class="mb-4">No Pets only ESA / SA</li>
-          <li class="mb-4">Short-Term Lease applications only</li>
-          <li class="mb-4">Everyone +18 Applies</li>
-          <li class="mb-4">Airbnb booking screenshots required</li>
-        </ul>
+          <h2 class="mb-1 text-medium">{{ state.propertyData?.name || 'Welcome!' }}</h2>
+          <h3 class="mb-4 text-medium">Here's the quick rundown <span>👇</span></h3>
+          <ul v-if="state.propertyData?.configuration?.[0]" class="body-large text-gray-800 mb-2 list-disc pl-4">
+            <li
+              v-for="(requirement, index) in state.propertyData.configuration[0].requirements"
+              :key="index"
+              class="mb-4"
+            >
+              {{ requirement }}
+            </li>
+          </ul>
+          <ul v-else class="body-large text-gray-800 mb-2 list-disc pl-4">
+            <li class="mb-4">Processing Time: up to 5 business days</li>
+            <li class="mb-4">No Pets only ESA / SA</li>
+            <li class="mb-4">Short-Term Lease applications only</li>
+            <li class="mb-4">Everyone +18 Applies</li>
+            <li class="mb-4">Airbnb booking screenshots required</li>
+          </ul>
+        </template>
       </div>
     </ion-modal>
   </ion-page>
@@ -106,7 +111,7 @@ import { propertyService } from '@/services/propertyService'
 import { IonPage, IonModal, IonSpinner } from '@ionic/vue'
 import { Capacitor } from '@capacitor/core'
 import { App } from '@capacitor/app'
-import { authService } from '@/services/auth.service'
+import { useAuth } from '@/composables/useAuth'
 import { ERouter } from '@/enums/router'
 
 interface Caption {
@@ -122,6 +127,7 @@ interface State {
   audioUrl: string
   captionsUrl: string
   propertyData: any
+  propertyDataLoading: boolean
 }
 
 const DEFAULT_PROPERTY_ID = '14791'
@@ -145,12 +151,15 @@ const state = reactive<State>({
   property: {},
   audioUrl: '',
   captionsUrl: '',
-  propertyData: null
+  propertyData: null,
+  propertyDataLoading: true
 })
 
 const router = useRouter()
 
 const propertyId = ref('')
+
+const { authState } = useAuth()
 
 const loadPropertyAssets = async () => {
   try {
@@ -161,10 +170,13 @@ const loadPropertyAssets = async () => {
     // Fetch property data if we have the uid
     if (propertyUid) {
       try {
+        state.propertyDataLoading = true
         state.propertyData = await propertyService.getPropertyLandingPage(propertyUid)
         console.log('Property data loaded:', state.propertyData)
       } catch (error) {
         console.error('Error loading property data:', error)
+      } finally {
+        state.propertyDataLoading = false
       }
     }
 
@@ -328,13 +340,19 @@ const handleIonViewWillLeave = () => {
 }
 
 const handleStartApplication = async () => {
-  if (!authService.isAuthenticated()) {
-    // If not authenticated, redirect to login
+  if (!authState.value.isAuthenticated) {
+    console.log('[PropertyVideo] User not authenticated, redirecting to auth verify')
     router.push({ name: ERouter.AuthVerify })
     return
   }
 
-  // If authenticated, proceed to chatbot
+  const propertyId = localStorage.getItem('current_property_id')
+  if (propertyId) {
+    console.log('[PropertyVideo] Marking property video as viewed:', propertyId)
+    localStorage.setItem(`property_video_viewed_${propertyId}`, 'true')
+  }
+
+  console.log('[PropertyVideo] User authenticated, redirecting to chatbot')
   router.push({ name: ERouter.Chatbot })
 }
 

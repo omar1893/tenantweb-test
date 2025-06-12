@@ -12,7 +12,7 @@
         <p class="label-subtitle">Fastest Application Processing</p>
       </div>
       <div class="avatar">
-        <!-- Avatar placeholder -->
+        <img src="@/assets/call-center-lady.svg" alt="Call center lady" class="w-[46px] h-[50px]">
       </div>
     </div>
 
@@ -38,7 +38,10 @@
 
       <!-- Exclusive bonus -->
       <div class="bonus-section">
-        <h4 class="mb-4 label-subtitle">Exclusive bonus</h4>
+        <h4 class="mb-4 ml-2 label-subtitle flex items-center gap-2">
+          <img src="@/assets/icons/star-orange.svg" alt="Star" class="w-[16px] h-[16px]">
+          Exclusive bonus
+        </h4>
         <ul class="mb-6 label">
           <li>Dedicated phone line support</li>
           <li>Instant copy of your final report</li>
@@ -90,5 +93,30 @@ defineProps<IProps>()
   border-radius: 1.6rem;
   padding: 1.2rem 1.6rem;
   margin-top: -2.6rem;
+}
+
+ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+li {
+  position: relative;
+  padding-left: 2rem;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+}
+
+li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  width: 14px;
+  height: 14px;
+  background-image: url('@/assets/icons/checkmark.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 </style>

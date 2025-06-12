@@ -20,31 +20,51 @@
         class="w-full !rounded-[100px] button-large"
         variant="white"
         label="Get started"
-        @click="showLoginModal"
+        @click="handleGetStarted"
       />
     </div>
 
-    <LoginInputs ref="loginModal" />
+    <LoginInputs ref="loginModal" :is-open="isOpen" @close-modal="handleModalClose" />
   </ion-page>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, watch } from 'vue'
+import { ref, onMounted } from 'vue'
 import { IonPage } from '@ionic/vue'
 import TButton from '@/components/TButton.vue'
 import LoginInputs from '../Login/LoginInputs.vue'
-import { useUIStore } from '@/stores/UIStore'
 import { Capacitor } from '@capacitor/core'
 import { App } from '@capacitor/app'
+import { eventBus } from '@/services/eventBus'
+
+const VIDEO_VIEWED_KEY = 'intro_video_viewed'
 
 const videoRef = ref()
 const audioRef = ref()
 const isVideoMuted = ref(true)
 const loginModal = ref()
-const uiStore = useUIStore()
+const isOpen = ref(false)
+const hasViewedVideo = ref(localStorage.getItem(VIDEO_VIEWED_KEY) === 'true')
 
 const showLoginModal = () => {
-  uiStore.showLoginModal()
+  isOpen.value = true
+}
+
+const closeLoginModal = () => {
+  isOpen.value = false
+  startMedia()
+}
+
+const handleModalClose = () => {
+  isOpen.value = false
+  startMedia()
+}
+
+const handleGetStarted = () => {
+  pauseAllMedia()
+  localStorage.setItem(VIDEO_VIEWED_KEY, 'true')
+  hasViewedVideo.value = true
+  showLoginModal()
 }
 
 const startMedia = async () => {
@@ -52,14 +72,11 @@ const startMedia = async () => {
 
   try {
     if (Capacitor.getPlatform() === 'ios') {
-      // En iOS intentamos primero reproducir el video con audio
       videoRef.value.muted = false
       try {
         await videoRef.value.play()
-        // Si el video se reproduce con audio, mantenemos el audio muted
         audioRef.value.muted = true
       } catch (error) {
-        // Si falla reproducir el video con audio, usamos el elemento de audio
         console.log('Fallback to audio element')
         videoRef.value.muted = true
         audioRef.value.muted = false
@@ -69,13 +86,11 @@ const startMedia = async () => {
         ])
       }
     } else {
-      // En Android intentamos directamente con el video
       videoRef.value.muted = false
       audioRef.value.muted = true
       try {
         await videoRef.value.play()
       } catch (error) {
-        // Si falla, intentamos con el audio
         console.log('Fallback to audio element')
         videoRef.value.muted = true
         audioRef.value.muted = false
@@ -87,7 +102,6 @@ const startMedia = async () => {
     }
   } catch (error) {
     console.error('Error starting media:', error)
-    // Si todo falla, al menos reproducimos el video sin sonido
     videoRef.value.muted = true
     audioRef.value.muted = true
     videoRef.value.play()
@@ -107,33 +121,24 @@ const pauseAllMedia = async () => {
   }
 }
 
-// Watch for login modal visibility changes
-watch(() => uiStore.loginModalVisible, (isVisible) => {
-  if (isVisible) {
-    pauseAllMedia()
-  } else {
-    startMedia()
-  }
-})
-
 onMounted(async () => {
-  // Esperamos un momento para asegurar que todo esté cargado
+  eventBus.on('close-login-modal', closeLoginModal)
+
+  if (hasViewedVideo.value) {
+    showLoginModal()
+    return
+  }
+
   await new Promise(resolve => setTimeout(resolve, 500))
   await startMedia()
 
-  // Add app state change listeners
   App.addListener('appStateChange', ({ isActive }: { isActive: boolean }) => {
     if (!isActive) {
       pauseAllMedia()
-    } else {
+    } else if (!isOpen.value) {
       startMedia()
     }
   })
-})
-
-onUnmounted(() => {
-  // Remove app state change listeners
-  App.removeAllListeners()
 })
 </script>
 

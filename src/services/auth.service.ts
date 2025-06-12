@@ -1,11 +1,51 @@
 import axios from 'axios'
 import env from '@/config/env'
-import { tokenService } from './token.service'
+import { TokenService } from './token.service'
+import type { TokenPair } from '@/types/auth.types'
 
 const API_URL = env.apiUrl
 
-export const authService = {
-  async sendPasswordlessEmail(email: string): Promise<boolean> {
+export class AuthService {
+  public static getAuthState() {
+    const tokens = TokenService.getStoredTokens()
+    const userInfo = TokenService.getUserInfo()
+
+    return {
+      isAuthenticated: tokens !== null,
+      user: userInfo,
+      accessToken: tokens?.accessToken || null,
+      authType: tokens?.authType || null
+    }
+  }
+
+  public static async refreshTokens(): Promise<TokenPair | null> {
+    try {
+      const tokens = TokenService.getStoredTokens()
+      if (!tokens) {
+        console.log('[AuthService] No tokens available for refresh')
+        return null
+      }
+
+      console.log('[AuthService] Attempting to refresh tokens')
+      const response = await axios.post(`${API_URL}/auth/refresh-token`, {
+        refresh_token: tokens.refreshToken,
+        access_token: tokens.accessToken
+      })
+
+      if (response.data?.access_token) {
+        TokenService.setTokens(response.data, tokens.authType)
+        return response.data
+      }
+
+      return null
+    } catch (error) {
+      console.error('[AuthService] Error refreshing tokens:', error)
+      TokenService.clearTokens()
+      return null
+    }
+  }
+
+  public static async sendPasswordlessEmail(email: string): Promise<boolean> {
     try {
       await axios.post(`${API_URL}/auth/password-less`, { email })
       return true
@@ -13,16 +53,16 @@ export const authService = {
       console.error('Error sending passwordless email:', error)
       throw error
     }
-  },
+  }
 
-  async verifyEmailWithToken(token: string, email: string): Promise<boolean> {
+  public static async verifyEmailWithToken(token: string, email: string): Promise<boolean> {
     try {
       const response = await axios.get(`${API_URL}/auth/password-less/${token}`, {
         params: { email }
       })
 
       if (response.data?.access_token) {
-        tokenService.setTokens(response.data)
+        TokenService.setTokens(response.data, 'password-less')
         return true
       }
       return false
@@ -30,20 +70,20 @@ export const authService = {
       console.error('Error verifying email:', error)
       throw error
     }
-  },
+  }
 
-  async initiateProviderLogin(provider: 'google' | 'apple') {
+  public static async initiateProviderLogin(provider: 'google' | 'apple') {
     window.location.href = `https://auth-qa.tenantev.dev/oauth2/authorization/${provider}`
-  },
+  }
 
-  async validateProviderCallback(token: string, email: string): Promise<boolean> {
+  public static async validateProviderCallback(token: string, email: string): Promise<boolean> {
     try {
       const response = await axios.get(`${API_URL}/auth/provider/${token}`, {
         params: { email }
       })
 
       if (response.data?.access_token) {
-        tokenService.setTokens(response.data)
+        TokenService.setTokens(response.data, 'provider')
         return true
       }
       return false
@@ -51,9 +91,9 @@ export const authService = {
       console.error('Error validating provider callback:', error)
       throw error
     }
-  },
+  }
 
-  async handleProviderCallback(url: string): Promise<boolean> {
+  public static async handleProviderCallback(url: string): Promise<boolean> {
     try {
       const urlParams = new URLSearchParams(url.split('?')[1])
       const token = urlParams.get('token')
@@ -69,17 +109,19 @@ export const authService = {
       console.error('Error handling provider callback:', error)
       throw error
     }
-  },
+  }
 
-  isAuthenticated(): boolean {
-    return tokenService.isAuthenticated()
-  },
+  public static isAuthenticated(): boolean {
+    const tokens = TokenService.getStoredTokens()
+    return tokens !== null
+  }
 
-  getAccessToken(): string | null {
-    return tokenService.getAccessToken()
-  },
+  public static getAccessToken(): string | null {
+    const tokens = TokenService.getStoredTokens()
+    return tokens?.accessToken || null
+  }
 
-  logout() {
-    tokenService.clearTokens()
+  public static logout() {
+    TokenService.clearTokens()
   }
 }

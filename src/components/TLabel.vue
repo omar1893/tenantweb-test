@@ -42,7 +42,7 @@ const shareValue = async () => {
     try {
       await navigator.share({
         title:'Property Details',
-        text: 'Check out this property',
+        text: 'Please follow the link to begin your application for this property:',
         url: shareUrl
       })
     } catch (e) {

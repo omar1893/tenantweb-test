@@ -1,30 +1,33 @@
 import { defineStore } from 'pinia'
 import { v4 as uuidv4 } from 'uuid'
-import { Capacitor } from '@capacitor/core'
+/* import { Capacitor } from "@capacitor/core"; */
 
-import type { IAgentMessage, IAgentResponse, IAgentRequest, IAgentQuickActionData, IAgentQuickActionItem } from '@/types/agent.d'
+import type {
+  IAgentMessage,
+  IAgentResponse,
+  IAgentRequest,
+  IAgentQuickActionData,
+  IAgentQuickActionItem,
+} from '@/types/agent.d'
 import AgentClientService from '@/services/agentClientService'
-import { EAgentMessageRole, EAgentRequestType, EAgentMessageType, EAgentResponseType } from '@/enums/agent'
+import {
+  EAgentMessageRole,
+  EAgentRequestType,
+  EAgentMessageType,
+  EAgentResponseType,
+} from '@/enums/agent'
 
 export interface IAgentStoreState {
-  waiting: boolean
-  messages: IAgentMessage[]
-  quickAction: IAgentQuickActionData | null
-  connected: boolean
-  client: AgentClientService | null
-  lastMessageTimestamp: number
-  currentStreamingId: string | null
+  waiting: boolean;
+  messages: IAgentMessage[];
+  quickAction: IAgentQuickActionData | null;
+  connected: boolean;
+  client: AgentClientService | null;
+  lastMessageTimestamp: number;
+  currentStreamingId: string | null;
 }
 
-const getWebSocketUrl = () => {
-  const isNative = Capacitor.isNativePlatform()
-  const isAndroid = Capacitor.getPlatform() === 'android'
-
-  if (isNative && isAndroid) {
-    return 'ws://supervisor.tenantev.dev/ws'
-  }
-  return 'wss://supervisor.tenantev.dev/ws'
-}
+const WEBSOCKET_URL = 'wss://supervisor.tenantev.dev/ws'
 
 export const useAgentStore = defineStore('agent', {
   state: (): IAgentStoreState => ({
@@ -34,7 +37,7 @@ export const useAgentStore = defineStore('agent', {
     connected: false,
     client: null,
     lastMessageTimestamp: 0,
-    currentStreamingId: null
+    currentStreamingId: null,
   }),
   getters: {
     isConnected: (state) => state.connected && state.client?.isReady() === true,
@@ -47,7 +50,8 @@ export const useAgentStore = defineStore('agent', {
 
       const now = Date.now()
       const timeSinceLastMessage = now - this.lastMessageTimestamp
-      const shouldCreateNewBubble = timeSinceLastMessage > 1000 || this.currentStreamingId !== message.id
+      const shouldCreateNewBubble =
+        timeSinceLastMessage > 1000 || this.currentStreamingId !== message.id
 
       if (shouldCreateNewBubble) {
         this.currentStreamingId = message.id
@@ -55,11 +59,14 @@ export const useAgentStore = defineStore('agent', {
           id: message.id,
           role: EAgentMessageRole.AGENT,
           type: EAgentMessageType.TEXT,
-          data: { message: message.data.message.trim() }
+          data: { message: message.data.message.trim() },
         })
       } else {
         const existingMessage = this.messages[this.messages.length - 1]
-        if (existingMessage && existingMessage.type === EAgentMessageType.TEXT) {
+        if (
+          existingMessage &&
+          existingMessage.type === EAgentMessageType.TEXT
+        ) {
           existingMessage.data.message += message.data.message
         }
       }
@@ -67,7 +74,10 @@ export const useAgentStore = defineStore('agent', {
       this.lastMessageTimestamp = now
     },
     _addComponentMessage(message: IAgentResponse) {
-      if (!('type' in message) || message.type !== EAgentResponseType.COMPONENT) {
+      if (
+        !('type' in message) ||
+        message.type !== EAgentResponseType.COMPONENT
+      ) {
         return
       }
 
@@ -88,14 +98,18 @@ export const useAgentStore = defineStore('agent', {
     connect(token: string) {
       this._cleanState()
       this.client = new AgentClientService({
-        url: getWebSocketUrl(),
+        url: WEBSOCKET_URL,
         token,
         onOpen: () => {
           this.connected = true
         },
         onMessage: (message: IAgentResponse) => {
           if (!('type' in message)) {
-            if ('status' in message && message.status === 'error' && 'message' in message) {
+            if (
+              'status' in message &&
+              message.status === 'error' &&
+              'message' in message
+            ) {
               console.error('Server error:', message.message)
               this.connected = false
             }
@@ -137,11 +151,13 @@ export const useAgentStore = defineStore('agent', {
     },
     send(request: IAgentRequest, message?: string) {
       this.quickAction = null
+      this.waiting = true
 
       // Check if client exists and is ready to send messages
       if (!this.client || !this.client.isReady()) {
         console.error('Agent client is not ready to send messages')
         this.connected = false
+        this.waiting = false
         throw new Error('Agent client is not ready to send messages')
       }
 
@@ -163,33 +179,41 @@ export const useAgentStore = defineStore('agent', {
         }
       } catch (error) {
         console.error('Failed to send message to agent:', error)
+        this.waiting = false
         // If it's a connection error, update the connected state
-        if (error instanceof Error && (
-          error.message.includes('WebSocket connection is not available') ||
-          error.message.includes('WebSocket connection is not ready')
-        )) {
+        if (
+          error instanceof Error &&
+          (error.message.includes('WebSocket connection is not available') ||
+            error.message.includes('WebSocket connection is not ready'))
+        ) {
           this.connected = false
         }
         throw error
       }
     },
     sendMessage(message: string) {
-      this.send({
-        type: EAgentRequestType.TEXT,
-        data: {
-          message,
+      this.send(
+        {
+          type: EAgentRequestType.TEXT,
+          data: {
+            message,
+          },
         },
-      }, message)
+        message
+      )
     },
     sendCommand(command: IAgentQuickActionItem, message?: string) {
       console.log('Send command', command)
-      this.send({
-        type: EAgentRequestType.COMMAND,
-        data: {
-          type: command.type,
-          value: command.value,
+      this.send(
+        {
+          type: EAgentRequestType.COMMAND,
+          data: {
+            type: command.type,
+            value: command.value,
+          },
         },
-      }, message)
+        message
+      )
     },
   },
 })

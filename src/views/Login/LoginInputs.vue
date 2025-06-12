@@ -1,14 +1,13 @@
 <template>
   <ion-modal
-    :is-open="uiStore.loginModalVisible"
+    :is-open="isOpen"
     :initial-breakpoint="1"
     :breakpoints="[0, 1]"
     class="bottom-modal"
-    @did-dismiss="closeModal"
   >
     <div class="flex flex-col gap-6 p-6">
       <div class="flex justify-between items-center">
-        <i class="pi pi-times text-xl cursor-pointer" @click="closeModal" />
+        <img src="@/assets/icons/close-icon.svg" alt="Close" class="w-[17px] h-[17px] cursor-pointer" @click="closeModal">
       </div>
 
       <div v-if="!emailSent" class="text-center text-slate-900">
@@ -23,6 +22,7 @@
             class="w-full button-large"
             :error="v$.email.$error"
             :error-message="v$.email.$errors[0]?.$message?.toString()"
+            :icon="mailIcon"
           />
 
           <TButton
@@ -93,78 +93,21 @@
       </div>
     </div>
   </ion-modal>
-
-  <!-- Property Selector Modal -->
-  <ion-modal
-    :is-open="showPropertySelector"
-    :initial-breakpoint="0.95"
-    :breakpoints="[0, 0.95]"
-    class="property-selector-modal"
-    @did-dismiss="showPropertySelector = false"
-  >
-    <div class="p-6">
-      <div class="flex justify-between items-center mb-8">
-        <h2 class="text-2xl font-semibold">Select Property</h2>
-        <i class="pi pi-times text-xl cursor-pointer" @click="showPropertySelector = false" />
-      </div>
-
-      <div class="flex flex-col gap-4 pb-6">
-        <button
-          v-for="property in properties"
-          :key="property.id"
-          class="w-full text-left px-6 py-5 rounded-2xl hover:bg-gray-100 transition-colors text-lg"
-          :class="{ 'bg-gray-100': selectedPropertyId === property.id }"
-          @click="selectProperty(property.id)"
-        >
-          {{ property.name }}
-        </button>
-        <button
-          class="w-full text-left px-6 py-5 rounded-2xl hover:bg-gray-100 transition-colors text-lg"
-          :class="{ 'bg-gray-100': selectedPropertyId === null }"
-          @click="selectProperty(null)"
-        >
-          No Property (Go to Chatbot)
-        </button>
-      </div>
-    </div>
-  </ion-modal>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onUnmounted, onMounted } from 'vue'
+import { ref, reactive, defineEmits } from 'vue'
 import { IonModal } from '@ionic/vue'
 import { useVuelidate } from '@vuelidate/core'
 import { required, email } from '@vuelidate/validators'
-import { authService } from '@/services/auth.service'
-import { useUIStore } from '@/stores/UIStore'
-import { useRouter } from 'vue-router'
+import { useAuth } from '@/composables/useAuth'
 import TInput from '@/components/TInput.vue'
 import TButton from '@/components/TButton.vue'
+import mailIcon from '@/assets/icons/mail.svg'
 
-const router = useRouter()
 const loading = ref(false)
 const emailSent = ref(false)
-const uiStore = useUIStore()
-const showPropertySelector = ref(false)
-
-const properties = [
-  { id: '14791', name: 'Property 14791' },
-  { id: '14795', name: 'Property 14795' },
-  { id: '14798', name: 'Property 14798' },
-  { id: '14766', name: 'Property 14766' }
-]
-
-const selectedPropertyId = ref<string | null>(localStorage.getItem('selectedPropertyId'))
-
-const selectProperty = (propertyId: string | null) => {
-  selectedPropertyId.value = propertyId
-  if (propertyId) {
-    localStorage.setItem('selectedPropertyId', propertyId)
-  } else {
-    localStorage.removeItem('selectedPropertyId')
-  }
-  showPropertySelector.value = false
-}
+const { login } = useAuth()
 
 const state = reactive({
   email: ''
@@ -173,6 +116,12 @@ const state = reactive({
 const rules = {
   email: { required, email }
 }
+
+defineProps<{
+  isOpen: boolean
+}>()
+
+const emit = defineEmits(['closeModal'])
 
 const v$ = useVuelidate(rules, state)
 
@@ -191,23 +140,18 @@ const startCountdown = () => {
   }, 1000)
 }
 
-onUnmounted(() => {
-  if (countdownInterval) clearInterval(countdownInterval)
-})
-
-const closeModal = () => {
-  uiStore.hideLoginModal()
-  resetForm()
-}
-
-const resetForm = () => {
+/* const resetForm = () => {
   state.email = ''
   emailSent.value = false
   v$.value.$reset()
+} */
+const closeModal = () => {
+  emit('closeModal')
 }
 
 const goBack = () => {
   emailSent.value = false
+  emit('closeModal')
 }
 
 const handleSendEmail = async () => {
@@ -216,73 +160,24 @@ const handleSendEmail = async () => {
 
   try {
     loading.value = true
-    const success = await authService.sendPasswordlessEmail(state.email)
-    if (success) {
-      emailSent.value = true
-      startCountdown()
-    }
+    await login(state.email)
+    emailSent.value = true
+    startCountdown()
   } catch (error) {
-    console.error('Error sending email:', error)
+    console.error('[LoginInputs] Error sending email:', error)
   } finally {
     loading.value = false
   }
 }
 
-const handleLoginSuccess = () => {
-  uiStore.hideLoginModal()
-  resetForm()
-  if (selectedPropertyId.value) {
-    router.push('/property-video')
-  } else {
-    router.push('/chatbot')
-  }
+const handleProviderRedirect = (provider: 'apple' | 'google') => {
+  emit('closeModal')
+  console.log(`[LoginInputs] Redirecting to ${provider} login`)
+  window.location.href = `https://auth-qa.tenantev.dev/oauth2/authorization/${provider}`
 }
 
-const handleAppleLogin = async () => {
-  try {
-    loading.value = true
-    await authService.initiateProviderLogin('apple')
-  } catch (error) {
-    console.error('Apple login error:', error)
-  } finally {
-    loading.value = false
-  }
-}
-
-const handleGoogleLogin = async () => {
-  try {
-    loading.value = true
-    await authService.initiateProviderLogin('google')
-  } catch (error) {
-    console.error('Google login error:', error)
-  } finally {
-    loading.value = false
-  }
-}
-
-const handleAuthCallback = async () => {
-  try {
-    const url = window.location.href
-    if (url.includes('auth-verify')) {
-      loading.value = true
-      await authService.handleProviderCallback(url)
-      handleLoginSuccess()
-    }
-  } catch (error) {
-    console.error('Auth callback error:', error)
-  } finally {
-    loading.value = false
-  }
-}
-
-onMounted(() => {
-  const savedPropertyId = localStorage.getItem('selectedPropertyId')
-  if (savedPropertyId) {
-    selectedPropertyId.value = savedPropertyId
-  }
-
-  handleAuthCallback()
-})
+const handleAppleLogin = () => handleProviderRedirect('apple')
+const handleGoogleLogin = () => handleProviderRedirect('google')
 </script>
 
 <style lang="scss" scoped>

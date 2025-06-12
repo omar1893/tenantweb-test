@@ -10,44 +10,65 @@
 import { IonPage, IonSpinner } from '@ionic/vue'
 import { onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { authService } from '@/services/auth.service'
 import { ERouter } from '@/enums/router'
+import { useAuth } from '@/composables/useAuth'
+import { eventBus } from '@/services/eventBus'
 
 const route = useRoute()
 const router = useRouter()
+const { verifyProviderCallback, verifyEmailToken } = useAuth()
+
+const checkPropertyVideoViewed = (propertyId: string): boolean => {
+  return localStorage.getItem(`property_video_viewed_${propertyId}`) === 'true'
+}
+
+const redirectAfterAuth = () => {
+  eventBus.emit('close-login-modal')
+
+  const storedPropertyId = localStorage.getItem('current_property_id')
+  if (!storedPropertyId) {
+    console.log('[AuthVerify] No property ID found, redirecting to chatbot')
+    router.push({ name: ERouter.Chatbot })
+    return
+  }
+
+  if (checkPropertyVideoViewed(storedPropertyId)) {
+    console.log('[AuthVerify] Property video already viewed, redirecting to chatbot')
+    router.push({ name: ERouter.Chatbot })
+  } else {
+    console.log('[AuthVerify] Redirecting to property video')
+    router.push({ name: ERouter.PropertyVideo })
+  }
+}
 
 onMounted(async () => {
   try {
     const email = route.query.email as string
     const type = route.query.type as string
     const token = route.query.token as string
+    const skipTokenCheck = route.query.skipTokenCheck === 'true'
 
-    if (!email) {
-      throw new Error('Missing email')
+    if (!email || !token || !type) {
+      console.error('[AuthVerify] Missing required parameters:', { email, token, type })
+      throw new Error('Missing required parameters')
     }
+
+    console.log('[AuthVerify] Processing authentication with:', { type, email, skipTokenCheck })
 
     let success = false
-    if (type === 'email' && token) {
-      success = await authService.verifyEmailWithToken(token, email)
-    } else if (type === 'provider' && token) {
-      await authService.validateProviderCallback(token, email)
-      success = true
+    if (type === 'provider') {
+      success = await verifyProviderCallback(token, email)
     } else {
-      throw new Error('Invalid verification parameters')
+      success = await verifyEmailToken(token, email)
     }
 
-    if (success) {
-      const storedPropertyId = localStorage.getItem('current_property_id')
-      if (!storedPropertyId) {
-        router.push({ name: ERouter.Chatbot })
-        return
-      }
-      router.push({ name: ERouter.PropertyVideo })
-    } else {
-      throw new Error('Verification failed')
+    if (!success) {
+      throw new Error('Authentication verification failed')
     }
+
+    redirectAfterAuth()
   } catch (error) {
-    console.error('Verification failed:', error)
+    console.error('[AuthVerify] Authentication failed:', error)
     router.push({ name: ERouter.VideoIntro })
   }
 })

@@ -2,7 +2,9 @@ package com.tenantev.app;
 
 import android.content.Context;
 import android.os.UserManager;
-import androidx.multidex.MultiDex;
+import androidx.multidex
+
+  .MultiDex;
 import androidx.multidex.MultiDexApplication;
 import static android.os.Build.VERSION.SDK_INT;
 import io.branch.referral.Branch;
