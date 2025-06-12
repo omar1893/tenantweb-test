@@ -80,6 +80,12 @@ export class AppStateService {
       return
     }
 
+    const currentRoute = router.currentRoute.value
+    if (currentRoute.meta.isPublic) {
+      console.log('[AppStateService] Current route is public, skipping session validation')
+      return true
+    }
+
     console.log('[AppStateService] Validating session')
     const tokens = TokenService.getStoredTokens()
 
@@ -105,7 +111,6 @@ export class AppStateService {
     // Si llegamos aquí, la sesión es válida
     console.log('[AppStateService] Session is valid, checking current route')
 
-    const currentRoute = router.currentRoute.value
     const isAuthRoute = [
       ERouter.VideoIntro,
       ERouter.AuthVerify,
