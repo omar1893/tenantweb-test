@@ -52,18 +52,21 @@
       <!-- Disclaimer -->
       <p class="disclaimer note">
         This service is optional: As part of the application process, applicants are
-        required to pay an application fee associated with the property.
+        required to pay an application fee associated with the property. <span v-if="showDisclaimer">Tenant Evaluation includes a “Standard Service” as part of the application fee at no additional charge. Tenant evaluation does provide an additional service called “Platinum Service”, but that is entirely optional and is not something offered, required, or charged by the association. The additional services included in “Platinum Service” are detailed by Tenant Evaluation at the time the option is presented to the applicant. Prices are subject to change.
+        </span>
       </p>
 
       <!-- See more button -->
-      <button class="see-more">
-        See more
+      <button class="see-more" @click="showDisclaimer = !showDisclaimer">
+        {{ showDisclaimer ? 'See less' : 'See more' }}
       </button>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue'
+
 interface IProps {
   properties?: {
     // Add any properties that might be needed
@@ -71,6 +74,8 @@ interface IProps {
 }
 
 defineProps<IProps>()
+
+const showDisclaimer = ref(false)
 </script>
 
 <style scoped>

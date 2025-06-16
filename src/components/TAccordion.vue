@@ -1,8 +1,8 @@
 <template>
   <Accordion :multiple="multiple" class="t-accordion">
     <AccordionPanel v-for="(item, index) in items" :key="index" :value="item.header">
-      <AccordionHeader class="button-small">
-        {{ item.header }}
+      <AccordionHeader class="button-small capitalize">
+        {{ formatHeader(item.header) }}
       </AccordionHeader>
       <AccordionContent>
         <ul class="body-medium space-y-2 text-left">
@@ -58,6 +58,17 @@ interface Props {
 }
 
 defineProps<Props>()
+
+const formatHeader = (text: string): string => {
+  return text
+    .replace(/_/g, ' ')
+    .replace(/([A-Z])/g, ' $1')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .split(' ')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(' ')
+}
 </script>
 
 <style scoped lang="scss">

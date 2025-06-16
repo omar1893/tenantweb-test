@@ -81,8 +81,9 @@ export class AppStateService {
     }
 
     const currentRoute = router.currentRoute.value
-    if (currentRoute.meta.isPublic) {
-      console.log('[AppStateService] Current route is public, skipping session validation')
+    // Solo saltar validación en rutas públicas que NO sean VideoIntro
+    if (currentRoute.meta.isPublic && currentRoute.name !== ERouter.VideoIntro) {
+      console.log('[AppStateService] Current route is public and not VideoIntro, skipping session validation')
       return true
     }
 

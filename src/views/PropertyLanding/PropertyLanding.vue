@@ -1,5 +1,5 @@
 <template>
-  <ion-page class="min-h-screen !bg-black justify-normal pb-[20px] overflow-y-auto">
+  <ion-page class="min-h-screen !bg-black justify-normal pb-[100px] overflow-y-auto">
     <!-- Loading State -->
     <div v-if="state.loading" class="flex items-center justify-center min-h-screen">
       <div class="text-white">Loading...</div>
@@ -47,14 +47,6 @@
           multiple
         />
       </div>
-      <div class="button-bar w-full p-4 z-10">
-        <a
-          class="block w-full text-center !rounded-[100px] button-large bg-white text-black py-4 no-underline"
-          @click.prevent="handleDeepLink"
-        >
-          Apply Now
-        </a>
-      </div>
 
       <div v-if="googlePlaceInfo" class="mt-6 p-4 rounded-lg bg-white/10 border border-white/10">
         <h3 class="text-white mb-2">Google Place Info</h3>
@@ -66,6 +58,28 @@
         </div>
       </div>
     </template>
+
+    <!-- Fixed Button Bar -->
+    <div class="fixed bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black via-black/95 to-transparent pt-8">
+      <div class="flex flex-col gap-4">
+        <a
+          class="block w-full text-center !rounded-[100px] button-large bg-white text-black py-[1.4rem] no-underline flex items-center justify-center gap-2"
+          @click.prevent="handleDeepLink"
+        >
+          <i :class="`pi ${isIOS ? 'pi-apple' : 'pi-google'}`" style="font-size: 1.8rem;" />
+          Download App
+        </a>
+        <a
+          v-if="!isFirstVisit"
+          class="block w-full text-center !rounded-[100px] button-small text-white py-[1.4rem] no-underline flex items-center justify-center"
+          href="#"
+          @click.prevent="handleContinueInBrowser"
+        >
+          Continue in browser
+        </a>
+      </div>
+    </div>
+
     <ion-toast
       :is-open="showToast"
       message="Copied!"
@@ -128,6 +142,9 @@ const propertyRequirements = computed(() => {
 
 const GOOGLE_API_KEY = 'AIzaSyAHFOQEwRQ6_CGQcBZ7R7fLO0ECSqrNxWw'
 const googlePlaceInfo = ref<any>(null)
+
+const isIOS = computed(() => Capacitor.getPlatform() === 'ios')
+const isFirstVisit = ref(true)
 
 const fetchGooglePlaceInfo = async (address: string) => {
   try {
@@ -199,7 +216,14 @@ const handleDeepLink = () => {
   }, 2000)
 }
 
+const handleContinueInBrowser = () => {
+  console.log('Continue in browser clicked')
+}
+
 onMounted(() => {
+  const hasVisited = localStorage.getItem('has_visited_property_landing')
+  isFirstVisit.value = !hasVisited
+  localStorage.setItem('has_visited_property_landing', 'true')
   fetchPropertyData()
 })
 

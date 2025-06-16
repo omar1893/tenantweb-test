@@ -15,7 +15,6 @@ import { AppStateService } from './services/appState.service'
 import { createPinia } from 'pinia'
 import primeVueTheme from './prime-vue-theme'
 import { App as CapacitorApp } from '@capacitor/app'
-import { useUIStore } from './stores/UIStore'
 
 /* Theme variables */
 import './theme/variables.css'
@@ -73,10 +72,8 @@ const handleAuthDeepLink = (url: URL) => {
   const params = Object.fromEntries(searchParams.entries())
   console.log('Auth params received:', params)
 
-  // Marcar que estamos en un proceso de autenticación por deep link
   AppStateService.setIsAuthDeepLink(true)
 
-  // Si es un deep link de proveedor, procesarlo directamente
   if (params.type === 'provider' && params.token && params.email) {
     /* uiStore.hideLoginModal() */
     console.log('Processing provider auth deep link')

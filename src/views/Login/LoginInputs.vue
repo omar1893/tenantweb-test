@@ -8,6 +8,9 @@
     <div class="flex flex-col gap-6 p-6">
       <div class="flex justify-between items-center">
         <img src="@/assets/icons/close-icon.svg" alt="Close" class="w-[17px] h-[17px] cursor-pointer" @click="closeModal">
+        <div class="ml-auto flex items-center">
+          <Vue3Lottie :animation-data="sparksLottie" :height="32" :width="32" :speed="2" :loop="true" :auto-play="true" />
+        </div>
       </div>
 
       <div v-if="!emailSent" class="text-center text-slate-900">
@@ -104,6 +107,8 @@ import { useAuth } from '@/composables/useAuth'
 import TInput from '@/components/TInput.vue'
 import TButton from '@/components/TButton.vue'
 import mailIcon from '@/assets/icons/mail.svg'
+import { Vue3Lottie } from 'vue3-lottie'
+import sparksLottie from '@/data/sparks-lottie.json'
 
 const loading = ref(false)
 const emailSent = ref(false)

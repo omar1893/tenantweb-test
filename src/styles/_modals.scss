@@ -3,18 +3,19 @@
   --max-height: 90%;
   --width: 100%;
   --border-radius: 24px;
-  border-bottom-left-radius: 0px !important;
-  border-bottom-right-radius: 0px !important;
+  border-top-left-radius: var(--border-radius) !important;
+  border-top-right-radius: var(--border-radius) !important;
+  border-bottom-left-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
 
-  :deep(.ion-page) {
-    border-bottom-left-radius: 0px !important;
-    border-bottom-right-radius: 0px !important;
-    border-radius: var(--border-radius);
+/*   :deep(.ion-page),
+  :deep(.modal-wrapper) {
+    border-top-left-radius: var(--border-radius) !important;
+    border-top-right-radius: var(--border-radius) !important;
+    border-bottom-left-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+    border-radius: unset !important;
     overflow: hidden;
     background: white;
-  }
-
-  :deep(.modal-wrapper) {
-    border-radius: var(--border-radius);
-  }
+  } */
 } 

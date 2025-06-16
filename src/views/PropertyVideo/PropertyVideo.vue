@@ -16,10 +16,13 @@
       <source src="../../assets/video-test6.mp4" type="video/mp4">
     </video>
 
-    <audio ref="audioRef" preload="auto">
-      <source :src="state.audioUrl" type="audio/mpeg">
-      Your browser does not support the audio element.
+    <audio ref="audioRef" preload="auto" @loadeddata="handleAudioLoaded">
+      <source :src="state.audioUrl" type="audio/mp3">
     </audio>
+
+    <button v-if="showIosPlayButton" class="manual-play-btn" @click="handleIosPlay">
+      Tap to Start
+    </button>
 
     <div v-if="currentCaption" class="caption-container body-large">
       <p class="caption-text">{{ currentCaption.text }}</p>
@@ -98,6 +101,8 @@
         </template>
       </div>
     </ion-modal>
+
+    <span ref="dummyTapRef" style="display:none;" aria-hidden="true">dummy</span>
   </ion-page>
 </template>
 
@@ -142,9 +147,10 @@ let timeUpdateInterval: number | null = null
 const isPlaying = ref(false)
 const isAudioMuted = ref(false)
 const isVideoMuted = ref(true)
-const infoModalVisible = ref(true)
+const infoModalVisible = ref(false)
 const showContinueButtons = ref(false)
 const isFirstInteraction = ref(true)
+const showIosPlayButton = ref(false)
 
 const state = reactive<State>({
   loading: true,
@@ -160,6 +166,8 @@ const router = useRouter()
 const propertyId = ref('')
 
 const { authState } = useAuth()
+
+const dummyTapRef = ref<HTMLElement | null>(null)
 
 const loadPropertyAssets = async () => {
   try {
@@ -210,6 +218,39 @@ const loadPropertyAssets = async () => {
 const handleVideoMetadata = () => {
   if (videoRef.value) {
     videoRef.value.currentTime = 0
+  }
+}
+
+const handleAudioLoaded = async () => {
+  // Solo iniciar reproducción cuando el audio esté listo
+  await startMedia()
+}
+
+const isIos = () => Capacitor.getPlatform() === 'ios'
+
+const startMedia = async () => {
+  if (!videoRef.value || !audioRef.value) return
+  try {
+    videoRef.value.currentTime = 0
+    audioRef.value.currentTime = 0
+    currentCaption.value = null
+    isPlaying.value = true
+    showContinueButtons.value = false
+    if (timeUpdateInterval) clearInterval(timeUpdateInterval)
+    timeUpdateInterval = window.setInterval(updateCaption, 100)
+    await Promise.all([
+      videoRef.value.play(),
+      audioRef.value.play()
+    ])
+    audioRef.value.onended = handleMediaEnded
+    videoRef.value.onended = handleMediaEnded
+    showIosPlayButton.value = false
+  } catch (error) {
+    if (isIos()) {
+      showIosPlayButton.value = true
+      assetsLoading.value = false
+    }
+    console.error('Error starting media:', error)
   }
 }
 
@@ -326,12 +367,25 @@ const updateCaption = () => {
   currentCaption.value = caption || null
 }
 
+const handleMediaEnded = () => {
+  if (timeUpdateInterval) {
+    clearInterval(timeUpdateInterval)
+  }
+  showContinueButtons.value = true
+}
+
 const restartMedia = async () => {
   if (videoRef.value && audioRef.value) {
+    if (timeUpdateInterval) clearInterval(timeUpdateInterval)
+    audioRef.value.load()
     videoRef.value.currentTime = 0
     audioRef.value.currentTime = 0
-    await handleModalDismiss()
+    currentCaption.value = null
+    isPlaying.value = true
     showContinueButtons.value = false
+    audioRef.value.onended = handleMediaEnded
+    videoRef.value.onended = handleMediaEnded
+    await startMedia()
   }
 }
 
@@ -370,7 +424,17 @@ const pauseAllMedia = async () => {
   }
 }
 
+const handleIosPlay = async () => {
+  showIosPlayButton.value = false
+  assetsLoading.value = false
+  await startMedia()
+}
+
 onMounted(async () => {
+  // Dummy tap to try to unlock autoplay
+  if (dummyTapRef.value) {
+    dummyTapRef.value.click()
+  }
   loadPropertyAssets()
 
   // Aseguramos que el video empiece muteado para permitir la precarga
@@ -388,6 +452,16 @@ onMounted(async () => {
       pauseAllMedia()
     }
   })
+
+  // Fallback para iOS: si en 3 segundos no se pudo iniciar autoplay, mostrar el botón
+  if (isIos()) {
+    setTimeout(() => {
+      if (assetsLoading.value) {
+        assetsLoading.value = false
+        showIosPlayButton.value = true
+      }
+    }, 3000)
+  }
 })
 
 onUnmounted(() => {
@@ -557,5 +631,21 @@ onUnmounted(() => {
   align-items: center;
   justify-content: center;
   z-index: 100;
+}
+
+.manual-play-btn {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 1rem 2rem;
+  border: none;
+  border-radius: 100px;
+  background-color: #FFFFFF;
+  color: #000;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  z-index: 4;
 }
 </style>
