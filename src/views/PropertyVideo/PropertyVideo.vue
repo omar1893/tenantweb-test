@@ -29,8 +29,14 @@
     </div>
 
     <div class="text-container w-full">
-      <p class="text-medium">{{ state.propertyData?.name || 'Welcome!' }}</p>
-      <p class="body-large">We're thrilled to have you{{ state.propertyData?.name ? ` at ${state.propertyData.name}` : '' }}...</p>
+      <p class="text-medium w-[85%]">{{ state.propertyData?.name || 'Welcome!' }}</p>
+      <p
+        v-if="captions && captions.length"
+        class="body-large caption-preview"
+      >
+        {{ captions[0].text }}
+      </p>
+      <p v-else class="body-large caption-preview">No caption available.</p>
       <p class="button-large" style="cursor:pointer;" @click="showInfoModal">Read more</p>
       <div v-if="!showContinueButtons" class="controls-container">
         <div class="control-group">
@@ -61,17 +67,16 @@
 
     <ion-modal
       :is-open="infoModalVisible"
-      :initial-breakpoint="1"
-      :breakpoints="[1]"
+      :initial-breakpoint="0.85"
+      :breakpoints="[0.85, 1]"
       class="bottom-modal"
       :backdrop-dismiss="!assetsLoading"
       :backdrop-breakpoint="1"
       :swipe-to-close="false"
       :presenting-element="null"
       :handle="false"
-      @did-dismiss="handleModalDismiss"
     >
-      <div class="p-7">
+      <div class="p-7 pb-40">
         <div v-if="state.propertyDataLoading" class="flex items-center justify-center min-h-[200px]">
           <ion-spinner name="crescent" />
         </div>
@@ -82,21 +87,17 @@
 
           <h2 class="mb-1 text-medium">{{ state.propertyData?.name || 'Welcome!' }}</h2>
           <h3 class="mb-4 text-medium">Here's the quick rundown <span>👇</span></h3>
-          <ul v-if="state.propertyData?.configuration?.[0]" class="body-large text-gray-800 mb-2 list-disc pl-4">
+          <ul v-if="captions && captions.length" class="body-large text-gray-800 mb-2 list-disc pl-4">
             <li
-              v-for="(requirement, index) in state.propertyData.configuration[0].requirements"
+              v-for="(caption, index) in captions"
               :key="index"
               class="mb-4"
             >
-              {{ requirement }}
+              {{ caption.text }}
             </li>
           </ul>
           <ul v-else class="body-large text-gray-800 mb-2 list-disc pl-4">
-            <li class="mb-4">Processing Time: up to 5 business days</li>
-            <li class="mb-4">No Pets only ESA / SA</li>
-            <li class="mb-4">Short-Term Lease applications only</li>
-            <li class="mb-4">Everyone +18 Applies</li>
-            <li class="mb-4">Airbnb booking screenshots required</li>
+            <li class="mb-4">No captions available.</li>
           </ul>
         </template>
       </div>
@@ -122,7 +123,7 @@ import { ERouter } from '@/enums/router'
 interface Caption {
   type: string
   text: string
-  time: number
+  startTime: number
   endTime: number
 }
 
@@ -149,7 +150,7 @@ const isAudioMuted = ref(false)
 const isVideoMuted = ref(true)
 const infoModalVisible = ref(false)
 const showContinueButtons = ref(false)
-const isFirstInteraction = ref(true)
+// const isFirstInteraction = ref(true)
 const showIosPlayButton = ref(false)
 
 const state = reactive<State>({
@@ -254,7 +255,7 @@ const startMedia = async () => {
   }
 }
 
-const handleModalDismiss = async () => {
+/* const handleModalDismiss = async () => {
   console.log('handleModalDismiss')
   if (!videoRef.value || !audioRef.value) return
 
@@ -298,7 +299,7 @@ const handleModalDismiss = async () => {
   } catch (error) {
     console.error('Error starting media:', error)
   }
-}
+} */
 
 const showInfoModal = () => {
   if (!assetsLoading.value) {
@@ -363,7 +364,7 @@ const updateCaption = () => {
   if (!audioRef.value) return
 
   const currentTime = audioRef.value.currentTime
-  const caption = captions.value.find(c => currentTime >= c.time && currentTime < c.endTime)
+  const caption = captions.value.find(c => currentTime >= c.startTime && currentTime < c.endTime)
   currentCaption.value = caption || null
 }
 
@@ -588,18 +589,22 @@ onUnmounted(() => {
   }
 }
 
-:deep(.bottom-modal) {
+/* :deep(.bottom-modal) {
   --height: auto;
   --max-height: 90%;
   --width: 100%;
   --border-radius: 24px;
   border-bottom-left-radius: 0px !important;
   border-bottom-right-radius: 0px !important;
+  border-top-left-radius: var(--border-radius) !important;
+  border-top-right-radius: var(--border-radius) !important;
   touch-action: none;
 
   .ion-page {
     border-bottom-left-radius: 0px !important;
     border-bottom-right-radius: 0px !important;
+    border-top-left-radius: var(--border-radius) !important;
+    border-top-right-radius: var(--border-radius) !important;
     background: white;
     position: fixed;
     touch-action: none;
@@ -607,6 +612,10 @@ onUnmounted(() => {
 
   .modal-wrapper {
     border-radius: var(--border-radius);
+    border-bottom-left-radius: 0px !important;
+    border-bottom-right-radius: 0px !important;
+    border-top-left-radius: var(--border-radius) !important;
+    border-top-right-radius: var(--border-radius) !important;
     touch-action: none;
   }
 
@@ -618,7 +627,7 @@ onUnmounted(() => {
   .modal-handle {
     display: none;
   }
-}
+} */
 
 .loading-container {
   position: fixed;
@@ -647,5 +656,13 @@ onUnmounted(() => {
   font-weight: 600;
   cursor: pointer;
   z-index: 4;
+}
+
+.caption-preview {
+  width: 85%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
 }
 </style>

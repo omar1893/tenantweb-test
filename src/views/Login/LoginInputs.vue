@@ -1,11 +1,13 @@
 <template>
   <ion-modal
     :is-open="isOpen"
-    :initial-breakpoint="1"
-    :breakpoints="[0, 1]"
+    :initial-breakpoint="0.85"
+    :breakpoints="[0.85, 1]"
     class="bottom-modal"
+    :swipe-to-close="false"
+    @didDismiss="closeModal"
   >
-    <div class="flex flex-col gap-6 p-6">
+    <div class="flex flex-col gap-6 p-6 pb-40">
       <div class="flex justify-between items-center">
         <img src="@/assets/icons/close-icon.svg" alt="Close" class="w-[17px] h-[17px] cursor-pointer" @click="closeModal">
         <div class="ml-auto flex items-center">

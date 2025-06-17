@@ -1,0 +1,103 @@
+{
+  "master": {
+    "tasks": [
+      {
+        "id": 1,
+        "title": "Implement Payment View in Vue + Ionic + Capacitor App",
+        "description": "Develop a responsive payment view in the hybrid app with billing address, payment method selection, order summary, legal text, and a conditional confirmation button.",
+        "details": "1. Create a new Vue component for the payment view within the Ionic framework. Ensure the component is responsive and adheres to the provided visual design guidelines. \n2. Implement a billing address section with a checkbox labeled 'Billing address is not in the United States'. Use Ionic components for form inputs to ensure consistency and responsiveness.\n3. Develop payment method selection using Ionic buttons for Apple Pay, Google Pay, and credit card options. Integrate Capacitor plugins for handling Apple Pay and Google Pay transactions.\n4. Add an order summary section that dynamically displays a breakdown of charges and the total amount. Use Vue's reactivity to update this section based on user input.\n5. Include legal text with links to the Privacy Policy, Terms and Conditions, and Cancellation Policy. Ensure links open in a new browser tab or modal.\n6. Implement a confirmation button that remains disabled until all required fields are filled and valid, and the user has agreed to terms. Use Vue's computed properties or watchers to manage button state.",
+        "testStrategy": "1. Verify the payment view renders correctly on various screen sizes and devices, ensuring responsiveness.\n2. Test the billing address section to ensure the checkbox functions and updates the form state correctly.\n3. Confirm that payment method buttons trigger the appropriate payment flows, and transactions can be simulated in a test environment.\n4. Check the order summary updates accurately with changes in user input.\n5. Ensure legal text links navigate to the correct documents and open in a new tab or modal.\n6. Validate that the confirmation button is disabled until all conditions are met, and becomes enabled when they are. Test edge cases for form validation.",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "medium",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Create Payment View Component",
+            "description": "Develop a new Vue component for the payment view within the Ionic framework, ensuring it is responsive and adheres to visual design guidelines.",
+            "dependencies": [],
+            "details": "Set up a new Vue component file within the Ionic project structure. Use Ionic's grid and layout components to ensure responsiveness. Apply CSS styles as per the design guidelines to match the visual requirements.",
+            "status": "pending",
+            "testStrategy": "Verify the component renders correctly on different screen sizes and matches the design specifications."
+          },
+          {
+            "id": 2,
+            "title": "Implement Billing Address Section",
+            "description": "Add a billing address section with a checkbox for 'Billing address is not in the United States'. Use Ionic components for form inputs.",
+            "dependencies": [
+              1
+            ],
+            "details": "Use Ionic's form components like ion-input and ion-checkbox to create the billing address form. Ensure the checkbox toggles additional input fields if checked.",
+            "status": "pending",
+            "testStrategy": "Test form inputs for correct data binding and ensure the checkbox functionality works as expected."
+          },
+          {
+            "id": 3,
+            "title": "Develop Payment Method Selection",
+            "description": "Create a section for payment method selection with options for Apple Pay, Google Pay, and credit card. Integrate Capacitor plugins for payment handling.",
+            "dependencies": [
+              1
+            ],
+            "details": "Use Ionic buttons to create selectable options for each payment method. Implement Capacitor plugins to handle Apple Pay and Google Pay transactions, ensuring proper configuration and permissions.",
+            "status": "pending",
+            "testStrategy": "Test each payment method selection and transaction flow to ensure they are correctly integrated and functional."
+          },
+          {
+            "id": 4,
+            "title": "Add Order Summary Section",
+            "description": "Implement an order summary section that dynamically displays a breakdown of charges and the total amount.",
+            "dependencies": [
+              1
+            ],
+            "details": "Use Vue's reactivity system to bind data to the order summary section. Ensure it updates in real-time based on user input and selections.",
+            "status": "pending",
+            "testStrategy": "Verify that the order summary updates correctly with changes in user input and reflects accurate totals."
+          },
+          {
+            "id": 5,
+            "title": "Include Legal Text with Links",
+            "description": "Add legal text with links to the Privacy Policy, Terms and Conditions, and Cancellation Policy, ensuring links open in a new tab or modal.",
+            "dependencies": [
+              1
+            ],
+            "details": "Use ion-text and ion-anchor components to display legal text and links. Configure links to open in a new browser tab or modal using target attributes or Ionic modals.",
+            "status": "pending",
+            "testStrategy": "Ensure all links are functional and open in the specified manner."
+          },
+          {
+            "id": 6,
+            "title": "Implement Confirmation Button Logic",
+            "description": "Create a confirmation button that is disabled until all required fields are filled and valid, and the user has agreed to terms.",
+            "dependencies": [
+              2,
+              3,
+              4,
+              5
+            ],
+            "details": "Use Vue's computed properties or watchers to monitor form validity and agreement to terms. Enable the button only when all conditions are met.",
+            "status": "pending",
+            "testStrategy": "Test the button's enabled/disabled state under various form completion scenarios to ensure correct behavior."
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Fix and Enhance PropertyVideo.vue Captions Display",
+        "description": "Modify the PropertyVideo.vue component to display captions instead of requirements and adjust the text display behavior.",
+        "details": "1. Update the modal in PropertyVideo.vue to iterate over and display all captions as a list instead of property requirements. Ensure each caption is clearly listed and styled appropriately for readability.\\n2. In the main container, replace the current placeholder text with the first caption from the captions array. Limit the text width to 80% of the container. Use CSS to apply 'text-overflow: ellipsis' to handle overflow without line breaks.\\n3. Implement a 'Read more' button that, when clicked, opens the modal displaying all captions. Ensure the button is accessible and styled consistently with the existing UI.\\n4. Refactor the component to ensure clean and maintainable code, possibly extracting the captions logic into a separate method or component if necessary.",
+        "testStrategy": "1. Verify that the modal displays all captions as a list, checking for correct iteration and display.\\n2. Check that the first caption is displayed in the main container, occupying only 80% of the width, and that ellipsis is applied correctly for overflow.\\n3. Test the 'Read more' button to ensure it opens the modal with all captions.\\n4. Conduct cross-browser testing to ensure consistent behavior across different browsers.\\n5. Perform a code review to ensure the changes are maintainable and follow best practices.",
+        "status": "pending",
+        "dependencies": [
+          1
+        ],
+        "priority": "medium",
+        "subtasks": []
+      }
+    ],
+    "metadata": {
+      "created": "2025-06-16T15:54:58.540Z",
+      "updated": "2025-06-17T02:49:34.356Z",
+      "description": "Tasks for master context"
+    }
+  }
+}

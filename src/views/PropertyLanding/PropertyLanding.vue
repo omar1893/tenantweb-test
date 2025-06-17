@@ -90,7 +90,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, reactive } from 'vue'
+import { ref, computed, onMounted, reactive, onUnmounted } from 'vue'
 import { useRoute } from 'vue-router'
 import TAccordion from '@/components/TAccordion.vue'
 import TLabel from '@/components/TLabel.vue'
@@ -225,7 +225,18 @@ onMounted(() => {
   isFirstVisit.value = !hasVisited
   localStorage.setItem('has_visited_property_landing', 'true')
   fetchPropertyData()
+
+  // Limpia el valor al cerrar/navegar fuera
+  window.addEventListener('pagehide', clearVisitedFlag)
 })
+
+onUnmounted(() => {
+  window.removeEventListener('pagehide', clearVisitedFlag)
+})
+
+function clearVisitedFlag() {
+  localStorage.removeItem('has_visited_property_landing')
+}
 
 defineExpose({ state })
 </script>

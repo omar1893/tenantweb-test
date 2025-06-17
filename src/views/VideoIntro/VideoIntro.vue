@@ -125,6 +125,28 @@ onMounted(async () => {
   eventBus.on('close-login-modal', closeLoginModal)
 
   if (hasViewedVideo.value) {
+    console.log('[VideoIntro] hasViewedVideo: esperando primer frame del video...')
+    await new Promise<void>((resolve) => {
+      if (videoRef.value?.readyState >= 2) {
+        console.log('[VideoIntro] videoRef readyState >= 2, primer frame ya cargado')
+        resolve()
+      } else {
+        videoRef.value?.addEventListener('loadeddata', () => {
+          console.log('[VideoIntro] evento loadeddata recibido, primer frame cargado')
+          resolve()
+        }, { once: true })
+      }
+    })
+    // Forzar avance al primer frame real
+    try {
+      videoRef.value.currentTime = 0.1
+      await new Promise(res => setTimeout(res, 50))
+      videoRef.value.pause()
+      console.log('[VideoIntro] Avanzado a currentTime=0.1 y pausado para mostrar primer frame real')
+    } catch (e) {
+      console.log('[VideoIntro] Error al avanzar el video:', e)
+    }
+    console.log('[VideoIntro] Mostrando modal de login tras cargar primer frame')
     showLoginModal()
     return
   }

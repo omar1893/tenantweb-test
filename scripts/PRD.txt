@@ -1,0 +1,112 @@
+<context>
+# Overview  
+Esta aplicación tiene como objetivo simplificar el proceso de evaluación de candidatos interesados en rentar o compartir vivienda. Está diseñada tanto para usuarios individuales (inquilinos) como para empresas de gestión de propiedades (landlords o property managers). La app automatiza la recolección de datos, validación y comparación de aplicaciones de forma eficiente a través de un asistente conversacional (chatbot) como punto central de interacción.
+
+# Core Features  
+- **Chatbot para Screening**  
+  - ¿Qué hace? Conduce al usuario por un proceso de preguntas personalizadas para reunir toda la información necesaria para una aplicación de renta.  
+  - ¿Por qué es importante? Automatiza un proceso que suele ser manual, inconsistente y propenso a errores.  
+  - ¿Cómo funciona? Utiliza lógica condicional para adaptar el flujo de preguntas y almacenar las respuestas en tiempo real.
+
+- **Evaluación Automática de Aplicaciones**  
+  - ¿Qué hace? Compara distintas aplicaciones de acuerdo con criterios definidos (score, ingresos, historial, etc).  
+  - ¿Por qué es importante? Ayuda a propietarios a tomar decisiones objetivas y rápidas.  
+  - ¿Cómo funciona? Se basa en un sistema de puntuación configurable que se aplica sobre los datos recogidos.
+
+- **Gestión de Documentos**  
+  - ¿Qué hace? Permite al usuario cargar documentos clave (ID, comprobantes de ingresos, etc.).  
+  - ¿Por qué es importante? Centraliza la información necesaria para el análisis de la aplicación.  
+  - ¿Cómo funciona? Upload simple a través del chatbot o formularios, con almacenamiento seguro.
+
+- **Vista Web Administrativa (futura)**  
+  - ¿Qué hace? Permite a landlords ver el estado de las aplicaciones, comparar candidatos, y exportar información.  
+  - ¿Por qué es importante? Proporciona herramientas de gestión eficientes para usuarios empresariales.  
+  - ¿Cómo funciona? Panel web sincronizado con la app móvil.
+
+# User Experience  
+- **User Personas**
+  - *Aplicante (Inquilino)*: Persona que quiere alquilar o compartir vivienda. Busca una experiencia rápida, clara y sin papeleo excesivo.
+  - *Property Manager*: Empresa o individuo que administra una o varias propiedades. Necesita organizar y comparar aplicaciones de forma escalable.
+
+- **Key User Flows**
+  1. Aplicante abre la app → inicia chat → responde preguntas → sube documentos → recibe confirmación.
+  2. Property Manager revisa aplicaciones desde dashboard (fase futura) → compara → toma decisiones.
+
+- **UI/UX Consideraciones**
+  - Diseño minimalista, enfocado en accesibilidad móvil.
+  - Componentes PrimeVue adaptados para dispositivos táctiles.
+  - Animaciones suaves, tiempos de carga mínimos.
+  - Interfaz conversacional clara, estilo "step by step" para no abrumar.
+
+</context>
+
+<PRD>
+# Technical Architecture  
+- **Sistema**
+  - Frontend en Vue 3 con Ionic Framework.
+  - Capacitor para empaquetado mobile (iOS y Android).
+  - PrimeVue para componentes UI, SCSS para estilos.
+
+- **Componentes**
+  - Chatbot: motor lógico en el frontend con almacenamiento local temporal y sincronización con backend.
+  - Backend (fase 2): API RESTful para almacenar datos y realizar evaluaciones.
+  - Storage: Firebase Storage o AWS S3 para documentos.
+  - Base de datos: Firestore / PostgreSQL (según escalabilidad deseada).
+
+- **APIs e Integraciones**
+  - Autenticación (Google/Facebook/Email).
+  - OCR (lectura automática de documentos, fase futura).
+  - Notificaciones push (fase futura).
+
+- **Infraestructura**
+  - Firebase Hosting para entorno web.
+  - Capacitor plugins nativos para acceso a cámara, archivos, etc.
+  - Build pipeline con Vite + Capacitor CLI + App Store/Play Store.
+
+# Development Roadmap  
+- **Fase 1: MVP Móvil**
+  - Chatbot funcional con lógica de preguntas adaptativas.
+  - Validación y guardado local de datos del usuario.
+  - Carga básica de documentos.
+  - Export de datos local para testing de evaluación.
+  - UI responsiva y fluida.
+
+- **Fase 2: Backend & Evaluación**
+  - Almacenamiento persistente (Firebase o API propia).
+  - Motor de scoring basado en reglas.
+  - Autenticación básica.
+  - Reporte de aplicaciones.
+
+- **Fase 3: Web Admin & Escalabilidad**
+  - Dashboard web con tabla de aplicaciones.
+  - Herramientas de comparación.
+  - Exportación a CSV/PDF.
+  - Roles de usuario.
+
+- **Fase 4: Experiencia Pro**
+  - Notificaciones push.
+  - Firma digital de contratos.
+  - Integraciones con CRMs o sistemas de pago.
+
+# Logical Dependency Chain  
+1. Estructura de navegación y estilos base (Ionic + SCSS).
+2. Chatbot y flujos conversacionales (offline first).
+3. Lógica de validación de respuestas y almacenamiento local.
+4. Interfaz para carga de documentos.
+5. Backend y motor de evaluación.
+6. Exportación de resultados.
+7. Dashboard web.
+8. Mejoras en UX, escalabilidad, y funcionalidades pro.
+
+# Risks and Mitigations  
+- **Desfase entre mobile y web**: Se prioriza mobile, pero se mantiene diseño responsive desde el inicio.  
+- **Complejidad del chatbot**: Comenzar con flujos simples; extender modularmente.  
+- **Gestión de documentos sensibles**: Encriptar en tránsito y en reposo, seguir buenas prácticas de almacenamiento seguro.  
+- **Backend no disponible en MVP**: Se planea modo local para pruebas y migración progresiva.
+
+# Appendix  
+- PrimeVue: https://primevue.org  
+- Capacitor Docs: https://capacitorjs.com/docs  
+- Firebase: https://firebase.google.com  
+- Ejemplos similares: TurboTax, Klarna Onboarding, Airbnb Host App
+</PRD>

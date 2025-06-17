@@ -27,7 +27,7 @@ export interface IAgentStoreState {
   currentStreamingId: string | null;
 }
 
-const WEBSOCKET_URL = 'wss://supervisor.tenantev.dev/ws'
+const WEBSOCKET_URL = 'wss://supervisor-qa.tenantev.dev/ws'
 
 export const useAgentStore = defineStore('agent', {
   state: (): IAgentStoreState => ({

@@ -3,7 +3,7 @@ import axios from 'axios'
 interface Caption {
   type: string
   text: string
-  time: number
+  startTime: number
   endTime: number
 }
 
@@ -29,13 +29,13 @@ export const propertyCaptionsService = {
       const validCaptions = parsedCaptions.map((caption: any) => ({
         type: caption.type || 'subtitle',
         text: caption.text || '',
-        time: Number(caption.time) || 0,
+        startTime: Number(caption.startTime) || 0,
         endTime: Number(caption.endTime) || 0
       })).filter((caption: Caption) =>
         caption.text &&
-        !isNaN(caption.time) &&
+        !isNaN(caption.startTime) &&
         !isNaN(caption.endTime) &&
-        caption.endTime > caption.time
+        caption.endTime > caption.startTime
       )
 
       console.log('Validated captions:', validCaptions)

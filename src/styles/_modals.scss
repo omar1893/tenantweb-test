@@ -1,4 +1,4 @@
-.bottom-modal {
+/* .bottom-modal {
   --height: auto;
   --max-height: 90%;
   --width: 100%;
@@ -7,15 +7,31 @@
   border-top-right-radius: var(--border-radius) !important;
   border-bottom-left-radius: 0 !important;
   border-bottom-right-radius: 0 !important;
+}
+ */
 
-/*   :deep(.ion-page),
-  :deep(.modal-wrapper) {
-    border-top-left-radius: var(--border-radius) !important;
-    border-top-right-radius: var(--border-radius) !important;
-    border-bottom-left-radius: 0 !important;
-    border-bottom-right-radius: 0 !important;
-    border-radius: unset !important;
-    overflow: hidden;
-    background: white;
-  } */
-} 
+/* .bottom-modal {
+  --height: auto;
+  --max-height: 90%;
+  --width: 100%;
+  border-top-left-radius: var(--border-radius, 24px) !important;
+  border-top-right-radius: var(--border-radius, 24px) !important;
+  border-bottom-left-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+} */
+
+.bottom-modal {
+  --border-radius: 24px;
+}
+
+.bottom-modal,
+.bottom-modal .ion-page,
+.bottom-modal .modal-wrapper,
+.bottom-modal :deep(.ion-page),
+.bottom-modal :deep(.modal-wrapper) {
+  border-radius: 0 !important;
+  border-top-left-radius: var(--border-radius, 24px) !important;
+  border-top-right-radius: var(--border-radius, 24px) !important;
+  border-bottom-left-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+}
