@@ -70,7 +70,7 @@
           Download App
         </a>
         <a
-          v-if="!isFirstVisit"
+          v-if="showContinueButton"
           class="block w-full text-center !rounded-[100px] button-small text-white py-[1.4rem] no-underline flex items-center justify-center"
           href="#"
           @click.prevent="handleContinueInBrowser"
@@ -144,7 +144,7 @@ const GOOGLE_API_KEY = 'AIzaSyAHFOQEwRQ6_CGQcBZ7R7fLO0ECSqrNxWw'
 const googlePlaceInfo = ref<any>(null)
 
 const isIOS = computed(() => Capacitor.getPlatform() === 'ios')
-const isFirstVisit = ref(true)
+const showContinueButton = ref(false)
 
 const fetchGooglePlaceInfo = async (address: string) => {
   try {
@@ -221,17 +221,27 @@ const handleContinueInBrowser = () => {
 }
 
 onMounted(() => {
+  // Check if user has visited before
   const hasVisited = localStorage.getItem('has_visited_property_landing')
-  isFirstVisit.value = !hasVisited
-  localStorage.setItem('has_visited_property_landing', 'true')
+
+  // Show continue button only if user has visited before
+  showContinueButton.value = !!hasVisited
+
+  // Set the flag for future visits
+  if (!hasVisited) {
+    localStorage.setItem('has_visited_property_landing', 'true')
+  }
+
   fetchPropertyData()
 
-  // Limpia el valor al cerrar/navegar fuera
+  // Add event listeners for page/tab close
   window.addEventListener('pagehide', clearVisitedFlag)
+  window.addEventListener('beforeunload', clearVisitedFlag)
 })
 
 onUnmounted(() => {
   window.removeEventListener('pagehide', clearVisitedFlag)
+  window.removeEventListener('beforeunload', clearVisitedFlag)
 })
 
 function clearVisitedFlag() {

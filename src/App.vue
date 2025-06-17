@@ -1,32 +1,17 @@
 <template>
   <ion-app>
-    <div v-if="isPublic" class="ion-safe-area">
+    <div class="ion-safe-area">
       <router-view />
-    </div>
-    <div v-else class="ion-safe-area">
-      <router-view />
-<!--     <AuthLogic>
-      <template #signed-in>
-      </template>
-    </AuthLogic> -->
     </div>
   </ion-app>
 </template>
 
 <script setup lang="ts">
-import { useRoute } from 'vue-router'
-import { computed, onMounted } from 'vue'
-/* import AuthLogic from '@/components/AuthLogic.vue' */
+import { onMounted } from 'vue'
 import { DeepLinkService } from '@/services/deepLink.service'
 import { StatusBar, Style } from '@capacitor/status-bar'
 import { Capacitor } from '@capacitor/core'
 import { IonApp } from '@ionic/vue'
-
-const route = useRoute()
-
-const isPublic = computed(() => {
-  return route.meta.isPublic
-})
 
 const initializeStatusBar = async () => {
   if (Capacitor.isNativePlatform()) {
