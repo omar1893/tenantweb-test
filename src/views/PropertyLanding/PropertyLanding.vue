@@ -221,31 +221,31 @@ const handleContinueInBrowser = () => {
 }
 
 onMounted(() => {
-  // Check if user has visited before
-  const hasVisited = localStorage.getItem('has_visited_property_landing')
+  const lastHidden = localStorage.getItem('property_landing_last_hidden')
+  if (lastHidden && Date.now() - Number(lastHidden) > 3000) {
+    localStorage.removeItem('has_visited_property_landing')
+    localStorage.removeItem('property_landing_last_hidden')
+  }
 
-  // Show continue button only if user has visited before
+  const hasVisited = localStorage.getItem('has_visited_property_landing')
   showContinueButton.value = !!hasVisited
 
-  // Set the flag for future visits
   if (!hasVisited) {
     localStorage.setItem('has_visited_property_landing', 'true')
   }
 
   fetchPropertyData()
-
-  // Add event listeners for page/tab close
-  window.addEventListener('pagehide', clearVisitedFlag)
-  window.addEventListener('beforeunload', clearVisitedFlag)
+  document.addEventListener('visibilitychange', handleVisibilityChange)
 })
 
 onUnmounted(() => {
-  window.removeEventListener('pagehide', clearVisitedFlag)
-  window.removeEventListener('beforeunload', clearVisitedFlag)
+  document.removeEventListener('visibilitychange', handleVisibilityChange)
 })
 
-function clearVisitedFlag() {
-  localStorage.removeItem('has_visited_property_landing')
+function handleVisibilityChange() {
+  if (document.visibilityState === 'hidden') {
+    localStorage.setItem('property_landing_last_hidden', Date.now().toString())
+  }
 }
 
 defineExpose({ state })
